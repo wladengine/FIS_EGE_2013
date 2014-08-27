@@ -1,0 +1,2937 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- edited with XMLSpy v2005 rel. 3 U (http://www.altova.com) by Test (Ru-Board) -->
+<xs:schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:complexType name="TOlympicDocument">
+		<xs:all>
+			<xs:element name="UID" type="TUID" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OriginalReceived">
+				<xs:annotation>
+					<xs:documentation>Признак предоставления оригиналов документов</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:boolean"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OriginalReceivedDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата предоставления оригиналов документов</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentNumber" type="TDocumentSeriesNumber">
+				<xs:annotation>
+					<xs:documentation>Номер документа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DocumentDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата выдачи документа</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DiplomaTypeID">
+				<xs:annotation>
+					<xs:documentation>ИД типа диплома</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedInt"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OlympicID">
+				<xs:annotation>
+					<xs:documentation>ИД олимпиады</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedInt"/>
+				</xs:simpleType>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="TOlympicTotalDocument">
+		<xs:all>
+			<xs:element name="UID" type="TUID" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OriginalReceived">
+				<xs:annotation>
+					<xs:documentation>Признак предоставления оригиналов документов</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:boolean"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OriginalReceivedDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата предоставления оригиналов документов</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentSeries" type="TDocumentSeriesNumber">
+				<xs:annotation>
+					<xs:documentation>Серия документа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DocumentNumber" type="TDocumentSeriesNumber">
+				<xs:annotation>
+					<xs:documentation>Номер документа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OlympicPlace" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Место проведения олимпиады</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OlympicDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата проведения олимпиады</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DiplomaTypeID">
+				<xs:annotation>
+					<xs:documentation>Тип диплома</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedInt"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Subjects">
+				<xs:annotation>
+					<xs:documentation>Профильные предметы олимпиады</xs:documentation>
+				</xs:annotation>
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element name="SubjectBriefData" maxOccurs="unbounded">
+							<xs:complexType>
+								<xs:all>
+									<xs:element name="SubjectID">
+										<xs:annotation>
+											<xs:documentation>ИД дисциплины</xs:documentation>
+										</xs:annotation>
+										<xs:simpleType>
+											<xs:restriction base="xs:unsignedInt"/>
+										</xs:simpleType>
+									</xs:element>
+								</xs:all>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="TDisabilityDocument">
+		<xs:all>
+			<xs:element name="UID" type="TUID" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OriginalReceived">
+				<xs:annotation>
+					<xs:documentation>Признак предоставления оригиналов документов</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:boolean"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OriginalReceivedDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата предоставления оригиналов документов</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentSeries" type="TDocumentSeriesNumber">
+				<xs:annotation>
+					<xs:documentation>Серия документа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DocumentNumber" type="TDocumentSeriesNumber">
+				<xs:annotation>
+					<xs:documentation>Номер документа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DocumentDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата выдачи документа</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentOrganization" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Организация, выдавшая документ</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="500"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DisabilityTypeID">
+				<xs:annotation>
+					<xs:documentation>Группа инвалидности</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedInt"/>
+				</xs:simpleType>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="TMedicalDocument">
+		<xs:all>
+			<xs:element name="UID" type="TUID" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OriginalReceived">
+				<xs:annotation>
+					<xs:documentation>Признак предоставления оригиналов документов</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:boolean"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OriginalReceivedDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата предоставления оригиналов документов</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentNumber" type="TDocumentSeriesNumber">
+				<xs:annotation>
+					<xs:documentation>Номер документа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DocumentDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата выдачи документа</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentOrganization" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Организация, выдавшая документ</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="500"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="TCustomDocument">
+		<xs:all>
+			<xs:element name="UID" type="TUID" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OriginalReceived">
+				<xs:annotation>
+					<xs:documentation>Признак предоставления оригиналов документов</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:boolean"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OriginalReceivedDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата предоставления оригиналов документов</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentSeries" type="TDocumentSeriesNumber" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Серия документа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DocumentNumber" type="TDocumentSeriesNumber" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Номер документа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DocumentDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата выдачи документа</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentOrganization" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Организация, выдавшая документ</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="500"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="AdditionalInfo" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дополнительные сведения</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentTypeNameText">
+				<xs:annotation>
+					<xs:documentation>Тип документа</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="255"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="TAllowEducationDocument">
+		<xs:all>
+			<xs:element name="UID" type="TUID" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OriginalReceived">
+				<xs:annotation>
+					<xs:documentation>Признак предоставления оригиналов документов</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:boolean"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OriginalReceivedDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата предоставления оригиналов документов</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentNumber" type="TDocumentSeriesNumber">
+				<xs:annotation>
+					<xs:documentation>Номер документа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DocumentDate">
+				<xs:annotation>
+					<xs:documentation>Дата выдачи документа</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentOrganization" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Организация, выдавшая документ</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="500"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="TEntranceTestSubject">
+		<xs:choice>
+			<xs:element name="SubjectID">
+				<xs:annotation>
+					<xs:documentation>ИД дисциплины</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedInt"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SubjectName">
+				<xs:annotation>
+					<xs:documentation>Наименование дисциплины</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="50"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:choice>
+	</xs:complexType>
+	<xs:complexType name="TEgeDocumentSubject">
+		<xs:all>
+			<xs:element name="UID" type="TUID" minOccurs="0"/>
+			<xs:element name="DocumentNumber" type="TDocumentSeriesNumber">
+				<xs:annotation>
+					<xs:documentation>Номер документа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DocumentDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата выдачи документа</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentOrganization" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Организация, выдавшая документ</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SubjectID">
+				<xs:annotation>
+					<xs:documentation>ИД предмета</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedInt"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="Value">
+				<xs:annotation>
+					<xs:documentation>Баллы</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedInt"/>
+				</xs:simpleType>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="TSchoolCertificateDocument">
+		<xs:all>
+			<xs:element name="UID" type="TUID" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OriginalReceived">
+				<xs:annotation>
+					<xs:documentation>Признак предоставления оригиналов документов</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:boolean"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OriginalReceivedDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата предоставления оригиналов документов</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentSeries" type="TDocumentSeriesNumber">
+				<xs:annotation>
+					<xs:documentation>Серия документа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DocumentNumber" type="TDocumentSeriesNumber">
+				<xs:annotation>
+					<xs:documentation>Номер документа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DocumentDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата выдачи документа</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentOrganization" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Организация, выдавшая документ</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="500"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EndYear" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Год окончания</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedInt"/>
+				</xs:simpleType>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="THighEduDiplomaDocument">
+		<xs:all>
+			<xs:element name="UID" type="TUID" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OriginalReceived">
+				<xs:annotation>
+					<xs:documentation>Признак предоставления оригиналов документов</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:boolean"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OriginalReceivedDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата предоставления оригиналов документов</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentSeries" type="TDocumentSeriesNumber">
+				<xs:annotation>
+					<xs:documentation>Серия документа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DocumentNumber" type="TDocumentSeriesNumber">
+				<xs:annotation>
+					<xs:documentation>Номер документа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DocumentDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата выдачи документa</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentOrganization" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Организация, выдавшая документ</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="500"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RegistrationNumber" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>регистрационный номер</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="QualificationTypeID" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ИД квалификации</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedInt"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SpecialityID" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ИД специальности</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedInt"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EndYear" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Год окончания</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedInt"/>
+				</xs:simpleType>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="TMiddleEduDiplomaDocument">
+		<xs:all>
+			<xs:element name="UID" type="TUID" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OriginalReceived">
+				<xs:annotation>
+					<xs:documentation>Признак предоставления оригиналов документов</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:boolean"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OriginalReceivedDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата предоставления оригиналов документов</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentSeries" type="TDocumentSeriesNumber">
+				<xs:annotation>
+					<xs:documentation>Серия документа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DocumentNumber" type="TDocumentSeriesNumber">
+				<xs:annotation>
+					<xs:documentation>Номер документа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DocumentDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата выдачи документа</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentOrganization" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Организация, выдавшая документ</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="500"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RegistrationNumber" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>регистрационный номер</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="QualificationTypeID" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ИД квалификации</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedInt"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SpecialityID" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ИД специальности</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedInt"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EndYear" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Год окончания</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedInt"/>
+				</xs:simpleType>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="TBasicDiplomaDocument">
+		<xs:all>
+			<xs:element name="UID" type="TUID" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OriginalReceived">
+				<xs:annotation>
+					<xs:documentation>Признак предоставления оригиналов документов</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:boolean"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OriginalReceivedDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата предоставления оригиналов документов</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentSeries" type="TDocumentSeriesNumber">
+				<xs:annotation>
+					<xs:documentation>Серия документа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DocumentNumber" type="TDocumentSeriesNumber">
+				<xs:annotation>
+					<xs:documentation>Номер документа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DocumentDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата выдачи документа</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentOrganization" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Организация, выдавшая документ</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="500"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RegistrationNumber" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Регистрационный номер</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="QualificationTypeID" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ИД квалификации</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedInt"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="ProfessionID" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ИД профессии</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedInt"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="EndYear" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Год окончания</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedInt"/>
+				</xs:simpleType>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="TIncomplHighEduDiplomaDocument">
+		<xs:all>
+			<xs:element name="UID" type="TUID" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OriginalReceived">
+				<xs:annotation>
+					<xs:documentation>Признак предоставления оригиналов документов</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:boolean"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OriginalReceivedDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата предоставления оригиналов документов</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentSeries" type="TDocumentSeriesNumber">
+				<xs:annotation>
+					<xs:documentation>Серия документа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DocumentNumber" type="TDocumentSeriesNumber">
+				<xs:annotation>
+					<xs:documentation>Номер документа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DocumentDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата выдачи документа</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentOrganization" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Организация, выдавшая документ</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="500"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RegistrationNumber" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>регистрационный номер</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="QualificationTypeID" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ИД квалификации</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedInt"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SpecialityID" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ИД специальности</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedInt"/>
+				</xs:simpleType>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="TAcademicDiplomaDocument">
+		<xs:all>
+			<xs:element name="UID" type="TUID" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="OriginalReceived">
+				<xs:annotation>
+					<xs:documentation>Признак предоставления оригиналов документов</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:boolean"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="OriginalReceivedDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата предоставления оригиналов документов</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="RegistrationNumber" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>регистрационный номер</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="20"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentSeries" type="TDocumentSeriesNumber">
+				<xs:annotation>
+					<xs:documentation>Серия документа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DocumentNumber" type="TDocumentSeriesNumber">
+				<xs:annotation>
+					<xs:documentation>Номер документа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DocumentDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата выдачи документа</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentOrganization" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Организация, выдавшая документ</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="500"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="QualificationTypeID" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ИД квалификации</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedInt"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="SpecialityID" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>ИД специальности</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:unsignedInt"/>
+				</xs:simpleType>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+	<xs:complexType name="TInstitutionDocument">
+		<xs:all>
+			<xs:element name="DocumentNumber" type="TDocumentSeriesNumber">
+				<xs:annotation>
+					<xs:documentation>Номер документа</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="DocumentDate" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Дата выдачи документа</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:date"/>
+				</xs:simpleType>
+			</xs:element>
+			<xs:element name="DocumentTypeID" minOccurs="0">
+				<xs:annotation>
+					<xs:documentation>Организация, выдавшая документ</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:string">
+						<xs:length value="500"/>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:element>
+		</xs:all>
+	</xs:complexType>
+	<xs:simpleType name="TDocumentSeriesNumber">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="50"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TUID">
+		<xs:restriction base="xs:string">
+			<xs:maxLength value="50"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TPhone">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="8(\d{3})\d{7}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:simpleType name="TSnils">
+		<xs:restriction base="xs:string">
+			<xs:pattern value="\d{3}-\d{3}-\d{3} \d{2}"/>
+		</xs:restriction>
+	</xs:simpleType>
+	<xs:element name="InstitutionExport">
+		<xs:annotation>
+			<xs:documentation>Пакет с импортируемыми данными</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="InstitutionDetails">
+					<xs:annotation>
+						<xs:documentation>Элементы приемной кампании</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="FullName">
+								<xs:annotation>
+									<xs:documentation>Название</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="1000"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="BriefName">
+								<xs:annotation>
+									<xs:documentation>Название</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="500"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="Site">
+								<xs:annotation>
+									<xs:documentation>Название</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="255"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="Addrress">
+								<xs:annotation>
+									<xs:documentation>Название</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="500"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="Phone">
+								<xs:annotation>
+									<xs:documentation>Телефон</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="50"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="Fax">
+								<xs:annotation>
+									<xs:documentation>Название</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="50"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="HasMilitaryDepartment">
+								<xs:annotation>
+									<xs:documentation>Военная кафедра</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:boolean"/>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="HasHostel">
+								<xs:annotation>
+									<xs:documentation>Наличие общежития</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:boolean"/>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="HostelCapasity">
+								<xs:annotation>
+									<xs:documentation>Кол-во мест в общежитии</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:unsignedInt"/>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="FormOfLawID">
+								<xs:annotation>
+									<xs:documentation>Вид ОУ</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:unsignedInt"/>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="RegionID">
+								<xs:annotation>
+									<xs:documentation>ИД региона</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:unsignedInt"/>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="INN">
+								<xs:annotation>
+									<xs:documentation>ИНН организации</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="10"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="OGRN">
+								<xs:annotation>
+									<xs:documentation>ОГРН организации</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="13"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="LicenseNumber">
+								<xs:annotation>
+									<xs:documentation>Номер лицензии</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="50"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="LicenseDate">
+								<xs:annotation>
+									<xs:documentation>Дата выдачи лицензии</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:date"/>
+								</xs:simpleType>
+							</xs:element>
+							<xs:element name="Accreditation">
+								<xs:annotation>
+									<xs:documentation>Номер лицензии</xs:documentation>
+								</xs:annotation>
+								<xs:simpleType>
+									<xs:restriction base="xs:string">
+										<xs:length value="50"/>
+									</xs:restriction>
+								</xs:simpleType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="PreparatoryCourses">
+					<xs:annotation>
+						<xs:documentation>Элементы приемной кампании</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="PreparatoryCourse" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>Приемная кампания</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="UID" type="TUID">
+											<xs:annotation>
+												<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Name">
+											<xs:annotation>
+												<xs:documentation>Название</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:length value="100"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="Information">
+											<xs:annotation>
+												<xs:documentation>Информация</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string"/>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="Subjects" maxOccurs="unbounded">
+											<xs:annotation>
+												<xs:documentation>Запись справочника</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="SubjectID">
+														<xs:annotation>
+															<xs:documentation>Идентификатор предмета</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:unsignedInt"/>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="SubjectName">
+														<xs:annotation>
+															<xs:documentation>Наименование предмета</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string"/>
+														</xs:simpleType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Campaigns">
+					<xs:annotation>
+						<xs:documentation>Элементы приемной кампании</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Campaign" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>Приемная кампания</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="UID" type="TUID">
+											<xs:annotation>
+												<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Name">
+											<xs:annotation>
+												<xs:documentation>Название</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:length value="100"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="YearStart">
+											<xs:annotation>
+												<xs:documentation>Год начала</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:unsignedInt"/>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="YearEnd">
+											<xs:annotation>
+												<xs:documentation>Год окончания</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:unsignedInt"/>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="EducationForms">
+											<xs:annotation>
+												<xs:documentation>Формы обучения</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="EducationFormID" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>ИД формы обучения</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:unsignedInt"/>
+														</xs:simpleType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="StatusID">
+											<xs:annotation>
+												<xs:documentation>ИД статуса</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:unsignedInt"/>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="EducationLevels">
+											<xs:annotation>
+												<xs:documentation>Уровни образования</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="EducationLevel" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>Уровень образования</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="Course">
+																	<xs:annotation>
+																		<xs:documentation>Курс</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedInt"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="EducationLevelID">
+																	<xs:annotation>
+																		<xs:documentation>ИД Уровня образования</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedShort"/>
+																	</xs:simpleType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="CampaignDates">
+											<xs:annotation>
+												<xs:documentation>Даты приемной кампании</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="CampaignDate" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>Дата приемной кампании</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="UID" type="TUID">
+																	<xs:annotation>
+																		<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="Course">
+																	<xs:annotation>
+																		<xs:documentation>Курс</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedInt"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="EducationLevelID">
+																	<xs:annotation>
+																		<xs:documentation>ИД Уровня образования</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedShort"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="EducationFormID">
+																	<xs:annotation>
+																		<xs:documentation>ИД Формы обучения</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedShort"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="EducationSourceID">
+																	<xs:annotation>
+																		<xs:documentation>ИД источника финансирования</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedShort"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="Stage" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Этап приемной кампании</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedInt"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="DateStart">
+																	<xs:annotation>
+																		<xs:documentation>Дата начала приема</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:date"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="DateEnd">
+																	<xs:annotation>
+																		<xs:documentation>Дата окончания приема</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:date"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="DateOrder">
+																	<xs:annotation>
+																		<xs:documentation>Дата включения в приказ</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:date"/>
+																	</xs:simpleType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="AdmissionVolume">
+					<xs:annotation>
+						<xs:documentation>Объем приема (контрольные цифры)</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Item" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>Объем приема по направлению подготовки</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:all>
+										<xs:element name="UID" type="TUID">
+											<xs:annotation>
+												<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="CampaignUID" type="TUID">
+											<xs:annotation>
+												<xs:documentation>Идентификатор приемной кампании</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="EducationLevelID">
+											<xs:annotation>
+												<xs:documentation>ИД образовательной программы</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:unsignedShort"/>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="Course">
+											<xs:annotation>
+												<xs:documentation>Курс</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:unsignedInt"/>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="DirectionID">
+											<xs:annotation>
+												<xs:documentation>ИД направления подготовки</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:unsignedInt"/>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="NumberBudgetO" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Бюджетные места очной формы</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:unsignedInt"/>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="NumberBudgetOZ" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Бюджетные места очно-заочной формы</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:unsignedInt"/>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="NumberBudgetZ" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Бюджетные места заочной формы</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:unsignedInt"/>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="NumberPaidO" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Места с оплатой обучения очной формы</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:unsignedInt"/>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="NumberPaidOZ" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Места с оплатой обучения очно-заочной формы</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:unsignedInt"/>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="NumberPaidZ" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Места с оплатой обучения заочной формы</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:unsignedInt"/>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="NumberTargetO" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Места целевого приема очной формы</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:unsignedInt"/>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="NumberTargetOZ" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Места целевого приема очно-заочной формы</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:unsignedInt"/>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="NumberTargetZ" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Места целевого приема заочной формы</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:unsignedInt"/>
+											</xs:simpleType>
+										</xs:element>
+									</xs:all>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="CompetitiveGroups">
+					<xs:annotation>
+						<xs:documentation>Конкурсные группы</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="CompetitiveGroup" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>Конкурсная группа</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:all>
+										<xs:element name="UID" type="TUID">
+											<xs:annotation>
+												<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="CampaignUID" type="TUID">
+											<xs:annotation>
+												<xs:documentation>Идентификатор приемной кампании</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Course">
+											<xs:annotation>
+												<xs:documentation>Курс</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:unsignedShort"/>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="Name">
+											<xs:annotation>
+												<xs:documentation>Наименование конкурсной группы</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:length value="250"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="Items">
+											<xs:annotation>
+												<xs:documentation>Перечень направлений подготовки</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="CompetitiveGroupItem" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>Направление подготовки конкурсной группы</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:all>
+																<xs:element name="UID" type="TUID">
+																	<xs:annotation>
+																		<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="EducationLevelID">
+																	<xs:annotation>
+																		<xs:documentation>ИД образовательной программы</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedShort"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="DirectionID">
+																	<xs:annotation>
+																		<xs:documentation>ИД направления подготовки</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedInt"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="NumberBudgetO" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Бюджетные места очной формы</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedInt"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="NumberBudgetOZ" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Бюджетные места очно-заочной формы</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedInt"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="NumberBudgetZ" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Бюджетные места заочной формы</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedInt"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="NumberPaidO" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Места с оплатой обучения очной формы</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedInt"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="NumberPaidOZ" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Места с оплатой обучения очно-заочной формы</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedInt"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="NumberPaidZ" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Места с оплатой обучения заочной формы</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedInt"/>
+																	</xs:simpleType>
+																</xs:element>
+															</xs:all>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="TargetOrganizations" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Сведения о целевом наборе</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="TargetOrganization" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>Сведения о целевом наборе от организации</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:all>
+																<xs:element name="UID" type="TUID">
+																	<xs:annotation>
+																		<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="TargetOrganizationName">
+																	<xs:annotation>
+																		<xs:documentation>Наименование организации, с которой заключен договор</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:length value="250"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="Items">
+																	<xs:annotation>
+																		<xs:documentation>Направления подготовки целевого приема</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="CompetitiveGroupTargetItem" maxOccurs="unbounded">
+																				<xs:annotation>
+																					<xs:documentation>Места для целевого приема</xs:documentation>
+																				</xs:annotation>
+																				<xs:complexType>
+																					<xs:all>
+																						<xs:element name="UID" type="TUID">
+																							<xs:annotation>
+																								<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="EducationLevelID">
+																							<xs:annotation>
+																								<xs:documentation>ИД образовательной программы</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:unsignedShort"/>
+																							</xs:simpleType>
+																						</xs:element>
+																						<xs:element name="NumberTargetO" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>Места целевого приема очной формы</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:unsignedInt"/>
+																							</xs:simpleType>
+																						</xs:element>
+																						<xs:element name="NumberTargetOZ" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>Места целевого приема очно-заочной формы</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:unsignedInt"/>
+																							</xs:simpleType>
+																						</xs:element>
+																						<xs:element name="NumberTargetZ" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>Места целевого приема заочной формы</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:unsignedInt"/>
+																							</xs:simpleType>
+																						</xs:element>
+																						<xs:element name="DirectionID">
+																							<xs:annotation>
+																								<xs:documentation>ИД направления подготовки</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:unsignedInt"/>
+																							</xs:simpleType>
+																						</xs:element>
+																					</xs:all>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+															</xs:all>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="CommonBenefit" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Сведения об общей льготе (без в.и.) (олимпиада школьников)</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="CommonBenefitItem" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>Условие предоставления общей льготы (без в.и.) (олимпиада школьников)</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:all>
+																<xs:element name="UID" type="TUID">
+																	<xs:annotation>
+																		<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="OlympicDiplomTypes">
+																	<xs:annotation>
+																		<xs:documentation>Типы дипломов</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="OlympicDiplomTypeID" maxOccurs="unbounded">
+																				<xs:annotation>
+																					<xs:documentation>ИД типа диплома</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:unsignedShort"/>
+																				</xs:simpleType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="BenefitKindID">
+																	<xs:annotation>
+																		<xs:documentation>Вид льготы</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedShort"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="IsForAllOlympics">
+																	<xs:annotation>
+																		<xs:documentation>Флаг действия льготы для всех олимпиад</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:boolean"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="Olympics" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Перечень олимпиад, для которых действует льгота</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="OlympicID" maxOccurs="unbounded">
+																				<xs:annotation>
+																					<xs:documentation>ИД олимпиады</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:unsignedInt"/>
+																				</xs:simpleType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+															</xs:all>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="EntranceTestItems">
+											<xs:annotation>
+												<xs:documentation>Вступительные испытания конкурсной группы</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="EntranceTestItem" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>Вступительное испытание</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:all>
+																<xs:element name="UID" type="TUID">
+																	<xs:annotation>
+																		<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="EntranceTestTypeID">
+																	<xs:annotation>
+																		<xs:documentation>Вид вступительного испытания</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedShort"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="Form">
+																	<xs:annotation>
+																		<xs:documentation>Форма вступительного испытания</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:length value="100"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="MinScore" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Минимальное количество баллов</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedInt"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="EntranceTestSubject" type="TEntranceTestSubject">
+																	<xs:annotation>
+																		<xs:documentation>Дисциплина вступительного испытания</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="EntranceTestBenefits" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Условия предоставления льгот</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:sequence>
+																			<xs:element name="EntranceTestBenefitItem" maxOccurs="unbounded">
+																				<xs:annotation>
+																					<xs:documentation>Условие предоставления льгот</xs:documentation>
+																				</xs:annotation>
+																				<xs:complexType>
+																					<xs:all>
+																						<xs:element name="UID" type="TUID">
+																							<xs:annotation>
+																								<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="OlympicDiplomTypes">
+																							<xs:annotation>
+																								<xs:documentation>Типы дипломов</xs:documentation>
+																							</xs:annotation>
+																							<xs:complexType>
+																								<xs:sequence>
+																									<xs:element name="OlympicDiplomTypeID" maxOccurs="unbounded">
+																										<xs:annotation>
+																											<xs:documentation>ИД типа диплома</xs:documentation>
+																										</xs:annotation>
+																										<xs:simpleType>
+																											<xs:restriction base="xs:unsignedInt"/>
+																										</xs:simpleType>
+																									</xs:element>
+																								</xs:sequence>
+																							</xs:complexType>
+																						</xs:element>
+																						<xs:element name="BenefitKindID">
+																							<xs:annotation>
+																								<xs:documentation>Вид льготы</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:unsignedShort"/>
+																							</xs:simpleType>
+																						</xs:element>
+																						<xs:element name="IsForAllOlympics">
+																							<xs:annotation>
+																								<xs:documentation>Флаг действия льготы для всех олимпиад</xs:documentation>
+																							</xs:annotation>
+																							<xs:simpleType>
+																								<xs:restriction base="xs:boolean"/>
+																							</xs:simpleType>
+																						</xs:element>
+																						<xs:element name="Olympics" minOccurs="0">
+																							<xs:annotation>
+																								<xs:documentation>Перечень олимпиад, для которых действует льгота</xs:documentation>
+																							</xs:annotation>
+																							<xs:complexType>
+																								<xs:sequence>
+																									<xs:element name="OlympicID" maxOccurs="unbounded">
+																										<xs:annotation>
+																											<xs:documentation>ИД олимпиады</xs:documentation>
+																										</xs:annotation>
+																										<xs:simpleType>
+																											<xs:restriction base="xs:unsignedInt"/>
+																										</xs:simpleType>
+																									</xs:element>
+																								</xs:sequence>
+																							</xs:complexType>
+																						</xs:element>
+																					</xs:all>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:sequence>
+																	</xs:complexType>
+																</xs:element>
+															</xs:all>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+									</xs:all>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Applications">
+					<xs:annotation>
+						<xs:documentation>Заявления абитуриентов</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Application" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>Заявление от абитуриента</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:all>
+										<xs:element name="UID" type="TUID">
+											<xs:annotation>
+												<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="ApplicationNumber">
+											<xs:annotation>
+												<xs:documentation>Номер заявления ОУ</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:length value="50"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="Entrant">
+											<xs:annotation>
+												<xs:documentation>Абитуриент</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:all>
+													<xs:element name="UID" type="TUID" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="FirstName">
+														<xs:annotation>
+															<xs:documentation>Имя</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:length value="255"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="MiddleName" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Отчество</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:length value="255"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="LastName">
+														<xs:annotation>
+															<xs:documentation>Фамилия</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:length value="255"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="GenderID">
+														<xs:annotation>
+															<xs:documentation>Пол</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:unsignedInt"/>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="CustomInformation" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Дополнительные сведения, предоставленные абитуриентом</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string"/>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="Snils" type="TSnils" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>СНИЛС</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+												</xs:all>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="RegistrationDate">
+											<xs:annotation>
+												<xs:documentation>Дата регистрации заявления</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:dateTime"/>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="LastDenyDate" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Дата отзыва заявления</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:dateTime"/>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="NeedHostel">
+											<xs:annotation>
+												<xs:documentation>Признак необходимости общежития</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:boolean"/>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="StatusID">
+											<xs:annotation>
+												<xs:documentation>Статус заявления</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:unsignedInt"/>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="SelectedCompetitiveGroups">
+											<xs:annotation>
+												<xs:documentation>Конкурсные группы для заявления</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="CompetitiveGroupID" type="TUID" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>ИД конкурсной группы</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="SelectedCompetitiveGroupItems" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Элементы конкурсных групп для заявления</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="CompetitiveGroupItemID" type="TUID" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>ИД конкурсной группы</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="FinSourceAndEduForms">
+											<xs:annotation>
+												<xs:documentation>Формы обучения и источники финансирования, выбранные абитуриентом</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="FinSourceEduForm" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>Пара - форма обучения и источник финансирования</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:all>
+																<xs:element name="FinanceSourceID">
+																	<xs:annotation>
+																		<xs:documentation>ИД источника финансирования</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedShort"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="EducationFormID">
+																	<xs:annotation>
+																		<xs:documentation>ИД формы обучения</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedShort"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="TargetOrganizationUID" type="TUID" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>UID организации целевого приема</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+															</xs:all>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="ApplicationCommonBenefit" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Общая льгота предоставленная абитуриенту</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:all>
+													<xs:element name="UID" type="TUID">
+														<xs:annotation>
+															<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="CompetitiveGroupID" type="TUID">
+														<xs:annotation>
+															<xs:documentation>Идентификатор в конкурсной группы для льготы</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="DocumentTypeID" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Ид типа документа-основания</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:unsignedInt"/>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="DocumentReason" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Сведения о документе-основании</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:choice>
+																<xs:element name="OlympicDocument" type="TOlympicDocument">
+																	<xs:annotation>
+																		<xs:documentation>Диплом победителя/призера олимпиады школьников</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="OlympicTotalDocument" type="TOlympicTotalDocument">
+																	<xs:annotation>
+																		<xs:documentation>Диплом победителя/призера всероссийской олимпиады школьников</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="MedicalDocuments">
+																	<xs:annotation>
+																		<xs:documentation>Основание для льготы по медицинским показаниям</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:all>
+																			<xs:element name="BenefitDocument">
+																				<xs:annotation>
+																					<xs:documentation>Основание для льготы</xs:documentation>
+																				</xs:annotation>
+																				<xs:complexType>
+																					<xs:choice>
+																						<xs:element name="DisabilityDocument" type="TDisabilityDocument">
+																							<xs:annotation>
+																								<xs:documentation>Справка об установлении инвалидности</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																						<xs:element name="MedicalDocument" type="TMedicalDocument">
+																							<xs:annotation>
+																								<xs:documentation>Заключение психолого-медико-педагогической комиссии</xs:documentation>
+																							</xs:annotation>
+																						</xs:element>
+																					</xs:choice>
+																				</xs:complexType>
+																			</xs:element>
+																			<xs:element name="AllowEducationDocument" type="TAllowEducationDocument">
+																				<xs:annotation>
+																					<xs:documentation>Заключение об отсутствии противопоказаний для обучения</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																		</xs:all>
+																	</xs:complexType>
+																</xs:element>
+																<xs:element name="CustomDocument" type="TCustomDocument">
+																	<xs:annotation>
+																		<xs:documentation>Иной документ</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+															</xs:choice>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="BenefitKindID">
+														<xs:annotation>
+															<xs:documentation>ИД вида льготы</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:unsignedShort"/>
+														</xs:simpleType>
+													</xs:element>
+												</xs:all>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="EntranceTestResults" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Результаты вступительных испытаний</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="EntranceTestResult" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>Результат вступительного испытания</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:all>
+																<xs:element name="UID" type="TUID">
+																	<xs:annotation>
+																		<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="ResultValue">
+																	<xs:annotation>
+																		<xs:documentation>Балл</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedInt"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="ResultSourceTypeID">
+																	<xs:annotation>
+																		<xs:documentation>ИД основания для оценки</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedInt"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="EntranceTestSubject" type="TEntranceTestSubject">
+																	<xs:annotation>
+																		<xs:documentation>Дисциплина вступительного испытания</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="EntranceTestTypeID">
+																	<xs:annotation>
+																		<xs:documentation>ИД типа вступительного испытания</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedShort"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="CompetitiveGroupID" type="TUID">
+																	<xs:annotation>
+																		<xs:documentation>ИД конкурсной группы</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="ResultDocument" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Сведения об основании для оценки</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:choice>
+																			<xs:element name="OlympicDocument" type="TOlympicDocument">
+																				<xs:annotation>
+																					<xs:documentation>Диплом победителя/призера олимпиады школьников</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="OlympicTotalDocument" type="TOlympicTotalDocument">
+																				<xs:annotation>
+																					<xs:documentation>Диплом победителя/призера всероссийской олимпиады школьников</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="InstitutionDocument" type="TInstitutionDocument">
+																				<xs:annotation>
+																					<xs:documentation>Испытание ОУ</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="EgeDocumentID" type="TUID">
+																				<xs:annotation>
+																					<xs:documentation>ИД свидетельства о результатах ЕГЭ, приложенного к заявлению</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																		</xs:choice>
+																	</xs:complexType>
+																</xs:element>
+															</xs:all>
+														</xs:complexType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="ApplicationDocuments">
+											<xs:annotation>
+												<xs:documentation>Документы, приложенные к заявлению</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:all>
+													<xs:element name="EgeDocuments" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Свидетельства о результатах ЕГЭ</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="EgeDocument" maxOccurs="unbounded">
+																	<xs:annotation>
+																		<xs:documentation>Свидетельство о результатах ЕГЭ</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:all>
+																			<xs:element name="UID" type="TUID" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="OriginalReceived">
+																				<xs:annotation>
+																					<xs:documentation>Признак предоставления оригиналов документов</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:boolean"/>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="OriginalReceivedDate" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Признак предоставления оригиналов документов</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:date"/>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="DocumentNumber" type="TDocumentSeriesNumber">
+																				<xs:annotation>
+																					<xs:documentation>Номер свидетельства о результатах ЕГЭ</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="DocumentDate" minOccurs="0">
+																				<xs:annotation>
+																					<xs:documentation>Дата выдачи свидетельства</xs:documentation>
+																				</xs:annotation>
+																				<xs:simpleType>
+																					<xs:restriction base="xs:date"/>
+																				</xs:simpleType>
+																			</xs:element>
+																			<xs:element name="Subjects">
+																				<xs:annotation>
+																					<xs:documentation>Дисциплины</xs:documentation>
+																				</xs:annotation>
+																				<xs:complexType>
+																					<xs:sequence>
+																						<xs:element name="SubjectData" maxOccurs="unbounded">
+																							<xs:annotation>
+																								<xs:documentation>Дисциплина</xs:documentation>
+																							</xs:annotation>
+																							<xs:complexType>
+																								<xs:all>
+																									<xs:element name="SubjectID">
+																										<xs:annotation>
+																											<xs:documentation>ИД дисциплины</xs:documentation>
+																										</xs:annotation>
+																										<xs:simpleType>
+																											<xs:restriction base="xs:unsignedInt"/>
+																										</xs:simpleType>
+																									</xs:element>
+																									<xs:element name="Value">
+																										<xs:annotation>
+																											<xs:documentation>Балл</xs:documentation>
+																										</xs:annotation>
+																										<xs:simpleType>
+																											<xs:restriction base="xs:decimal"/>
+																										</xs:simpleType>
+																									</xs:element>
+																								</xs:all>
+																							</xs:complexType>
+																						</xs:element>
+																					</xs:sequence>
+																				</xs:complexType>
+																			</xs:element>
+																		</xs:all>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="IdentityDocument">
+														<xs:annotation>
+															<xs:documentation>Документ, удостоверяющий личность</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:all>
+																<xs:element name="UID" type="TUID" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="OriginalReceived">
+																	<xs:annotation>
+																		<xs:documentation>Признак предоставления оригиналов документов</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:boolean"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="OriginalReceivedDate" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Признак предоставления оригиналов документов</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:date"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="DocumentSeries">
+																	<xs:annotation>
+																		<xs:documentation>Серия документа</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:pattern value=".{1,6}"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="DocumentNumber">
+																	<xs:annotation>
+																		<xs:documentation>Номер документа</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:pattern value=".{1,10}"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="DocumentDate" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Дата выдачи документа</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:date"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="DocumentOrganization" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Кем выдан</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:length value="500"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="IdentityDocumentTypeID">
+																	<xs:annotation>
+																		<xs:documentation>Ид типа документа, удостоверяющего личность</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedInt"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="NationalityTypeID">
+																	<xs:annotation>
+																		<xs:documentation>ИД граждантсва (страна)</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedInt"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="BirthDate">
+																	<xs:annotation>
+																		<xs:documentation>Дата рождения</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:date"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="BirthPlace" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Место рождения</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:length value="255"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+															</xs:all>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="EduDocuments" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Документы об образовании</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="EduDocument" maxOccurs="unbounded">
+																	<xs:annotation>
+																		<xs:documentation>Документ об образовании</xs:documentation>
+																	</xs:annotation>
+																	<xs:complexType>
+																		<xs:choice>
+																			<xs:element name="SchoolCertificateDocument" type="TSchoolCertificateDocument">
+																				<xs:annotation>
+																					<xs:documentation>Аттестат о среднем (полном) общем образовании</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="HighEduDiplomaDocument" type="THighEduDiplomaDocument">
+																				<xs:annotation>
+																					<xs:documentation>Диплом о высшем профессиональном образовании</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="MiddleEduDiplomaDocument" type="TMiddleEduDiplomaDocument">
+																				<xs:annotation>
+																					<xs:documentation>Диплом о среднем профессиональном образовании</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="BasicDiplomaDocument" type="TBasicDiplomaDocument">
+																				<xs:annotation>
+																					<xs:documentation>Диплом о начальном профессиональном образовании</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="IncomplHighEduDiplomaDocument" type="TIncomplHighEduDiplomaDocument">
+																				<xs:annotation>
+																					<xs:documentation>Диплом о неполном высшем профессиональном образовании</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																			<xs:element name="AcademicDiplomaDocument" type="TAcademicDiplomaDocument">
+																				<xs:annotation>
+																					<xs:documentation>Академическая справка</xs:documentation>
+																				</xs:annotation>
+																			</xs:element>
+																		</xs:choice>
+																	</xs:complexType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="MilitaryCardDocument" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Военный билет</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:all>
+																<xs:element name="UID" type="TUID" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="OriginalReceived">
+																	<xs:annotation>
+																		<xs:documentation>Признак предоставления оригиналов документов</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:boolean"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="OriginalReceivedDate" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Дата предоставления оригиналов документов</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:date"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="DocumentSeries" type="TDocumentSeriesNumber">
+																	<xs:annotation>
+																		<xs:documentation>Серия документа</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="DocumentNumber" type="TDocumentSeriesNumber">
+																	<xs:annotation>
+																		<xs:documentation>Номер документа</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="DocumentDate">
+																	<xs:annotation>
+																		<xs:documentation>Дата выдачи документа</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:date"/>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="DocumentOrganization" minOccurs="0">
+																	<xs:annotation>
+																		<xs:documentation>Организация, выдавшая документ</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:length value="500"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+															</xs:all>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="CustomDocuments" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>Иные документы</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="CustomDocument" type="TCustomDocument" maxOccurs="unbounded">
+																	<xs:annotation>
+																		<xs:documentation>Иной документ</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+												</xs:all>
+											</xs:complexType>
+										</xs:element>
+									</xs:all>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="OrdersOfAdmission">
+					<xs:annotation>
+						<xs:documentation>Списки заявлений абитуриентов, включенных в приказ</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="OrderOfAdmission" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>Заявление</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:all>
+										<xs:element name="Application">
+											<xs:annotation>
+												<xs:documentation>Сведения о заявлении</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:all>
+													<xs:element name="ApplicationNumber">
+														<xs:annotation>
+															<xs:documentation>Номер заявления ОУ</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:length value="50"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="RegistrationDate">
+														<xs:annotation>
+															<xs:documentation>Дата регистрации заявления</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:dateTime"/>
+														</xs:simpleType>
+													</xs:element>
+												</xs:all>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="DirectionID">
+											<xs:annotation>
+												<xs:documentation>ИД направления подготовки</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:unsignedInt"/>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="EducationFormID">
+											<xs:annotation>
+												<xs:documentation>ИД формы обучения</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:unsignedShort"/>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="FinanceSourceID">
+											<xs:annotation>
+												<xs:documentation>ИД источника финансирования</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:unsignedShort"/>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="EducationLevelID">
+											<xs:annotation>
+												<xs:documentation>ИД уровня образования</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Stage" minOccurs="0">
+											<xs:annotation>
+												<xs:documentation>Этап приема</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:unsignedShort"/>
+											</xs:simpleType>
+										</xs:element>
+									</xs:all>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="Structure">
+					<xs:annotation>
+						<xs:documentation>Структура ОУ</xs:documentation>
+					</xs:annotation>
+					<xs:complexType>
+						<xs:choice>
+							<xs:element name="Faculty" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>Факультет</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Sub-faculty" maxOccurs="unbounded">
+											<xs:annotation>
+												<xs:documentation>Кафедра</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="Speciality" maxOccurs="unbounded">
+														<xs:annotation>
+															<xs:documentation>Специальность</xs:documentation>
+														</xs:annotation>
+														<xs:complexType>
+															<xs:sequence>
+																<xs:element name="UID" type="TUID">
+																	<xs:annotation>
+																		<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+																	</xs:annotation>
+																</xs:element>
+																<xs:element name="Name">
+																	<xs:annotation>
+																		<xs:documentation>Название</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:string">
+																			<xs:length value="100"/>
+																		</xs:restriction>
+																	</xs:simpleType>
+																</xs:element>
+																<xs:element name="SpecialityID">
+																	<xs:annotation>
+																		<xs:documentation>ИД направления подготовки</xs:documentation>
+																	</xs:annotation>
+																	<xs:simpleType>
+																		<xs:restriction base="xs:unsignedInt"/>
+																	</xs:simpleType>
+																</xs:element>
+															</xs:sequence>
+														</xs:complexType>
+													</xs:element>
+													<xs:element name="FullName">
+														<xs:annotation>
+															<xs:documentation>Название</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:length value="1000"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="BriefName">
+														<xs:annotation>
+															<xs:documentation>Название</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:length value="500"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="Site">
+														<xs:annotation>
+															<xs:documentation>Название</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:length value="255"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="FullName">
+											<xs:annotation>
+												<xs:documentation>Название</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:length value="1000"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="BriefName">
+											<xs:annotation>
+												<xs:documentation>Название</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:length value="500"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="Site">
+											<xs:annotation>
+												<xs:documentation>Название</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:length value="255"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Sub-faculty" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>Кафедра</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Speciality" maxOccurs="unbounded">
+											<xs:annotation>
+												<xs:documentation>Специальность</xs:documentation>
+											</xs:annotation>
+											<xs:complexType>
+												<xs:sequence>
+													<xs:element name="UID" type="TUID">
+														<xs:annotation>
+															<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+														</xs:annotation>
+													</xs:element>
+													<xs:element name="Name">
+														<xs:annotation>
+															<xs:documentation>Название</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:string">
+																<xs:length value="100"/>
+															</xs:restriction>
+														</xs:simpleType>
+													</xs:element>
+													<xs:element name="SpecialityID">
+														<xs:annotation>
+															<xs:documentation>ИД направления подготовки</xs:documentation>
+														</xs:annotation>
+														<xs:simpleType>
+															<xs:restriction base="xs:unsignedInt"/>
+														</xs:simpleType>
+													</xs:element>
+												</xs:sequence>
+											</xs:complexType>
+										</xs:element>
+										<xs:element name="FullName">
+											<xs:annotation>
+												<xs:documentation>Название</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:length value="1000"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="BriefName">
+											<xs:annotation>
+												<xs:documentation>Название</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:length value="500"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="Site">
+											<xs:annotation>
+												<xs:documentation>Название</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:length value="255"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+							<xs:element name="Speciality" maxOccurs="unbounded">
+								<xs:annotation>
+									<xs:documentation>Специальность</xs:documentation>
+								</xs:annotation>
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="UID" type="TUID">
+											<xs:annotation>
+												<xs:documentation>Идентификатор в ИС ОУ</xs:documentation>
+											</xs:annotation>
+										</xs:element>
+										<xs:element name="Name">
+											<xs:annotation>
+												<xs:documentation>Название</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:string">
+													<xs:length value="100"/>
+												</xs:restriction>
+											</xs:simpleType>
+										</xs:element>
+										<xs:element name="SpecialityID">
+											<xs:annotation>
+												<xs:documentation>ИД направления подготовки</xs:documentation>
+											</xs:annotation>
+											<xs:simpleType>
+												<xs:restriction base="xs:unsignedInt"/>
+											</xs:simpleType>
+										</xs:element>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:choice>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
