@@ -1037,6 +1037,134 @@ namespace FIS_EGE_2013
             }
         }
 
+        //заполняет только раздел о заявлениях. включенные в приказ
+        private void ExportXML_Part4(string fname)
+        {
+            XmlDocument doc = new XmlDocument();
+            //XmlImplementation imp = new XmlImplementation();
+
+            UpdateDictionaries();
+            List<int?> BeneficiaryCompetitions = new List<int?>() { 1, 2, 7, 8 };
+
+            using (PriemEntities context = new PriemEntities())
+            {
+                DateTime dt = DateTime.Now;
+                TimeSpan dt1, dt2, dt3, dt4_allAbitList;
+                TimeSpan dt4_EgeMarks = TimeSpan.MinValue, dt4_Marks = TimeSpan.MinValue;
+
+                //создаём корневой элемент
+                doc.AppendChild(doc.CreateNode(XmlNodeType.Element, "Root", ""));
+
+                //создаём элементы AuthData и PackageData
+                XmlNode root = doc["Root"];
+
+                root.AppendChild(doc.CreateNode(XmlNodeType.Element, "AuthData", ""));
+                root.AppendChild(doc.CreateNode(XmlNodeType.Element, "PackageData", ""));
+
+                //заполняем данные AuthData
+                root = root["AuthData"];
+                root.AppendChild(doc.CreateNode(XmlNodeType.Element, "Login", ""));
+                root.AppendChild(doc.CreateNode(XmlNodeType.Element, "Pass", ""));
+
+                bool isDefault = true;
+                root["Login"].InnerText = isDefault ? "p.karpenko@spbu.ru" : tbLogin.Text;
+                root["Pass"].InnerText = isDefault ? "E0k02II" : tbPassword.Text;
+
+                //----------------------------------------------------------------------------------------------------------
+                //заполняем данные PackageData
+                root = doc["Root"];
+                root["PackageData"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OrdersOfAdmission", ""));
+
+                NewWatch wc = new NewWatch();
+
+                wc.Show();
+                //--------------------------------------------------------------------------------------------------------------
+                //заполняем данные Applications
+                var apps = (from abit in context.qAbiturient
+                            join person in context.Person on abit.PersonId equals person.Id
+                            join compGroup in context.qEntryToCompetitiveGroup on abit.EntryId equals compGroup.EntryId
+                            join extCompGroup in context.extCompetitiveGroup on compGroup.CompetitiveGroupId equals extCompGroup.Id
+                            where (FacultyId.HasValue ? abit.FacultyId == FacultyId.Value : true)
+                            && (LicenseProgramId.HasValue ? abit.LicenseProgramId == LicenseProgramId.Value : true)
+                            && (abit.StudyLevelGroupId == StudyLevelGroupId)
+                            select new
+                            {
+                                AppUID = abit.Id,
+                                CompetitionId = abit.CompetitionId,
+                                IsGosline = abit.IsGosLine,
+                                ApplicationNumber = abit.RegNum,
+                                RegistrationDate = abit.DocInsertDate,
+                                LicenceProgramId = abit.LicenseProgramId,
+                                abit.StudyBasisFISName,
+                                abit.StudyFormFISName,
+                                compGroup.CompetitiveGroupId
+                            });
+
+                root = doc["Root"]["PackageData"]["OrdersOfAdmission"];
+
+                int wcMax = apps.Count();
+                wc.SetText(fname + " - Заполняем данные OrdersOfAdmission");
+                wc.SetMax(wcMax);
+                wc.ZeroCount();
+
+
+                dt4_allAbitList = DateTime.Now - dt;
+
+                dt = DateTime.Now;
+                foreach (var app in apps)
+                {
+                    wc.PerformStep();
+                    root.AppendChild(doc.CreateNode(XmlNodeType.Element, "OrderOfAdmission", ""));
+
+                    root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "Application", ""));
+
+                    //id направления подготовки (справочник №14 "Направления подготовки")
+                    root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DirectionID", ""));
+                    //root.LastChild["DirectionID"].InnerXml = SearchInDictionary(dic10_Direction);
+
+                    //id формы обучения (справочник №14 "Формы обучения")
+                    root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "EducationFormID", ""));
+                    root.LastChild["EducationFormID"].InnerXml = SearchInDictionary(dic14_EducationForm, app.StudyFormFISName);
+
+                    //id источника финансирования (справочник №15 "Источники финансирования")
+                    root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "FinanceSourceID", ""));
+                    root.LastChild["FinanceSourceID"].InnerXml = SearchInDictionary(dic15_FinSource, app.StudyBasisFISName);
+
+                    //id Уровня образования (справочник №2 "Уровни Образования")
+                    root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "EducationLevelID", ""));
+                    root.LastChild["EducationLevelID"].InnerXml = SearchInDictionary(dic02_StudyLevel, StudyLevelGroupId.ToString());
+                    
+                    //Номер заявления
+                    root.LastChild["Application"].AppendChild(doc.CreateNode(XmlNodeType.Element, "ApplicationNumber", ""));
+                    root.LastChild["Application"]["ApplicationNumber"].InnerText = app.ApplicationNumber.ToString();
+                    
+                    //Дата регистрации заявления
+                    root.LastChild["Application"].AppendChild(doc.CreateNode(XmlNodeType.Element, "RegistrationDate", ""));
+                    root.LastChild["Application"]["RegistrationDate"].InnerText = app.RegistrationDate.ToString("yyyy-MM-ddTHH:mm:ss");
+
+                    root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "CompetitiveGroupID", ""));
+                    root.LastChild["CompetitiveGroupID"].InnerXml = app.CompetitiveGroupId.ToString();
+
+                    if (app.IsGosline)
+                    {
+                        root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "IsForeigner", ""));
+                        //root.LastChild["IsForeigner"].InnerText = "";
+                    }
+                    if (BeneficiaryCompetitions.Contains(app.CompetitionId))
+                    {
+                        root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "IsBeneficiary", ""));
+                        //root.LastChild["IsBeneficiary"].InnerText = "";
+                    }
+                }
+                wc.Close();
+                doc.Save(fname);
+
+
+                if (!chbFullImport.Checked)
+                    MessageBox.Show("OK");
+            }
+        }
+
         private void WCF_Import(XmlDocument docToImport)
         {
 
