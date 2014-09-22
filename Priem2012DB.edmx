@@ -103,7 +103,13 @@
       [extAbit].[StudyFormFISName] AS [StudyFormFISName], 
       [extAbit].[CommitId] AS [CommitId], 
       [extAbit].[CommitNumber] AS [CommitNumber], 
-      [extAbit].[IsGosLine] AS [IsGosLine]
+      [extAbit].[IsGosLine] AS [IsGosLine], 
+      [extAbit].[ObrazProgramInEntryId] AS [ObrazProgramInEntryId], 
+      [extAbit].[ProfileInObrazProgramInEntryId] AS [ProfileInObrazProgramInEntryId], 
+      [extAbit].[ProfileInObrazProgramInEntryName] AS [ProfileInObrazProgramInEntryName], 
+      [extAbit].[ObrazProgramInEntryCrypt] AS [ObrazProgramInEntryCrypt], 
+      [extAbit].[ObrazProgramInEntryName] AS [ObrazProgramInEntryName], 
+      [extAbit].[ObrazProgramInEntryObrazProgramId] AS [ObrazProgramInEntryObrazProgramId]
       FROM [ed].[extAbit] AS [extAbit]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="extAbitMarksSum" EntityType="Priem2012Model.Store.extAbitMarksSum" store:Type="Views" store:Schema="ed" store:Name="extAbitMarksSum">
@@ -157,7 +163,8 @@
       [extEgeMark].[Number] AS [Number], 
       [extEgeMark].[PersonId] AS [PersonId], 
       [extEgeMark].[Year] AS [Year], 
-      [extEgeMark].[FISName] AS [FISName]
+      [extEgeMark].[FISName] AS [FISName], 
+      [extEgeMark].[FBSStatusId] AS [FBSStatusId]
       FROM [ed].[extEgeMark] AS [extEgeMark]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="extEntry" EntityType="Priem2012Model.Store.extEntry" store:Type="Views" store:Schema="ed" store:Name="extEntry">
@@ -227,7 +234,14 @@
       [extEntryView].[OrderNumFor] AS [OrderNumFor], 
       [extEntryView].[OrderDateFor] AS [OrderDateFor], 
       [extEntryView].[SignerName] AS [SignerName], 
-      [extEntryView].[SignerPosition] AS [SignerPosition]
+      [extEntryView].[SignerPosition] AS [SignerPosition], 
+      [extEntryView].[EntryId] AS [EntryId], 
+      [extEntryView].[ProtocolHistoryId] AS [ProtocolHistoryId], 
+      [extEntryView].[PersonId] AS [PersonId], 
+      [extEntryView].[IsCrimea] AS [IsCrimea], 
+      [extEntryView].[IsQuota] AS [IsQuota], 
+      [extEntryView].[IsCel] AS [IsCel], 
+      [extEntryView].[IsBE] AS [IsBE]
       FROM [ed].[extEntryView] AS [extEntryView]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="extExamInEntry" EntityType="Priem2012Model.Store.extExamInEntry" store:Type="Views" store:Schema="ed" store:Name="extExamInEntry">
@@ -252,7 +266,8 @@
       [extExamInEntry].[IsSecond] AS [IsSecond], 
       [extExamInEntry].[IsReduced] AS [IsReduced], 
       [extExamInEntry].[IsParallel] AS [IsParallel], 
-      [extExamInEntry].[ExamInEntryToCompetitiveGroupId] AS [ExamInEntryToCompetitiveGroupId]
+      [extExamInEntry].[ExamInEntryToCompetitiveGroupId] AS [ExamInEntryToCompetitiveGroupId], 
+      [extExamInEntry].[OrderNumber] AS [OrderNumber]
       FROM [ed].[extExamInEntry] AS [extExamInEntry]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="extOlympiadsAll" EntityType="Priem2012Model.Store.extOlympiadsAll" store:Type="Views" store:Schema="ed" store:Name="extOlympiadsAll">
@@ -270,7 +285,11 @@
       [extOlympiadsAll].[OlympSubjectName] AS [OlympSubjectName], 
       [extOlympiadsAll].[OlympTypeName] AS [OlympTypeName], 
       [extOlympiadsAll].[PersonId] AS [PersonId], 
-      [extOlympiadsAll].[OriginDoc] AS [OriginDoc]
+      [extOlympiadsAll].[OriginDoc] AS [OriginDoc], 
+      [extOlympiadsAll].[Number] AS [Number], 
+      [extOlympiadsAll].[DocumentSeries] AS [DocumentSeries], 
+      [extOlympiadsAll].[DocumentNumber] AS [DocumentNumber], 
+      [extOlympiadsAll].[DocumentDate] AS [DocumentDate]
       FROM [ed].[extOlympiadsAll] AS [extOlympiadsAll]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="extPerson" EntityType="Priem2012Model.Store.extPerson" store:Type="Views" store:Schema="ed" store:Name="extPerson">
@@ -360,7 +379,12 @@
       [extPerson].[HostelEduc] AS [HostelEduc], 
       [extPerson].[KladrCode] AS [KladrCode], 
       [extPerson].[SNILS] AS [SNILS], 
-      [extPerson].[RegionEducId] AS [RegionEducId]
+      [extPerson].[RegionEducId] AS [RegionEducId], 
+      [extPerson].[RegionNumber] AS [RegionNumber], 
+      [extPerson].[ForeignNationality] AS [ForeignNationality], 
+      [extPerson].[ForeignNationalityId] AS [ForeignNationalityId], 
+      [extPerson].[ForeignCountry] AS [ForeignCountry], 
+      [extPerson].[ForeignCountryId] AS [ForeignCountryId]
       FROM [ed].[extPerson] AS [extPerson]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="hlpLicenseProgramKCP" EntityType="Priem2012Model.Store.hlpLicenseProgramKCP" store:Type="Views" store:Schema="ed" store:Name="hlpLicenseProgramKCP">
@@ -448,7 +472,9 @@
       [qAbiturient].[CommitNumber] AS [CommitNumber], 
       [qAbiturient].[IsGosLine] AS [IsGosLine], 
       [qAbiturient].[IsViewed] AS [IsViewed], 
-      [qAbiturient].[IsCommonRussianCompetition] AS [IsCommonRussianCompetition]
+      [qAbiturient].[IsCommonRussianCompetition] AS [IsCommonRussianCompetition], 
+      [qAbiturient].[ObrazProgramInEntryId] AS [ObrazProgramInEntryId], 
+      [qAbiturient].[ProfileInObrazProgramInEntryId] AS [ProfileInObrazProgramInEntryId]
       FROM [ed].[qAbiturient] AS [qAbiturient]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="qAbiturientForeignApplicationsOnly" EntityType="Priem2012Model.Store.qAbiturientForeignApplicationsOnly" store:Type="Views" store:Schema="ed" store:Name="qAbiturientForeignApplicationsOnly">
@@ -500,7 +526,9 @@
       [qMark].[ExamNameId] AS [ExamNameId], 
       [qMark].[EntranceTestType] AS [EntranceTestType], 
       [qMark].[OlympiadId] AS [OlympiadId], 
-      [qMark].[EgeCertificateId] AS [EgeCertificateId]
+      [qMark].[EgeCertificateId] AS [EgeCertificateId], 
+      [qMark].[OrderNumber] AS [OrderNumber], 
+      [qMark].[FiveGradeValue] AS [FiveGradeValue]
       FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           </EntitySet>
           <AssociationSet Name="FK_Abiturient_Entry" Association="Priem2012Model.Store.FK_Abiturient_Entry">
@@ -668,6 +696,8 @@
           <Property Name="IsGosLine" Type="bit" Nullable="false" />
           <Property Name="IsViewed" Type="bit" Nullable="false" />
           <Property Name="IsCommonRussianCompetition" Type="bit" Nullable="false" />
+          <Property Name="ObrazProgramInEntryId" Type="uniqueidentifier" />
+          <Property Name="ProfileInObrazProgramInEntryId" Type="uniqueidentifier" />
         </EntityType>
         <EntityType Name="ChangeType">
           <Key>
@@ -760,6 +790,8 @@
           <Property Name="CommissionId" Type="int" />
           <Property Name="KCPCrimea" Type="int" />
           <Property Name="KCPQuota" Type="int" />
+          <Property Name="DateFinishEduc" Type="date" />
+          <Property Name="DateStartEduc" Type="date" />
         </EntityType>
         <EntityType Name="EntryHeader">
           <Key>
@@ -865,6 +897,7 @@
           <Property Name="NameDative" Type="nvarchar" MaxLength="100" />
           <Property Name="IsOpen" Type="bit" Nullable="false" />
           <Property Name="Holder" Type="nvarchar" MaxLength="150" />
+          <Property Name="ExamId" Type="int" />
         </EntityType>
         <EntityType Name="OlympType">
           <Key>
@@ -896,6 +929,8 @@
           <Property Name="OrderNumFor" Type="nvarchar" MaxLength="50" />
           <Property Name="OrderDateFor" Type="datetime" />
           <Property Name="SignerId" Type="int" />
+          <Property Name="ComissionDate" Type="date" />
+          <Property Name="ComissionNumber" Type="nvarchar" MaxLength="10" />
         </EntityType>
         <EntityType Name="PassportType">
           <Key>
@@ -1084,9 +1119,13 @@
         <EntityType Name="extAbit">
           <Key>
             <PropertyRef Name="Id" />
+            
+            
             <PropertyRef Name="IsListener" />
             <PropertyRef Name="IsPaid" />
             <PropertyRef Name="BackDoc" />
+            
+            
             <PropertyRef Name="Checked" />
             <PropertyRef Name="NotEnabled" />
             <PropertyRef Name="CompFromOlymp" />
@@ -1107,6 +1146,7 @@
             
             <PropertyRef Name="StudyLevelGroupId" />
             
+            
             <PropertyRef Name="WithHE" />
             <PropertyRef Name="IsReduced" />
             <PropertyRef Name="IsParallel" />
@@ -1114,16 +1154,16 @@
             <PropertyRef Name="StudyPlanId" />
           </Key>
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="PersonId" Type="uniqueidentifier" />
+          <Property Name="PersonId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="RegNum" Type="nvarchar" MaxLength="50" />
-          <Property Name="EntryId" Type="uniqueidentifier" />
+          <Property Name="EntryId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="CompetitionId" Type="int" />
           <Property Name="IsListener" Type="bit" Nullable="false" />
           <Property Name="IsPaid" Type="bit" Nullable="false" />
           <Property Name="BackDoc" Type="bit" Nullable="false" />
           <Property Name="BackDocDate" Type="smalldatetime" />
-          <Property Name="DocDate" Type="smalldatetime" />
-          <Property Name="DocInsertDate" Type="smalldatetime" />
+          <Property Name="DocDate" Type="smalldatetime" Nullable="false" />
+          <Property Name="DocInsertDate" Type="smalldatetime" Nullable="false" />
           <Property Name="Checked" Type="bit" Nullable="false" />
           <Property Name="NotEnabled" Type="bit" Nullable="false" />
           <Property Name="Coefficient" Type="float" />
@@ -1168,7 +1208,7 @@
           <Property Name="StudyFormOldName" Type="nvarchar" MaxLength="50" />
           <Property Name="LanguageName" Type="nvarchar" MaxLength="50" />
           <Property Name="StudyLevelGroupId" Type="int" Nullable="false" />
-          <Property Name="FIO" Type="nvarchar" MaxLength="152" />
+          <Property Name="FIO" Type="nvarchar" Nullable="false" MaxLength="152" />
           <Property Name="PassportData" Type="nvarchar" MaxLength="532" />
           <Property Name="ObrazProgramNameEx" Type="nvarchar" Nullable="false" MaxLength="1014" />
           <Property Name="WithHE" Type="bit" Nullable="false" />
@@ -1179,6 +1219,12 @@
           <Property Name="CommitId" Type="uniqueidentifier" />
           <Property Name="CommitNumber" Type="int" />
           <Property Name="IsGosLine" Type="bit" Nullable="false" />
+          <Property Name="ObrazProgramInEntryId" Type="uniqueidentifier" />
+          <Property Name="ProfileInObrazProgramInEntryId" Type="uniqueidentifier" />
+          <Property Name="ProfileInObrazProgramInEntryName" Type="nvarchar" MaxLength="1000" />
+          <Property Name="ObrazProgramInEntryCrypt" Type="nvarchar" MaxLength="66" />
+          <Property Name="ObrazProgramInEntryName" Type="nvarchar" MaxLength="1000" />
+          <Property Name="ObrazProgramInEntryObrazProgramId" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
       warning 6002: The table/view 'Priem.ed.extAbitMarksSum' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
@@ -1252,6 +1298,7 @@
             <PropertyRef Name="EgeExamName" />
             <PropertyRef Name="Number" />
             <PropertyRef Name="PersonId" />
+            <PropertyRef Name="FBSStatusId" />
           </Key>
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="Value" Type="int" Nullable="false" />
@@ -1264,6 +1311,7 @@
           <Property Name="PersonId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="Year" Type="nvarchar" MaxLength="4" />
           <Property Name="FISName" Type="nvarchar" MaxLength="50" />
+          <Property Name="FBSStatusId" Type="int" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
       warning 6002: The table/view 'Priem.ed.extEntry' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
@@ -1335,6 +1383,13 @@
             <PropertyRef Name="Excluded" />
             <PropertyRef Name="IsOld" />
             <PropertyRef Name="ProtocolTypeName" />
+            <PropertyRef Name="EntryId" />
+            <PropertyRef Name="ProtocolHistoryId" />
+            <PropertyRef Name="PersonId" />
+            <PropertyRef Name="IsCrimea" />
+            <PropertyRef Name="IsQuota" />
+            <PropertyRef Name="IsCel" />
+            <PropertyRef Name="IsBE" />
           </Key>
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="AbiturientId" Type="uniqueidentifier" Nullable="false" />
@@ -1363,6 +1418,13 @@
           <Property Name="OrderDateFor" Type="datetime" />
           <Property Name="SignerName" Type="nvarchar" MaxLength="100" />
           <Property Name="SignerPosition" Type="nvarchar" MaxLength="100" />
+          <Property Name="EntryId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="ProtocolHistoryId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="PersonId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="IsCrimea" Type="int" Nullable="false" />
+          <Property Name="IsQuota" Type="int" Nullable="false" />
+          <Property Name="IsCel" Type="int" Nullable="false" />
+          <Property Name="IsBE" Type="int" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
       warning 6002: The table/view 'Priem.ed.extExamInEntry' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
@@ -1407,6 +1469,7 @@
           <Property Name="IsReduced" Type="bit" Nullable="false" />
           <Property Name="IsParallel" Type="bit" Nullable="false" />
           <Property Name="ExamInEntryToCompetitiveGroupId" Type="uniqueidentifier" />
+          <Property Name="OrderNumber" Type="tinyint" />
         </EntityType>
         <!--Errors Found During Generation:
       warning 6002: The table/view 'Priem.ed.extOlympiadsAll' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
@@ -1414,6 +1477,7 @@
         <EntityType Name="extOlympiadsAll">
           <Key>
             <PropertyRef Name="Id" />
+            
             <PropertyRef Name="OriginDoc" />
           </Key>
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
@@ -1428,8 +1492,12 @@
           <Property Name="OlympName" Type="nvarchar" MaxLength="2000" />
           <Property Name="OlympSubjectName" Type="nvarchar" MaxLength="100" />
           <Property Name="OlympTypeName" Type="nvarchar" MaxLength="50" />
-          <Property Name="PersonId" Type="uniqueidentifier" />
+          <Property Name="PersonId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="OriginDoc" Type="bit" Nullable="false" />
+          <Property Name="Number" Type="int" />
+          <Property Name="DocumentSeries" Type="nvarchar" MaxLength="50" />
+          <Property Name="DocumentNumber" Type="nvarchar" MaxLength="50" />
+          <Property Name="DocumentDate" Type="date" />
         </EntityType>
         <!--Errors Found During Generation:
       warning 6002: The table/view 'Priem.ed.extPerson' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
@@ -1539,6 +1607,11 @@
           <Property Name="KladrCode" Type="nvarchar" MaxLength="50" />
           <Property Name="SNILS" Type="nvarchar" MaxLength="50" />
           <Property Name="RegionEducId" Type="int" />
+          <Property Name="RegionNumber" Type="nvarchar" MaxLength="2" />
+          <Property Name="ForeignNationality" Type="nvarchar" MaxLength="100" />
+          <Property Name="ForeignNationalityId" Type="int" />
+          <Property Name="ForeignCountry" Type="nvarchar" MaxLength="100" />
+          <Property Name="ForeignCountryId" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
       warning 6002: The table/view 'Priem.ed.hlpLicenseProgramKCP' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
@@ -1669,6 +1742,8 @@
           <Property Name="IsGosLine" Type="bit" Nullable="false" />
           <Property Name="IsViewed" Type="bit" Nullable="false" />
           <Property Name="IsCommonRussianCompetition" Type="bit" Nullable="false" />
+          <Property Name="ObrazProgramInEntryId" Type="uniqueidentifier" />
+          <Property Name="ProfileInObrazProgramInEntryId" Type="uniqueidentifier" />
         </EntityType>
         <!--Errors Found During Generation:
       warning 6002: The table/view 'Priem.ed.qAbiturientForeignApplicationsOnly' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.
@@ -1755,6 +1830,8 @@
           <Property Name="EntranceTestType" Type="varchar" Nullable="false" MaxLength="74" />
           <Property Name="OlympiadId" Type="uniqueidentifier" />
           <Property Name="EgeCertificateId" Type="uniqueidentifier" />
+          <Property Name="OrderNumber" Type="tinyint" />
+          <Property Name="FiveGradeValue" Type="tinyint" />
         </EntityType>
         <Association Name="FK_Abiturient_Entry">
           <End Role="Entry" Type="Priem2012Model.Store.Entry" Multiplicity="1" />
@@ -2395,10 +2472,10 @@
             <Parameter Name="id" Mode="In" Type="Guid" />
           </FunctionImport>
           <FunctionImport Name="EgeMark_Delete">
-            <Parameter Name="id" Mode="In" Type="Guid" />
+          <Parameter Name="id" Mode="In" Type="Guid" />
           </FunctionImport>
           <FunctionImport Name="EgeMark_DeleteByCertId">
-            <Parameter Name="Certid" Mode="In" Type="Guid" />
+          <Parameter Name="Certid" Mode="In" Type="Guid" />
           </FunctionImport>
           <FunctionImport Name="EgeMark_Insert">
             <Parameter Name="Value" Mode="In" Type="Int32" />
@@ -2457,6 +2534,8 @@
           <Property Type="Boolean" Name="IsGosLine" Nullable="false" />
           <Property Type="Boolean" Name="IsViewed" Nullable="false" />
           <Property Type="Boolean" Name="IsCommonRussianCompetition" Nullable="false" />
+          <Property Type="Guid" Name="ObrazProgramInEntryId" />
+          <Property Type="Guid" Name="ProfileInObrazProgramInEntryId" />
         </EntityType>
         <EntityType Name="Country">
           <Key>
@@ -2545,6 +2624,8 @@
           <NavigationProperty Name="SP_Faculty" Relationship="Priem2012Model.FK_Entry_SP_Faculty" FromRole="Entry" ToRole="SP_Faculty" />
           <Property Type="Int32" Name="KCPQuota" />
           <NavigationProperty Name="ExamInEntry" Relationship="Priem2012Model.FK_ExamInEntry_Entry" FromRole="Entry" ToRole="ExamInEntry" />
+          <Property Type="DateTime" Name="DateFinishEduc" Precision="0" />
+          <Property Type="DateTime" Name="DateStartEduc" Precision="0" />
         </EntityType>
         <EntityType Name="EntryHeader">
           <Key>
@@ -2618,6 +2699,7 @@
           <NavigationProperty Name="Olympiads" Relationship="Priem2012Model.fk_Olympiads_OlympSubject" FromRole="OlympSubject" ToRole="Olympiads" />
           <Property Type="Boolean" Name="IsOpen" Nullable="false" />
           <Property Type="String" Name="Holder" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="ExamId" />
         </EntityType>
         <EntityType Name="OlympType">
           <Key>
@@ -2651,6 +2733,8 @@
           <Property Name="OrderNumFor" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Name="OrderDateFor" Type="DateTime" Precision="3" />
           <Property Type="Int32" Name="SignerId" />
+          <Property Type="DateTime" Name="ComissionDate" Precision="0" />
+          <Property Type="String" Name="ComissionNumber" MaxLength="10" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="PassportType">
           <Key>
@@ -2866,16 +2950,16 @@
             <PropertyRef Name="IsGosLine" />
           </Key>
           <Property Type="Guid" Name="Id" Nullable="false" />
-          <Property Type="Guid" Name="PersonId" />
+          <Property Type="Guid" Name="PersonId" Nullable="false" />
           <Property Type="String" Name="RegNum" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Type="Guid" Name="EntryId" />
+          <Property Type="Guid" Name="EntryId" Nullable="false" />
           <Property Type="Int32" Name="CompetitionId" />
           <Property Type="Boolean" Name="IsListener" Nullable="false" />
           <Property Type="Boolean" Name="IsPaid" Nullable="false" />
           <Property Type="Boolean" Name="BackDoc" Nullable="false" />
           <Property Type="DateTime" Name="BackDocDate" Precision="0" />
-          <Property Type="DateTime" Name="DocDate" Precision="0" />
-          <Property Type="DateTime" Name="DocInsertDate" Precision="0" />
+          <Property Type="DateTime" Name="DocDate" Precision="0" Nullable="false" />
+          <Property Type="DateTime" Name="DocInsertDate" Precision="0" Nullable="false" />
           <Property Type="Boolean" Name="Checked" Nullable="false" />
           <Property Type="Boolean" Name="NotEnabled" Nullable="false" />
           <Property Type="Double" Name="Coefficient" />
@@ -2920,7 +3004,7 @@
           <Property Type="String" Name="StudyFormOldName" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="LanguageName" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="StudyLevelGroupId" Nullable="false" />
-          <Property Type="String" Name="FIO" MaxLength="152" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="FIO" MaxLength="152" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Type="String" Name="PassportData" MaxLength="532" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="ObrazProgramNameEx" MaxLength="1014" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Type="Boolean" Name="WithHE" Nullable="false" />
@@ -2931,6 +3015,12 @@
           <Property Type="Guid" Name="CommitId" />
           <Property Type="Int32" Name="CommitNumber" />
           <Property Type="Boolean" Name="IsGosLine" Nullable="false" />
+          <Property Type="Guid" Name="ObrazProgramInEntryId" />
+          <Property Type="Guid" Name="ProfileInObrazProgramInEntryId" />
+          <Property Type="String" Name="ProfileInObrazProgramInEntryName" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="ObrazProgramInEntryCrypt" MaxLength="66" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="ObrazProgramInEntryName" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="ObrazProgramInEntryObrazProgramId" />
         </EntityType>
         <EntityType Name="extAbitMarksSum">
           <Key>
@@ -2988,6 +3078,13 @@
             <PropertyRef Name="Excluded" />
             <PropertyRef Name="IsOld" />
             <PropertyRef Name="ProtocolTypeName" />
+            <PropertyRef Name="EntryId" />
+            <PropertyRef Name="ProtocolHistoryId" />
+            <PropertyRef Name="PersonId" />
+            <PropertyRef Name="IsCrimea" />
+            <PropertyRef Name="IsQuota" />
+            <PropertyRef Name="IsCel" />
+            <PropertyRef Name="IsBE" />
           </Key>
           <Property Type="Guid" Name="Id" Nullable="false" />
           <Property Type="Guid" Name="AbiturientId" Nullable="false" />
@@ -3016,6 +3113,13 @@
           <Property Type="DateTime" Name="OrderDateFor" Precision="3" />
           <Property Type="String" Name="SignerName" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="SignerPosition" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="Guid" Name="EntryId" Nullable="false" />
+          <Property Type="Guid" Name="ProtocolHistoryId" Nullable="false" />
+          <Property Type="Guid" Name="PersonId" Nullable="false" />
+          <Property Type="Int32" Name="IsCrimea" Nullable="false" />
+          <Property Type="Int32" Name="IsQuota" Nullable="false" />
+          <Property Type="Int32" Name="IsCel" Nullable="false" />
+          <Property Type="Int32" Name="IsBE" Nullable="false" />
         </EntityType>
         <EntityType Name="extOlympiadsAll">
           <Key>
@@ -3034,8 +3138,12 @@
           <Property Type="String" Name="OlympName" MaxLength="2000" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="OlympSubjectName" MaxLength="100" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="OlympTypeName" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Type="Guid" Name="PersonId" />
+          <Property Type="Guid" Name="PersonId" Nullable="false" />
           <Property Type="Boolean" Name="OriginDoc" Nullable="false" />
+          <Property Type="Int32" Name="Number" />
+          <Property Type="String" Name="DocumentSeries" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="DocumentNumber" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="DateTime" Name="DocumentDate" Precision="0" />
         </EntityType>
         <EntityType Name="extPerson">
           <Key>
@@ -3135,6 +3243,11 @@
           <Property Type="String" Name="KladrCode" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="SNILS" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="RegionEducId" />
+          <Property Type="String" Name="RegionNumber" MaxLength="2" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="ForeignNationality" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="ForeignNationalityId" />
+          <Property Type="String" Name="ForeignCountry" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="ForeignCountryId" />
         </EntityType>
         <EntityType Name="qCompetitiveGroup">
           <Key>
@@ -3683,6 +3796,8 @@
           <Property Type="Boolean" Name="IsGosLine" Nullable="false" />
           <Property Type="Boolean" Name="IsViewed" Nullable="false" />
           <Property Type="Boolean" Name="IsCommonRussianCompetition" Nullable="false" />
+          <Property Type="Guid" Name="ObrazProgramInEntryId" />
+          <Property Type="Guid" Name="ProfileInObrazProgramInEntryId" />
         </EntityType>
         <EntityType Name="qMark">
           <Key>
@@ -3720,6 +3835,8 @@
           <Property Type="String" Name="EntranceTestType" Nullable="false" MaxLength="74" FixedLength="false" Unicode="false" />
           <Property Type="Guid" Name="OlympiadId" />
           <Property Type="Guid" Name="EgeCertificateId" />
+          <Property Type="Byte" Name="OrderNumber" />
+          <Property Type="Byte" Name="FiveGradeValue" />
         </EntityType>
         <EntityType Name="extExamInEntry">
           <Key>
@@ -3761,6 +3878,7 @@
           <Property Type="Boolean" Name="IsReduced" Nullable="false" />
           <Property Type="Boolean" Name="IsParallel" Nullable="false" />
           <Property Type="Guid" Name="ExamInEntryToCompetitiveGroupId" />
+          <Property Type="Byte" Name="OrderNumber" />
         </EntityType>
         <EntityType Name="extEgeMark">
           <Key>
@@ -3773,6 +3891,7 @@
             <PropertyRef Name="EgeExamName" />
             <PropertyRef Name="Number" />
             <PropertyRef Name="PersonId" />
+            <PropertyRef Name="FBSStatusId" />
           </Key>
           <Property Type="Guid" Name="Id" Nullable="false" />
           <Property Type="Int32" Name="Value" Nullable="false" />
@@ -3785,6 +3904,7 @@
           <Property Type="Guid" Name="PersonId" Nullable="false" />
           <Property Type="String" Name="Year" MaxLength="4" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="FISName" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Type="Int32" Name="FBSStatusId" Nullable="false" />
         </EntityType>
         <EntityType Name="ExamsVedHistory">
           <Key>
@@ -3927,7 +4047,9 @@
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="Priem2012ModelStoreContainer" CdmEntityContainer="PriemEntities">
           <EntitySetMapping Name="Abiturient"><EntityTypeMapping TypeName="Priem2012Model.Abiturient"><MappingFragment StoreEntitySet="Abiturient">
-            <ScalarProperty Name="IsCommonRussianCompetition" ColumnName="IsCommonRussianCompetition" />
+            <ScalarProperty Name="ProfileInObrazProgramInEntryId" ColumnName="ProfileInObrazProgramInEntryId" />
+                <ScalarProperty Name="ObrazProgramInEntryId" ColumnName="ObrazProgramInEntryId" />
+                <ScalarProperty Name="IsCommonRussianCompetition" ColumnName="IsCommonRussianCompetition" />
                 <ScalarProperty Name="IsViewed" ColumnName="IsViewed" />
                 <ScalarProperty Name="IsGosLine" ColumnName="IsGosLine" />
                 <ScalarProperty Name="CommitNumber" ColumnName="CommitNumber" />
@@ -3996,7 +4118,9 @@
             <ScalarProperty Name="IsCurrent" ColumnName="IsCurrent" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="Entry"><EntityTypeMapping TypeName="Priem2012Model.Entry"><MappingFragment StoreEntitySet="Entry">
-            <ScalarProperty Name="KCPQuota" ColumnName="KCPQuota" />
+            <ScalarProperty Name="DateStartEduc" ColumnName="DateStartEduc" />
+                <ScalarProperty Name="DateFinishEduc" ColumnName="DateFinishEduc" />
+                <ScalarProperty Name="KCPQuota" ColumnName="KCPQuota" />
                 <ScalarProperty Name="KCPCrimea" ColumnName="KCPCrimea" />
                 <ScalarProperty Name="CommissionId" ColumnName="CommissionId" />
                 <ScalarProperty Name="DateOfStart" ColumnName="DateOfStart" />
@@ -4066,7 +4190,8 @@
             <ScalarProperty Name="Number" ColumnName="Number" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="OlympSubject"><EntityTypeMapping TypeName="Priem2012Model.OlympSubject"><MappingFragment StoreEntitySet="OlympSubject">
-            <ScalarProperty Name="Holder" ColumnName="Holder" />
+            <ScalarProperty Name="ExamId" ColumnName="ExamId" />
+                <ScalarProperty Name="Holder" ColumnName="Holder" />
                 <ScalarProperty Name="IsOpen" ColumnName="IsOpen" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
             <ScalarProperty Name="Name" ColumnName="Name" />
@@ -4087,7 +4212,9 @@
             <ScalarProperty Name="Acronym" ColumnName="Acronym" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="OrderNumbers"><EntityTypeMapping TypeName="Priem2012Model.OrderNumbers"><MappingFragment StoreEntitySet="OrderNumbers">
-            <ScalarProperty Name="SignerId" ColumnName="SignerId" />
+            <ScalarProperty Name="ComissionNumber" ColumnName="ComissionNumber" />
+                <ScalarProperty Name="ComissionDate" ColumnName="ComissionDate" />
+                <ScalarProperty Name="SignerId" ColumnName="SignerId" />
                 <ScalarProperty Name="ProtocolId" ColumnName="ProtocolId" />
             <ScalarProperty Name="OrderDate" ColumnName="OrderDate" />
             <ScalarProperty Name="OrderNum" ColumnName="OrderNum" />
@@ -4145,6 +4272,12 @@
           <EntitySetMapping Name="extAbit">
             <EntityTypeMapping TypeName="Priem2012Model.extAbit">
               <MappingFragment StoreEntitySet="extAbit">
+                <ScalarProperty Name="ObrazProgramInEntryObrazProgramId" ColumnName="ObrazProgramInEntryObrazProgramId" />
+                <ScalarProperty Name="ObrazProgramInEntryName" ColumnName="ObrazProgramInEntryName" />
+                <ScalarProperty Name="ObrazProgramInEntryCrypt" ColumnName="ObrazProgramInEntryCrypt" />
+                <ScalarProperty Name="ProfileInObrazProgramInEntryName" ColumnName="ProfileInObrazProgramInEntryName" />
+                <ScalarProperty Name="ProfileInObrazProgramInEntryId" ColumnName="ProfileInObrazProgramInEntryId" />
+                <ScalarProperty Name="ObrazProgramInEntryId" ColumnName="ObrazProgramInEntryId" />
                 <ScalarProperty Name="IsGosLine" ColumnName="IsGosLine" />
                 <ScalarProperty Name="CommitNumber" ColumnName="CommitNumber" />
                 <ScalarProperty Name="CommitId" ColumnName="CommitId" />
@@ -4260,6 +4393,13 @@
           <EntitySetMapping Name="extEntryView">
             <EntityTypeMapping TypeName="Priem2012Model.extEntryView">
               <MappingFragment StoreEntitySet="extEntryView">
+                <ScalarProperty Name="IsBE" ColumnName="IsBE" />
+                <ScalarProperty Name="IsCel" ColumnName="IsCel" />
+                <ScalarProperty Name="IsQuota" ColumnName="IsQuota" />
+                <ScalarProperty Name="IsCrimea" ColumnName="IsCrimea" />
+                <ScalarProperty Name="PersonId" ColumnName="PersonId" />
+                <ScalarProperty Name="ProtocolHistoryId" ColumnName="ProtocolHistoryId" />
+                <ScalarProperty Name="EntryId" ColumnName="EntryId" />
                 <ScalarProperty Name="SignerPosition" ColumnName="SignerPosition" />
                 <ScalarProperty Name="SignerName" ColumnName="SignerName" />
                 <ScalarProperty Name="OrderDateFor" ColumnName="OrderDateFor" />
@@ -4293,6 +4433,10 @@
           <EntitySetMapping Name="extOlympiadsAll">
             <EntityTypeMapping TypeName="Priem2012Model.extOlympiadsAll">
               <MappingFragment StoreEntitySet="extOlympiadsAll">
+                <ScalarProperty Name="DocumentDate" ColumnName="DocumentDate" />
+                <ScalarProperty Name="DocumentNumber" ColumnName="DocumentNumber" />
+                <ScalarProperty Name="DocumentSeries" ColumnName="DocumentSeries" />
+                <ScalarProperty Name="Number" ColumnName="Number" />
                 <ScalarProperty Name="OriginDoc" ColumnName="OriginDoc" />
                 <ScalarProperty Name="PersonId" ColumnName="PersonId" />
                 <ScalarProperty Name="OlympTypeName" ColumnName="OlympTypeName" />
@@ -4313,6 +4457,11 @@
           <EntitySetMapping Name="extPerson">
             <EntityTypeMapping TypeName="Priem2012Model.extPerson">
               <MappingFragment StoreEntitySet="extPerson">
+                <ScalarProperty Name="ForeignCountryId" ColumnName="ForeignCountryId" />
+                <ScalarProperty Name="ForeignCountry" ColumnName="ForeignCountry" />
+                <ScalarProperty Name="ForeignNationalityId" ColumnName="ForeignNationalityId" />
+                <ScalarProperty Name="ForeignNationality" ColumnName="ForeignNationality" />
+                <ScalarProperty Name="RegionNumber" ColumnName="RegionNumber" />
                 <ScalarProperty Name="RegionEducId" ColumnName="RegionEducId" />
                 <ScalarProperty Name="SNILS" ColumnName="SNILS" />
                 <ScalarProperty Name="KladrCode" ColumnName="KladrCode" />
@@ -4585,6 +4734,8 @@
           <EntitySetMapping Name="qAbiturient">
             <EntityTypeMapping TypeName="Priem2012Model.qAbiturient">
               <MappingFragment StoreEntitySet="qAbiturient">
+                <ScalarProperty Name="ProfileInObrazProgramInEntryId" ColumnName="ProfileInObrazProgramInEntryId" />
+                <ScalarProperty Name="ObrazProgramInEntryId" ColumnName="ObrazProgramInEntryId" />
                 <ScalarProperty Name="IsCommonRussianCompetition" ColumnName="IsCommonRussianCompetition" />
                 <ScalarProperty Name="IsViewed" ColumnName="IsViewed" />
                 <ScalarProperty Name="IsGosLine" ColumnName="IsGosLine" />
@@ -4653,6 +4804,8 @@
           <EntitySetMapping Name="qMark">
             <EntityTypeMapping TypeName="Priem2012Model.qMark">
               <MappingFragment StoreEntitySet="qMark">
+                <ScalarProperty Name="FiveGradeValue" ColumnName="FiveGradeValue" />
+                <ScalarProperty Name="OrderNumber" ColumnName="OrderNumber" />
                 <ScalarProperty Name="EgeCertificateId" ColumnName="EgeCertificateId" />
                 <ScalarProperty Name="OlympiadId" ColumnName="OlympiadId" />
                 <ScalarProperty Name="EntranceTestType" ColumnName="EntranceTestType" />
@@ -4678,6 +4831,7 @@
           <EntitySetMapping Name="extExamInEntry">
             <EntityTypeMapping TypeName="Priem2012Model.extExamInEntry">
               <MappingFragment StoreEntitySet="extExamInEntry">
+                <ScalarProperty Name="OrderNumber" ColumnName="OrderNumber" />
                 <ScalarProperty Name="ExamInEntryToCompetitiveGroupId" ColumnName="ExamInEntryToCompetitiveGroupId" />
                 <ScalarProperty Name="IsParallel" ColumnName="IsParallel" />
                 <ScalarProperty Name="IsReduced" ColumnName="IsReduced" />
@@ -4705,6 +4859,7 @@
           <EntitySetMapping Name="extEgeMark">
             <EntityTypeMapping TypeName="Priem2012Model.extEgeMark">
               <MappingFragment StoreEntitySet="extEgeMark">
+                <ScalarProperty Name="FBSStatusId" ColumnName="FBSStatusId" />
                 <ScalarProperty Name="FISName" ColumnName="FISName" />
                 <ScalarProperty Name="Year" ColumnName="Year" />
                 <ScalarProperty Name="PersonId" ColumnName="PersonId" />

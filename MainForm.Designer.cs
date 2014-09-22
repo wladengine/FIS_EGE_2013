@@ -48,6 +48,8 @@
             this.btnExportXML_part3 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.chbFullImport = new System.Windows.Forms.CheckBox();
+            this.btnImportOrdersOfAdmission = new System.Windows.Forms.Button();
+            this.btnDeleteApplications = new System.Windows.Forms.Button();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCompGroup)).BeginInit();
             this.groupBox3.SuspendLayout();
@@ -60,7 +62,7 @@
             this.groupBox4.Controls.Add(this.tbServiceAddress);
             this.groupBox4.Location = new System.Drawing.Point(12, 12);
             this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(611, 50);
+            this.groupBox4.Size = new System.Drawing.Size(666, 50);
             this.groupBox4.TabIndex = 15;
             this.groupBox4.TabStop = false;
             this.groupBox4.Text = "Адрес сервиса";
@@ -84,7 +86,7 @@
             this.dgvCompGroup.Location = new System.Drawing.Point(6, 19);
             this.dgvCompGroup.Name = "dgvCompGroup";
             this.dgvCompGroup.ReadOnly = true;
-            this.dgvCompGroup.Size = new System.Drawing.Size(492, 323);
+            this.dgvCompGroup.Size = new System.Drawing.Size(547, 323);
             this.dgvCompGroup.TabIndex = 0;
             // 
             // cbStudyLevelGroup
@@ -92,7 +94,7 @@
             this.cbStudyLevelGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbStudyLevelGroup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbStudyLevelGroup.FormattingEnabled = true;
-            this.cbStudyLevelGroup.Location = new System.Drawing.Point(522, 148);
+            this.cbStudyLevelGroup.Location = new System.Drawing.Point(577, 148);
             this.cbStudyLevelGroup.Name = "cbStudyLevelGroup";
             this.cbStudyLevelGroup.Size = new System.Drawing.Size(101, 21);
             this.cbStudyLevelGroup.TabIndex = 14;
@@ -116,16 +118,16 @@
             this.groupBox3.Controls.Add(this.dgvCompGroup);
             this.groupBox3.Location = new System.Drawing.Point(12, 148);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(504, 348);
+            this.groupBox3.Size = new System.Drawing.Size(559, 348);
             this.groupBox3.TabIndex = 13;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Конкурсные группы";
             // 
             // btnExportXML
             // 
-            this.btnExportXML.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnExportXML.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnExportXML.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnExportXML.Location = new System.Drawing.Point(522, 455);
+            this.btnExportXML.Location = new System.Drawing.Point(577, 454);
             this.btnExportXML.Name = "btnExportXML";
             this.btnExportXML.Size = new System.Drawing.Size(101, 41);
             this.btnExportXML.TabIndex = 10;
@@ -142,7 +144,7 @@
             this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Location = new System.Drawing.Point(218, 68);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(405, 74);
+            this.groupBox2.Size = new System.Drawing.Size(460, 74);
             this.groupBox2.TabIndex = 12;
             this.groupBox2.TabStop = false;
             // 
@@ -220,9 +222,9 @@
             // 
             // btnExportXML_part1
             // 
-            this.btnExportXML_part1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnExportXML_part1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnExportXML_part1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnExportXML_part1.Location = new System.Drawing.Point(522, 175);
+            this.btnExportXML_part1.Location = new System.Drawing.Point(577, 175);
             this.btnExportXML_part1.Name = "btnExportXML_part1";
             this.btnExportXML_part1.Size = new System.Drawing.Size(101, 44);
             this.btnExportXML_part1.TabIndex = 16;
@@ -232,9 +234,9 @@
             // 
             // btnExportXML_part3
             // 
-            this.btnExportXML_part3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnExportXML_part3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnExportXML_part3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnExportXML_part3.Location = new System.Drawing.Point(522, 225);
+            this.btnExportXML_part3.Location = new System.Drawing.Point(577, 225);
             this.btnExportXML_part3.Name = "btnExportXML_part3";
             this.btnExportXML_part3.Size = new System.Drawing.Size(101, 44);
             this.btnExportXML_part3.TabIndex = 17;
@@ -244,29 +246,56 @@
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(577, 337);
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.Location = new System.Drawing.Point(577, 374);
             this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.Size = new System.Drawing.Size(101, 34);
             this.button1.TabIndex = 18;
-            this.button1.Text = "button1";
+            this.button1.Text = "UpdateExamInCompetitiveGroup";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // chbFullImport
             // 
+            this.chbFullImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chbFullImport.AutoSize = true;
-            this.chbFullImport.Location = new System.Drawing.Point(537, 275);
+            this.chbFullImport.Location = new System.Drawing.Point(577, 351);
             this.chbFullImport.Name = "chbFullImport";
             this.chbFullImport.Size = new System.Drawing.Size(74, 17);
             this.chbFullImport.TabIndex = 19;
             this.chbFullImport.Text = "Full Import";
             this.chbFullImport.UseVisualStyleBackColor = true;
             // 
+            // btnImportOrdersOfAdmission
+            // 
+            this.btnImportOrdersOfAdmission.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnImportOrdersOfAdmission.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.btnImportOrdersOfAdmission.Location = new System.Drawing.Point(577, 275);
+            this.btnImportOrdersOfAdmission.Name = "btnImportOrdersOfAdmission";
+            this.btnImportOrdersOfAdmission.Size = new System.Drawing.Size(101, 44);
+            this.btnImportOrdersOfAdmission.TabIndex = 20;
+            this.btnImportOrdersOfAdmission.Text = "Выгрузить OrderOfAdm";
+            this.btnImportOrdersOfAdmission.UseVisualStyleBackColor = true;
+            this.btnImportOrdersOfAdmission.Click += new System.EventHandler(this.btnImportOrdersOfAdmission_Click);
+            // 
+            // btnDeleteApplications
+            // 
+            this.btnDeleteApplications.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDeleteApplications.Location = new System.Drawing.Point(577, 414);
+            this.btnDeleteApplications.Name = "btnDeleteApplications";
+            this.btnDeleteApplications.Size = new System.Drawing.Size(101, 21);
+            this.btnDeleteApplications.TabIndex = 21;
+            this.btnDeleteApplications.Text = "DeleteApps";
+            this.btnDeleteApplications.UseVisualStyleBackColor = true;
+            this.btnDeleteApplications.Click += new System.EventHandler(this.btnDeleteApplications_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(690, 516);
+            this.Controls.Add(this.btnDeleteApplications);
+            this.Controls.Add(this.btnImportOrdersOfAdmission);
             this.Controls.Add(this.chbFullImport);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.btnExportXML_part3);
@@ -314,6 +343,8 @@
         private System.Windows.Forms.Button btnExportXML_part3;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.CheckBox chbFullImport;
+        private System.Windows.Forms.Button btnImportOrdersOfAdmission;
+        private System.Windows.Forms.Button btnDeleteApplications;
     }
 }
 
