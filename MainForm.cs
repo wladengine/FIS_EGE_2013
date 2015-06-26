@@ -185,7 +185,7 @@ namespace FIS_EGE_2013
         }
 
         //заполняет только первые два раздела
-        private void ExportXML_Part1()
+        private void ExportXML_Part1(bool isCrimea)
         {
             XmlDocument doc = new XmlDocument();
             //XmlImplementation imp = new XmlImplementation();
@@ -199,7 +199,7 @@ namespace FIS_EGE_2013
             else
                 return;
 
-            UpdateDictionaries();
+            UpdateDictionaries_Local();
             List<int?> BeneficiaryCompetitions = new List<int?>() { 1, 2, 7, 8 };
 
             using (PriemEntities context = new PriemEntities())
@@ -243,7 +243,7 @@ namespace FIS_EGE_2013
                 //root["Campaigns"].AppendChild(doc.CreateNode(XmlNodeType.Element, "Campaign", ""));
                 ////заполняем сведения о текущей приёмной кампании
                 ////Guid рандомно придуманный
-                string CampaignId = new Guid("00000000-0000-0000-2014-000000000001").ToString();
+                string CampaignId = new Guid("00000000-0000-0000-2015-00000000000" + (isCrimea ? "2" : "1")).ToString();
                 wc.Show();
                 //--------------------------------------------------------------------------------------------------------------
                 //заполняем данные AdmissionInfo
@@ -257,28 +257,33 @@ namespace FIS_EGE_2013
                 root = root["AdmissionInfo"]["AdmissionVolume"];
                 
                 //объём для СПО не грузим совсем
-                var LPs = context.extEntry.Where(x => x.StudyLevelGroupId <= 3 && (FacultyId.HasValue ? x.FacultyId == FacultyId.Value : true)
+                var LPs = context.extEntry.Where(x => x.StudyLevelGroupId < 3 && (FacultyId.HasValue ? x.FacultyId == FacultyId.Value : true)
                     && (LicenseProgramId.HasValue ? x.LicenseProgramId == LicenseProgramId.Value : true)).Select(x => x.LicenseProgramId).Distinct();
 
-                var PriemHelps = context.hlpLicenseProgramKCP.Where(x => LPs.Contains(x.LicenseProgramId) /*&& x.LevelGroupId == StudyLevelGroupId*/).Distinct().ToList();
+                var PriemHelps = context.hlpLicenseProgramKCP.Where(x => x.LevelGroupId < 3).ToList()
+                    .Select(x => new { x.QualificationCode, x.LicenseProgramCode, x.LicenseProgramName, x.StudyLevelId, x.IsReduced, x.KC_OB, x.KC_OP, x.KC_OZB, x.KC_OZP, x.KC_ZB, x.KC_ZP, x.KC_O_CEL, x.KC_OZ_CEL, x.KC_Z_CEL })
+                    .Distinct().ToList();
 
                 wcMax = PriemHelps.Count();
                 wc.SetText("Заполняем объём приёма (КЦ)");
                 wc.SetMax(wcMax);
                 wc.ZeroCount();
 
-                foreach (var p in PriemHelps.Select(x => new { x.QualificationCode, x.LicenseProgramCode, x.LicenseProgramName, x.StudyLevelId, x.KC_OB, x.KC_OP, x.KC_OZB, x.KC_OZP, x.KC_ZB, x.KC_ZP, x.KC_O_CEL, x.KC_OZ_CEL, x.KC_Z_CEL }).Distinct())
+                foreach (var p in PriemHelps)
                 {
                     wc.PerformStep();
                     root.AppendChild(doc.CreateNode(XmlNodeType.Element, "Item", ""));
                     //идентификатор объёма приёма по направлению подготовки в приёме
+                    string StudyLevelFISName = context.extEntry.Where(x => x.StudyLevelId == p.StudyLevelId).Select(x => x.StudyLevelFISName).FirstOrDefault();
+                    if (StudyLevelFISName == "Бакалавриат" && p.IsReduced)
+                        StudyLevelFISName += " (сокращ.)";
+
                     root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
-                    root.LastChild["UID"].InnerXml = p.LicenseProgramCode.ToString() + "_" + p.QualificationCode;
+                    root.LastChild["UID"].InnerXml = DateTime.Now.Year.ToString() + "_" + p.LicenseProgramCode.ToString() + "_" + p.QualificationCode + "_" + (StudyLevelFISName == "Бакалавриат (сокращ.)" ? "1" : "0");
                     root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "CampaignUID", ""));
                     root.LastChild["CampaignUID"].InnerXml = CampaignId;
                     //Справочник №2 - Уровни образования
                     root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "EducationLevelID", ""));
-                    string StudyLevelFISName = context.extEntry.Where(x => x.StudyLevelId == p.StudyLevelId).Select(x => x.StudyLevelFISName).FirstOrDefault();
                     root.LastChild["EducationLevelID"].InnerXml = SearchInDictionary(dic02_StudyLevel, StudyLevelFISName); //dic02_StudyLevel[p.StudyLevelId.ToString()];
                     root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "Course", ""));
                     root.LastChild["Course"].InnerXml = "1";
@@ -286,47 +291,47 @@ namespace FIS_EGE_2013
                     root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DirectionID", ""));
                     string qual_code = p.QualificationCode;
                     root.LastChild["DirectionID"].InnerXml = SearchInDictionary(dic10_Direction, p.LicenseProgramName, p.LicenseProgramCode, qual_code);
-                    if (p.KC_OB.HasValue)
+                    if (p.KC_OB.HasValue && p.KC_OB > 0)
                     {
                         root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberBudgetO", ""));
                         root.LastChild["NumberBudgetO"].InnerXml = p.KC_OB.ToString();
                     }
-                    if (p.KC_OZB.HasValue)
+                    if (p.KC_OZB.HasValue && p.KC_OZB > 0)
                     {
                         root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberBudgetOZ", ""));
                         root.LastChild["NumberBudgetOZ"].InnerXml = p.KC_OZB.ToString();
                     }
-                    if (p.KC_ZB.HasValue)
+                    if (p.KC_ZB.HasValue && p.KC_ZB > 0)
                     {
                         root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberBudgetZ", ""));
                         root.LastChild["NumberBudgetZ"].InnerXml = p.KC_ZB.ToString();
                     }
-                    if (p.KC_OP.HasValue)
+                    if (p.KC_OP.HasValue && p.KC_OP > 0)
                     {
                         root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberPaidO", ""));
                         root.LastChild["NumberPaidO"].InnerXml = p.KC_OP.ToString();
                     }
-                    if (p.KC_OZP.HasValue)
+                    if (p.KC_OZP.HasValue && p.KC_OZP > 0)
                     {
                         root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberPaidOZ", ""));
                         root.LastChild["NumberPaidOZ"].InnerXml = p.KC_OZP.ToString();
                     }
-                    if (p.KC_ZP.HasValue)
+                    if (p.KC_ZP.HasValue && p.KC_ZP > 0)
                     {
                         root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberPaidZ", ""));
                         root.LastChild["NumberPaidZ"].InnerXml = p.KC_ZP.ToString();
                     }
-                    if (p.KC_O_CEL.HasValue)
+                    if (p.KC_O_CEL.HasValue && p.KC_O_CEL > 0)
                     {
                         root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberTargetO", ""));
                         root.LastChild["NumberTargetO"].InnerXml = p.KC_O_CEL.ToString();
                     }
-                    if (p.KC_OZ_CEL.HasValue)
+                    if (p.KC_OZ_CEL.HasValue && p.KC_OZ_CEL > 0)
                     {
                         root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberTargetOZ", ""));
                         root.LastChild["NumberTargetOZ"].InnerXml = p.KC_OZ_CEL.ToString();
                     }
-                    if (p.KC_Z_CEL.HasValue)
+                    if (p.KC_Z_CEL.HasValue && p.KC_Z_CEL > 0)
                     {
                         root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberTargetZ", ""));
                         root.LastChild["NumberTargetZ"].InnerXml = p.KC_Z_CEL.ToString();
@@ -352,11 +357,11 @@ namespace FIS_EGE_2013
                 }
 
                 root = root.ParentNode["CompetitiveGroups"];
-                var CompetitionGroups = context.extCompetitiveGroup.Where(x =>
+                var CompetitionGroups = context.extCompetitiveGroup.Where(x => x.StudyLevelId > 10 && x.IsForeign == false && x.IsCrimea == isCrimea &&
                     (LicenseProgramId.HasValue ? x.LicenseProgramId == LicenseProgramId.Value : true)
                     && (FacultyId.HasValue ? x.FacultyId == FacultyId.Value : true)
                     /*&& (lstStudLev.Contains(x.StudyLevelId))*/)
-                    .Select(x => new { x.Id, x.CompetitiveGroupItemId, x.StudyLevelFISName, x.Name, x.QualificationCode, x.LicenseProgramName, x.LicenseProgramCode, 
+                    .Select(x => new { x.Id, x.StudyLevelFISName, x.Name, x.QualificationCode, x.LicenseProgramName, x.LicenseProgramCode, 
                         x.KCP_ZB, x.KCP_ZP, x.KCP_Cel_B, x.KCP_Cel_P, x.KCP_OB, x.KCP_OP, x.KCP_OZB, x.KCP_OZP, x.StudyLevelId } )
                     .Distinct();
 
@@ -383,8 +388,6 @@ namespace FIS_EGE_2013
                     root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "Items", ""));
                     //root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "TargetOrganizations", ""));
 
-
-
                     //добавляем направление подготовки конкурсной группы
                     root.LastChild["Items"].AppendChild(doc.CreateNode(XmlNodeType.Element, "CompetitiveGroupItem", ""));
                     //root.LastChild["Items"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "CompetitiveGroupItem", ""));
@@ -393,7 +396,7 @@ namespace FIS_EGE_2013
                     //это сделано для ВУЗов, где ведётся один конкурс на НЕСКОЛЬКО направлений
                     root.LastChild["Items"]["CompetitiveGroupItem"].AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
                     //поскольку у нас нет одного конкурса на несколько направлений, то мы просто возьмём тот же UID, что и для всей группы
-                    root.LastChild["Items"]["CompetitiveGroupItem"]["UID"].InnerXml = CompetitionGroup.CompetitiveGroupItemId.ToString();
+                    root.LastChild["Items"]["CompetitiveGroupItem"]["UID"].InnerXml = CompetitionGroup.Id.ToString();
                     //Справочник №2 - Уровни образования
                     root.LastChild["Items"]["CompetitiveGroupItem"].AppendChild(doc.CreateNode(XmlNodeType.Element, "EducationLevelID", ""));
                     root.LastChild["Items"]["CompetitiveGroupItem"]["EducationLevelID"].InnerXml = SearchInDictionary(dic02_StudyLevel, CompetitionGroup.StudyLevelFISName);
@@ -454,28 +457,6 @@ namespace FIS_EGE_2013
                         root.LastChild["TargetOrganizations"].LastChild["Items"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DirectionID", ""));
                     }
                      */
-
-                    //добавляем "условия предоставления общей льготы" (б/э)
-                    /*
-                    root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "CommonBenefit", ""));
-                    root.LastChild["CommonBenefit"].AppendChild(doc.CreateNode(XmlNodeType.Element, "CommonBenefitItem", ""));
-
-                    root.LastChild["CommonBenefit"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
-                    //типы дипломов олимпиад
-                    root.LastChild["CommonBenefit"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicDiplomTypes", ""));
-                    root.LastChild["CommonBenefit"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "BenefitKindID", ""));
-                    root.LastChild["CommonBenefit"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "IsForAllOlympics", ""));
-                    //перечень олимпиад, для которых действует льгота
-                    root.LastChild["CommonBenefit"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "Olympics", ""));
-
-                    //заполняем список типов дипломов олимпиад
-                    //id типа диплома (справочник №18)
-                    root.LastChild["CommonBenefit"].LastChild["OlympicDiplomTypes"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OlimpicDiplomTypeID", ""));
-
-                    //заполняем перечень олимпиад, для которых действует льгота
-                    //id олимпиады (справочник №20 "Названия олимпиад")
-                    root.LastChild["CommonBenefit"].LastChild["Olympics"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicID", ""));
-                    */
                     var EntryExams = (from ExInEnt in context.extExamInEntry
                                       join qComp in context.qEntryToCompetitiveGroup on ExInEnt.EntryId equals qComp.EntryId
                                       join Ent in context.extEntry on ExInEnt.EntryId equals Ent.Id
@@ -488,6 +469,50 @@ namespace FIS_EGE_2013
                                           SubjectName = ExInEnt.ExamName
                                       }).Where(x => x.MinScore.HasValue && x.MinScore > 0).Distinct().GroupBy(x => new { x.UID, x.TestType, x.SubjectName })
                                       .Select(x => new { x.Key.UID, x.Key.SubjectName, x.Key.TestType, MinScore = x.Select(z => z.MinScore).Min() }).Distinct().ToList();
+
+                    if (CompetitionGroup.StudyLevelId == 16 || CompetitionGroup.StudyLevelId == 18)
+                    {
+                        //добавляем "условия предоставления общей льготы" (б/э)
+                        root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "CommonBenefit", ""));
+
+                        root.LastChild["CommonBenefit"].AppendChild(doc.CreateNode(XmlNodeType.Element, "CommonBenefitItem", ""));
+                        root.LastChild["CommonBenefit"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
+                        root.LastChild["CommonBenefit"].LastChild["UID"].InnerXml = CompetitionGroup.Id.ToString();
+                        //типы дипломов олимпиад
+                        root.LastChild["CommonBenefit"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicDiplomTypes", ""));
+                        for (int i = 1; i <= 2; i++)
+                        {
+                            root.LastChild["CommonBenefit"].LastChild["OlympicDiplomTypes"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicDiplomTypeID", ""));
+                            root.LastChild["CommonBenefit"].LastChild["OlympicDiplomTypes"].LastChild.InnerXml = i.ToString();//победители
+                        }
+                        root.LastChild["CommonBenefit"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "BenefitKindID", ""));
+                        root.LastChild["CommonBenefit"].LastChild["BenefitKindID"].InnerXml = "1";
+                        root.LastChild["CommonBenefit"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "IsForAllOlympics", ""));
+                        root.LastChild["CommonBenefit"].LastChild["IsForAllOlympics"].InnerXml = "true";
+                        //перечень олимпиад, для которых действует льгота
+                        //root.LastChild["CommonBenefit"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "Olympics", ""));
+                        //заполняем перечень олимпиад, для которых действует льгота
+                        //id олимпиады (справочник №20 "Названия олимпиад")
+                        //root.LastChild["CommonBenefit"].LastChild["Olympics"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicID", ""));
+
+                        //заполняем список типов дипломов олимпиад
+                        //id типа диплома (справочник №18)
+                        //root.LastChild["CommonBenefit"].LastChild["OlympicDiplomTypes"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicDiplomTypeID", ""));
+                        List<string> examsList = EntryExams.Select(x => SearchInDictionary(dic01_Subject, x.SubjectName)).Where(x => !string.IsNullOrEmpty(x)).ToList();
+                        if (examsList.Count > 0)
+                            root.LastChild["CommonBenefit"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "MinEgeMarks", ""));
+                        foreach (string EntryExam in examsList)
+                        {
+                            if (!string.IsNullOrEmpty(EntryExam))
+                            {
+                                root.LastChild["CommonBenefit"].LastChild["MinEgeMarks"].AppendChild(doc.CreateNode(XmlNodeType.Element, "MinMarks", ""));
+                                root.LastChild["CommonBenefit"].LastChild["MinEgeMarks"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "SubjectID", ""));
+                                root.LastChild["CommonBenefit"].LastChild["MinEgeMarks"].LastChild["SubjectID"].InnerXml = EntryExam;
+                                root.LastChild["CommonBenefit"].LastChild["MinEgeMarks"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "MinMark", ""));
+                                root.LastChild["CommonBenefit"].LastChild["MinEgeMarks"].LastChild["MinMark"].InnerXml = "65";
+                            }
+                        }
+                    }
 
                     if (EntryExams.Count() > 0)
                         root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "EntranceTestItems", ""));
@@ -506,7 +531,7 @@ namespace FIS_EGE_2013
                         root.LastChild["EntranceTestItems"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "Form", ""));
                         root.LastChild["EntranceTestItems"].LastChild["Form"].InnerXml = EntryExam.TestType == 2 ? "Творческий конкурс" : (CompetitionGroup.QualificationCode == "68" ? "Вступительные испытания в магистратуру" : "Зачёт результатов ЕГЭ");
                         root.LastChild["EntranceTestItems"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "MinScore", ""));
-                        root.LastChild["EntranceTestItems"].LastChild["MinScore"].InnerXml = EntryExam.MinScore.ToString();
+                        root.LastChild["EntranceTestItems"].LastChild["MinScore"].InnerXml = CompetitionGroup.QualificationCode == "68" ? "1" : (EntryExam.MinScore ?? 1).ToString();
 
                         //название вступительного испытания
                         root.LastChild["EntranceTestItems"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "EntranceTestSubject", ""));
@@ -524,23 +549,50 @@ namespace FIS_EGE_2013
                             root.LastChild["EntranceTestItems"].LastChild["EntranceTestSubject"].AppendChild(doc.CreateNode(XmlNodeType.Element, "SubjectName", ""));
                             root.LastChild["EntranceTestItems"].LastChild["EntranceTestSubject"]["SubjectName"].InnerXml = EntryExam.SubjectName;
                         }
-                        //условия предоставления льгот
-                        /*
-                        root.LastChild["EntranceTestItems"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "EntranceTestBenefits", ""));
 
-                        root.LastChild["EntranceTestItems"].LastChild["EntranceTestBenefits"].AppendChild(doc.CreateNode(XmlNodeType.Element, "EntranceTestBenefitItem", ""));
-                        //заносим условие предоставления льгот
-                        root.LastChild["EntranceTestItems"].LastChild["EntranceTestBenefits"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
-                        root.LastChild["EntranceTestItems"].LastChild["EntranceTestBenefits"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicDiplomTypes", ""));
-                        root.LastChild["EntranceTestItems"].LastChild["EntranceTestBenefits"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "BenefitKindID", ""));
-                        root.LastChild["EntranceTestItems"].LastChild["EntranceTestBenefits"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "IsForAllOlympics", ""));
-                        root.LastChild["EntranceTestItems"].LastChild["EntranceTestBenefits"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "Olympics", ""));
-                        //заполняем дипломы (по справочнику №18 "Тип диплома")
-                        root.LastChild["EntranceTestItems"].LastChild["EntranceTestBenefits"].LastChild["OlympicDiplomTypes"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicDiplomTypeID", ""));
-                        //заполняем олимпиады (по справочнику №20 "Олимпиады")
-                        root.LastChild["EntranceTestItems"].LastChild["EntranceTestBenefits"].LastChild["Olympics"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicID", ""));
-                        
-                         */
+                        var lstBenefits =
+                            (from mrk in context.qMark
+                             join exinent in context.extExamInEntry on mrk.ExamInEntryId equals exinent.Id
+                             join olympiads in context.extOlympiadsAll on mrk.OlympiadId equals olympiads.Id
+                             where exinent.ExamInEntryToCompetitiveGroupId == EntryExam.UID && exinent.StudyLevelGroupId == 1
+                             select new { olympiads.Number, olympiads.OlympLevelName, olympiads.OlympNameId, olympiads.OlympSubjectId, olympiads.OlympName, olympiads.OlympTypeId, olympiads.OlympValueId }).Distinct().ToList();
+
+                        if (lstBenefits.Count > 0)
+                        {
+                            //условия предоставления льгот
+                            root.LastChild["EntranceTestItems"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "EntranceTestBenefits", ""));
+                            //у нас льгота лишь одна: 100 баллов за ЕГЭ (№3 в справочнике №30)
+                            //foreach (var Benefit in lstBenefits)
+                            {
+                                root.LastChild["EntranceTestItems"].LastChild["EntranceTestBenefits"].AppendChild(doc.CreateNode(XmlNodeType.Element, "EntranceTestBenefitItem", ""));
+                                //заносим условие предоставления льгот
+                                root.LastChild["EntranceTestItems"].LastChild["EntranceTestBenefits"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
+                                //UID
+                                root.LastChild["EntranceTestItems"].LastChild["EntranceTestBenefits"].LastChild["UID"].InnerXml = EntryExam.UID.ToString() + "_3";
+
+                                root.LastChild["EntranceTestItems"].LastChild["EntranceTestBenefits"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicDiplomTypes", ""));
+                                foreach (var xxx in lstBenefits.Select(x => x.OlympValueId == 7 ? "1" : "2").Distinct().ToList())
+                                {
+                                    //заполняем дипломы (по справочнику №18 "Тип диплома")
+                                    root.LastChild["EntranceTestItems"].LastChild["EntranceTestBenefits"].LastChild["OlympicDiplomTypes"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicDiplomTypeID", ""));
+                                    root.LastChild["EntranceTestItems"].LastChild["EntranceTestBenefits"].LastChild["OlympicDiplomTypes"].LastChild.InnerXml = xxx;
+                                }
+
+                                //Вид льготы (справочник №30)
+                                root.LastChild["EntranceTestItems"].LastChild["EntranceTestBenefits"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "BenefitKindID", ""));
+                                //у нас льгота лишь одна: 100 баллов за ЕГЭ (3 в справочнике №30)
+                                root.LastChild["EntranceTestItems"].LastChild["EntranceTestBenefits"].LastChild["BenefitKindID"].InnerXml = "3";
+
+                                root.LastChild["EntranceTestItems"].LastChild["EntranceTestBenefits"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "IsForAllOlympics", ""));
+                                root.LastChild["EntranceTestItems"].LastChild["EntranceTestBenefits"].LastChild["IsForAllOlympics"].InnerXml = "true";
+                                //root.LastChild["EntranceTestItems"].LastChild["EntranceTestBenefits"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "Olympics", ""));
+                                ////заполняем олимпиады (по справочнику №20 "Олимпиады")
+                                //root.LastChild["EntranceTestItems"].LastChild["EntranceTestBenefits"].LastChild["Olympics"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicID", ""));
+
+                                root.LastChild["EntranceTestItems"].LastChild["EntranceTestBenefits"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "MinEgeMark", ""));
+                                root.LastChild["EntranceTestItems"].LastChild["EntranceTestBenefits"].LastChild["MinEgeMark"].InnerXml = "65";
+                            }
+                        }
                     }
                 }
                 wc.Close();
@@ -555,7 +607,7 @@ namespace FIS_EGE_2013
             XmlDocument doc = new XmlDocument();
             //XmlImplementation imp = new XmlImplementation();
 
-            UpdateDictionaries();
+            UpdateDictionaries_Local();
             List<int?> BeneficiaryCompetitions = new List<int?>() { 1, 2, 7, 8 };
 
             using (PriemEntities context = new PriemEntities())
@@ -594,11 +646,18 @@ namespace FIS_EGE_2013
                 //заполняем данные Applications
                 var apps = (from abit in context.qAbiturient
                             join person in context.Person on abit.PersonId equals person.Id
+                            join CurrEduc in context.extPerson_EducationInfo_Current on person.Id equals CurrEduc.PersonId
                             join compGroup in context.qEntryToCompetitiveGroup on abit.EntryId equals compGroup.EntryId
                             join extCompGroup in context.extCompetitiveGroup on compGroup.CompetitiveGroupId equals extCompGroup.Id
+                            join qab in context.qAbiturientForeignApplicationsOnly on abit.Id equals qab.Id into qq2
+                            from qq in qq2.DefaultIfEmpty()
+                            //join PP in context.AbitList on abit.RegNum equals PP.RegNum
                             where (FacultyId.HasValue ? abit.FacultyId == FacultyId.Value : true)
-                            && (LicenseProgramId.HasValue ? abit.LicenseProgramId == LicenseProgramId.Value : true)
+                            //&& (LicenseProgramId.HasValue ? abit.LicenseProgramId == LicenseProgramId.Value : true)
                             && (abit.StudyLevelGroupId == StudyLevelGroupId)
+                            && 
+                            (qq.Id == null)
+                            //&& (abit.CompetitionId == 1 || abit.CompetitionId == 8)
                             select new
                             {
                                 AppUID = abit.Id,
@@ -620,18 +679,18 @@ namespace FIS_EGE_2013
                                 person.PassportAuthor,
                                 PassportDate = person.PassportDate,
                                 //abit.HasOriginals,
-                                HasOriginals = context.Abiturient.Where(x => x.PersonId == abit.PersonId && x.HasOriginals).Count() > 0,
+                                HasOriginals = 
+                                    context.Abiturient.Where(x => x.PersonId == abit.PersonId && x.HasOriginals).Count() > 0,
                                 NationalityFISName = person.Nationality.FISName != null ? 
                                     person.Nationality.FISName : 
                                     context.ForeignCountry.Where(x => x.Id == person.ForeignNationalityId).Select(x => x.Name).FirstOrDefault(),
                                 PassportTypeFISName = person.PassportType.FISName,
                                 person.BirthDate,
                                 person.BirthPlace,
-                                person.Person_EducationInfo.SchoolTypeId,
+                                SchoolTypeId = CurrEduc.SchoolTypeId,
                                 person.Sex,
-                                EducDocSeries = person.Person_EducationInfo.SchoolTypeId == 1 ? person.Person_EducationInfo.AttestatSeries : person.Person_EducationInfo.DiplomSeries,
-                                EducDocRegion = person.Person_EducationInfo.SchoolTypeId == 1 ? person.Person_EducationInfo.AttestatRegion : "",
-                                EducDocNum = person.Person_EducationInfo.SchoolTypeId == 1 ? person.Person_EducationInfo.AttestatNum : person.Person_EducationInfo.DiplomNum,
+                                EducDocSeries = CurrEduc.SchoolTypeId == 1 ? CurrEduc.AttestatSeries : CurrEduc.DiplomSeries,
+                                EducDocNum = CurrEduc.SchoolTypeId == 1 ? CurrEduc.AttestatNum : CurrEduc.DiplomNum,
                                 compGroup.CompetitiveGroupId,
                                 compGroup.CompetitiveGroupName,
                                 extCompGroup.CompetitiveGroupItemId,
@@ -654,8 +713,8 @@ namespace FIS_EGE_2013
                 {
                     wc.PerformStep();
 
-                    if (app.NationalityFISName.IndexOf("лицо без гражданства", StringComparison.CurrentCultureIgnoreCase) > -1)
-                        continue;
+                    //if (app.NationalityFISName.IndexOf("лицо без гражданства", StringComparison.CurrentCultureIgnoreCase) > -1)
+                    //    continue;
 
                     root.AppendChild(doc.CreateNode(XmlNodeType.Element, "Application", ""));
 
@@ -763,28 +822,74 @@ namespace FIS_EGE_2013
                     root.LastChild["FinSourceAndEduForms"].LastChild["EducationFormID"].InnerXml = SearchInDictionary(dic14_EducationForm, app.StudyFormFISName);
                     //UID организации
                     root.LastChild["FinSourceAndEduForms"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "TargetOrganizationUID", ""));
-
-                    //добавляем сведения о льготе, предоставленной абитуриенту
-                    /*
-                    root.LastChild["ApplicationCommonBenefit"].AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
-                    root.LastChild["ApplicationCommonBenefit"].AppendChild(doc.CreateNode(XmlNodeType.Element, "CompetitiveGroupID", ""));
-                    //id типа документа-основания (Справочник №31 - "Тип документа") - необяз
-                    root.LastChild["ApplicationCommonBenefit"].AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentTypeID", ""));
-                    //документ-основание - необяз
-                    root.LastChild["ApplicationCommonBenefit"].AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentReason", ""));
-                    //id вида льготы (Справочник №30 - "Вид льготы")
-                    root.LastChild["ApplicationCommonBenefit"].AppendChild(doc.CreateNode(XmlNodeType.Element, "BenefitKindID", ""));
                     
-                    //вводим документ-основание (если есть) - один из четырёх
                     List<int?> regards = new List<int?>() { 5, 6, 7 };//победител/призёр
-                    var OlympDocs = context.extOlympiads.Where(x => x.AbiturientId == app.AppUID && regards.Contains(x.OlympValueId));
-                    if (OlympDocs.Where(x => x.OlympTypeId == 2).Count() > 0)
-                        //диплом победителя/призёра всероссийской олимпиады школьников
-                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicTotalDocument", ""));
-                    else if (OlympDocs.Where(x => x.OlympTypeId != 2).Count() > 0)
-                        //диплом победителя/призёра олимпиады школьников
-                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicDocument", ""));
+                    //добавляем сведения о льготе, предоставленной абитуриенту
+                    if (context.extOlympiadsAll.Where(x => x.AbiturientId == app.AppUID && regards.Contains(x.OlympValueId)).Count() > 0)
+                    {
+                        root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "ApplicationCommonBenefit", ""));
+                        root.LastChild["ApplicationCommonBenefit"].AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
+                        root.LastChild["ApplicationCommonBenefit"].LastChild.InnerXml = app.AppUID.ToString();
+                        root.LastChild["ApplicationCommonBenefit"].AppendChild(doc.CreateNode(XmlNodeType.Element, "CompetitiveGroupID", ""));
+                        root.LastChild["ApplicationCommonBenefit"].LastChild.InnerXml = app.CompetitiveGroupId.ToString();
+                        //id типа документа-основания (Справочник №31 - "Тип документа") - необяз
+                        //root.LastChild["ApplicationCommonBenefit"].AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentTypeID", ""));
+                        //документ-основание - необяз
+                        root.LastChild["ApplicationCommonBenefit"].AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentReason", ""));
+                        //id вида льготы (Справочник №30 - "Вид льготы")
+                        root.LastChild["ApplicationCommonBenefit"].AppendChild(doc.CreateNode(XmlNodeType.Element, "BenefitKindID", ""));
+                        root.LastChild["ApplicationCommonBenefit"].LastChild.InnerXml = "1";
 
+                        //вводим документ-основание (если есть) - один из четырёх
+                        var OlympDocs = context.extOlympiadsAll.Where(x => x.AbiturientId == app.AppUID && regards.Contains(x.OlympValueId));
+                        if (OlympDocs.Where(x => x.OlympTypeId == 2).Count() > 0)
+                        {
+                            var Ol = OlympDocs.Where(x => x.OlympTypeId == 2).OrderBy(x => x.OlympValueSortOrder).FirstOrDefault();
+                            if (Ol != null)
+                            {
+                                //диплом победителя/призёра всероссийской олимпиады школьников
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicTotalDocument", ""));
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["UID"].InnerXml = Ol.Id.ToString();
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["OriginalReceived"].InnerXml = app.HasOriginals ? "true" : "false";
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentSeries", ""));
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["DocumentSeries"].InnerXml = string.IsNullOrEmpty(Ol.DocumentSeries) ? "-" : Ol.DocumentSeries;
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentNumber", ""));
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["DocumentNumber"].InnerXml = string.IsNullOrEmpty(Ol.DocumentNumber) ? "---" : Ol.DocumentNumber;
+
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DiplomaTypeID", ""));
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["DiplomaTypeID"].InnerXml = Ol.OlympValueId == 7 ? "1" : "2";
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "Subjects", ""));
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["Subjects"].AppendChild(doc.CreateNode(XmlNodeType.Element, "SubjectBriefData", ""));
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["Subjects"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "SubjectID", ""));
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["Subjects"].LastChild["SubjectID"].InnerXml = SearchInDictionary(dic01_Subject, Ol.OlympSubjectName);
+                            }
+                        }
+                        else if (OlympDocs.Where(x => x.OlympTypeId != 2).Count() > 0)
+                        {
+                            //диплом победителя/призёра олимпиады школьников
+                            var Ol = OlympDocs.Where(x => x.OlympTypeId != 2).OrderBy(x => x.OlympValueSortOrder).FirstOrDefault();
+                            if (Ol != null)
+                            {
+                                //диплом победителя/призёра всероссийской олимпиады школьников
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicDocument", ""));
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["UID"].InnerXml = Ol.Id.ToString();
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["OriginalReceived"].InnerXml = app.HasOriginals ? "true" : "false";
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentNumber", ""));
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["DocumentNumber"].InnerXml = string.IsNullOrEmpty(Ol.DocumentNumber) ? "---" : Ol.DocumentNumber;
+
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DiplomaTypeID", ""));
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["DiplomaTypeID"].InnerXml = Ol.OlympValueId == 7 ? "1" : "2";
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicID", ""));
+                                string OlNumber = (Ol.Number ?? 44).ToString();
+                                root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["OlympicID"].InnerXml = SearchInDictionary(dic19_Olympics, (Ol.Number ?? 1).ToString());
+                            }
+                        }
+                    }
+                    /*
                     //основание для льготы по медицинским показаниям - ПОКА ЧТО В БАЗЕ НЕТ
                     //root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].AppendChild(doc.CreateNode(XmlNodeType.Element, "MedicalDocument", ""));
                     //прочее - ПОКА ЧТО В БАЗЕ НЕТ
@@ -797,7 +902,7 @@ namespace FIS_EGE_2013
                     //рез-ты вступительных испытаний
                     if (abitMarks.Count() > 0)
                         root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "EntranceTestResults", ""));
-
+                    List<string> badValues = new List<string>() { "2014", "2015" };
                     foreach (var mrk in abitMarks)
                     {
                         root.LastChild["EntranceTestResults"].AppendChild(doc.CreateNode(XmlNodeType.Element, "EntranceTestResult", ""));
@@ -821,7 +926,7 @@ namespace FIS_EGE_2013
 
                         //вносим предмет
                         root.LastChild["EntranceTestResults"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "EntranceTestSubject", ""));
-                        if (StudyLevelGroupId == 1 && dic01_Subject.ContainsValue(mrk.ExamName))
+                        if ((StudyLevelGroupId == 1 || StudyLevelGroupId == 3) && dic01_Subject.ContainsValue(mrk.ExamName))
                         {
                             root.LastChild["EntranceTestResults"].LastChild["EntranceTestSubject"].AppendChild(doc.CreateNode(XmlNodeType.Element, "SubjectID", ""));
                             root.LastChild["EntranceTestResults"].LastChild["EntranceTestSubject"]["SubjectID"].InnerXml = SearchInDictionary(dic01_Subject, mrk.ExamName);
@@ -839,28 +944,31 @@ namespace FIS_EGE_2013
                         root.LastChild["EntranceTestResults"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "CompetitiveGroupID", ""));
                         root.LastChild["EntranceTestResults"].LastChild["CompetitiveGroupID"].InnerXml = app.CompetitiveGroupId.ToString();
 
-                        //вносим сведения об основании для оценки (OlympicDocument или OlympicTotalDocument или InstitutionDocument или EgeDocumentID) - необяз
-                        root.LastChild["EntranceTestResults"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "ResultDocument", ""));
-                        //string ResultDocumentId = "";
-                        //if (mrk.IsFromOlymp)
-                        //{
-                        //    var Olymp = context.extOlympiads.Where(x => x.Id == mrk.OlympiadId).FirstOrDefault();
-                        //    //тут надо посмотреть, какой из олимпийских сертификатов давать
-                        //    if (Olymp == null)
-                        //        continue;
-                        //    if (Olymp.OlympTypeId == 2)
-                        //    {
-                        //        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicTotalDocument", ""));
-                        //    }
-                        //    root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicDocument", ""));
-
-                        //}
-                        //else 
                         if (mrk.IsFromEge)
                         {
-                            //id свидетельства о рез-тах ЕГЭ, которое было приложено к заявлению
-                            root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].AppendChild(doc.CreateNode(XmlNodeType.Element, "EgeDocumentID", ""));
-                            root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild.InnerXml = mrk.EgeCertificateId.ToString();
+                            //проверка на сертификаты ЕГЭ - 2014 год НЕ ГРУЗИМ, т.к. не придумали никакого нормального идентификатора
+                            var EgeCert = context.EgeCertificate.Where(x => x.Id == mrk.EgeCertificateId).FirstOrDefault();
+                            if (!badValues.Contains(EgeCert.Year))
+                            {
+                                root.LastChild["EntranceTestResults"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "ResultDocument", ""));
+                            }
+                        }
+                        else
+                        {
+                            root.LastChild["EntranceTestResults"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "ResultDocument", ""));
+                        }
+
+                        if (mrk.IsFromEge)
+                        {
+                            //проверка на сертификаты ЕГЭ - 2014 год НЕ ГРУЗИМ, т.к. не придумали никакого нормального идентификатора
+                            var EgeCert = context.EgeCertificate.Where(x => x.Id == mrk.EgeCertificateId).FirstOrDefault();
+                            //List<string> badValues = new List<string>() { "2014", "2015" };
+                            if (!badValues.Contains(EgeCert.Year))
+                            {
+                                //id свидетельства о рез-тах ЕГЭ, которое было приложено к заявлению
+                                root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].AppendChild(doc.CreateNode(XmlNodeType.Element, "EgeDocumentID", ""));
+                                root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild.InnerXml = mrk.EgeCertificateId.ToString();
+                            }
                         }
                         else if (mrk.IsManual)
                         {
@@ -881,7 +989,7 @@ namespace FIS_EGE_2013
                                     root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild["UID"].InnerXml = olymp.Id.ToString();
                                     root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
                                     root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild["OriginalReceived"].InnerXml = app.HasOriginals.ToString().ToLower();
-                                    
+
                                     root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentSeries", ""));
                                     string DocSeries = olymp.DocumentSeries;
                                     if (string.IsNullOrEmpty(DocSeries))
@@ -913,7 +1021,7 @@ namespace FIS_EGE_2013
                                     root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild["UID"].InnerXml = olymp.Id.ToString();
                                     root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
                                     root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild["OriginalReceived"].InnerXml = app.HasOriginals.ToString().ToLower();
-                                    
+
                                     if (!string.IsNullOrEmpty(olymp.DocumentSeries))
                                     {
                                         string DocSeries = olymp.DocumentSeries;
@@ -966,39 +1074,43 @@ namespace FIS_EGE_2013
                     //root.LastChild["ApplicationDocuments"].AppendChild(doc.CreateNode(XmlNodeType.Element, "GiaDocuments", ""));
 
                     dt = DateTime.Now;
-
-                    var egeDocs = context.extEgeMark.Where(x => x.PersonId == app.EntrantUID).Select(x => new { x.Id, x.EgeCertificateId, x.Number, x.Year, x.FISName, x.Value });
+                    
+                    var egeDocs = context.extEgeMark.Where(x => x.PersonId == app.EntrantUID && !badValues.Contains(x.Year)).Select(x => new { x.Id, x.EgeCertificateId, x.Number, x.Year, x.FISName, x.Value });
                     //Свидетельства о результатах ЕГЭ - необяз
                     if (egeDocs.Count() > 0)
                         root.LastChild["ApplicationDocuments"].AppendChild(doc.CreateNode(XmlNodeType.Element, "EgeDocuments", ""));
 
                     foreach (var cert in egeDocs.Select(x => new { x.EgeCertificateId, x.Year, x.Number }).Distinct())
                     {
-                        //Заполняем данные о сертификатах
-                        root.LastChild["ApplicationDocuments"]["EgeDocuments"].AppendChild(doc.CreateNode(XmlNodeType.Element, "EgeDocument", ""));
-
-                        root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
-                        root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["UID"].InnerXml = cert.EgeCertificateId.ToString();
-                        root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
-                        root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["OriginalReceived"].InnerXml = app.HasOriginals.ToString().ToLower();
-                        //root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
-                        root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentNumber", ""));
-                        root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["DocumentNumber"].InnerXml = cert.Number;
-                        root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentYear", ""));
-                        root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["DocumentYear"].InnerXml = cert.Year;
-                        root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "Subjects", ""));
-
-                        var exams = egeDocs.Where(x => x.EgeCertificateId == cert.EgeCertificateId).Select(x => new { x.FISName, x.Value });
-                        foreach (var exam in exams)
+                        
+                        if (!badValues.Contains(cert.Year))
                         {
-                            //заполняем оценки в сертификате ЕГЭ
-                            root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["Subjects"].AppendChild(doc.CreateNode(XmlNodeType.Element, "SubjectData", ""));
+                            //Заполняем данные о сертификатах
+                            root.LastChild["ApplicationDocuments"]["EgeDocuments"].AppendChild(doc.CreateNode(XmlNodeType.Element, "EgeDocument", ""));
 
-                            //id дисциплины (справочник №1 - "Общеобразовательные предметы")
-                            root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["Subjects"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "SubjectID", ""));
-                            root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["Subjects"].LastChild["SubjectID"].InnerXml = SearchInDictionary(dic01_Subject, exam.FISName);
-                            root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["Subjects"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "Value", ""));
-                            root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["Subjects"].LastChild["Value"].InnerXml = exam.Value.ToString();
+                            root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
+                            root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["UID"].InnerXml = cert.EgeCertificateId.ToString();
+                            root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
+                            root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["OriginalReceived"].InnerXml = app.HasOriginals.ToString().ToLower();
+                            //root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
+                            root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentNumber", ""));
+                            root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["DocumentNumber"].InnerXml = cert.Number;
+                            root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentYear", ""));
+                            root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["DocumentYear"].InnerXml = cert.Year;
+                            root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "Subjects", ""));
+
+                            var exams = egeDocs.Where(x => x.EgeCertificateId == cert.EgeCertificateId).Select(x => new { x.FISName, x.Value });
+                            foreach (var exam in exams)
+                            {
+                                //заполняем оценки в сертификате ЕГЭ
+                                root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["Subjects"].AppendChild(doc.CreateNode(XmlNodeType.Element, "SubjectData", ""));
+
+                                //id дисциплины (справочник №1 - "Общеобразовательные предметы")
+                                root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["Subjects"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "SubjectID", ""));
+                                root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["Subjects"].LastChild["SubjectID"].InnerXml = SearchInDictionary(dic01_Subject, exam.FISName);
+                                root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["Subjects"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "Value", ""));
+                                root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["Subjects"].LastChild["Value"].InnerXml = exam.Value.ToString();
+                            }
                         }
                     }
 
@@ -1023,8 +1135,12 @@ namespace FIS_EGE_2013
                     root.LastChild["ApplicationDocuments"]["IdentityDocument"].AppendChild(doc.CreateNode(XmlNodeType.Element, "IdentityDocumentTypeID", ""));
                     root.LastChild["ApplicationDocuments"]["IdentityDocument"]["IdentityDocumentTypeID"].InnerXml = SearchInDictionary(dic22_IdentityDocumentType, app.PassportTypeFISName);
                     //Список стран (справочник №7)
+                    string Nationality = app.NationalityFISName;
+                    if (Nationality == "лицо без гражданства")
+                        Nationality = "Не определено";
+
                     root.LastChild["ApplicationDocuments"]["IdentityDocument"].AppendChild(doc.CreateNode(XmlNodeType.Element, "NationalityTypeID", ""));
-                    root.LastChild["ApplicationDocuments"]["IdentityDocument"]["NationalityTypeID"].InnerXml = SearchInDictionary(dic07_Country, app.NationalityFISName);
+                    root.LastChild["ApplicationDocuments"]["IdentityDocument"]["NationalityTypeID"].InnerXml = SearchInDictionary(dic07_Country, Nationality);
                     root.LastChild["ApplicationDocuments"]["IdentityDocument"].AppendChild(doc.CreateNode(XmlNodeType.Element, "BirthDate", ""));
                     root.LastChild["ApplicationDocuments"]["IdentityDocument"]["BirthDate"].InnerXml = app.BirthDate.ToString("yyyy-MM-dd");
                     root.LastChild["ApplicationDocuments"]["IdentityDocument"].AppendChild(doc.CreateNode(XmlNodeType.Element, "BirthPlace", ""));
@@ -1035,7 +1151,7 @@ namespace FIS_EGE_2013
                     //на выбор - один из
                     //все их объединяет три поля - Серия, Номер, Оригинал(да/нет)
                     XmlNode rootChild = root;
-                    switch (app.SchoolTypeId ?? 1)
+                    switch (app.SchoolTypeId)
                     {
                         case 1://Школа
                             {
@@ -1081,7 +1197,7 @@ namespace FIS_EGE_2013
                     }
 
                     rootChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentSeries", ""));
-                    string series = (app.EducDocRegion != "" ? (app.EducDocRegion + " ") : "") + app.EducDocSeries;
+                    string series = app.EducDocSeries;
                     rootChild["DocumentSeries"].InnerXml = string.IsNullOrEmpty(series) ? "-" : series;
                     rootChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentNumber", ""));
                     rootChild["DocumentNumber"].InnerXml = string.IsNullOrEmpty(app.EducDocNum) ? "-" : app.EducDocNum;
@@ -1136,7 +1252,7 @@ namespace FIS_EGE_2013
         {
             XmlDocument doc = new XmlDocument();
 
-            UpdateDictionaries();
+            UpdateDictionaries_Local();
             List<int?> BeneficiaryCompetitions = new List<int?>() { 1, 2, 7, 8 };
 
             using (PriemEntities context = new PriemEntities())
@@ -1248,8 +1364,8 @@ namespace FIS_EGE_2013
             XmlDocument doc = new XmlDocument();
             //XmlImplementation imp = new XmlImplementation();
 
-            UpdateDictionaries();
-            List<int?> BeneficiaryCompetitions = new List<int?>() { 1, 2, 7, 8 };
+            //UpdateDictionaries();
+            List<int?> BeneficiaryCompetitions = new List<int?>() { 1, /*2, 7,*/ 8 };
 
             using (PriemEntities context = new PriemEntities())
             {
@@ -1290,19 +1406,20 @@ namespace FIS_EGE_2013
                             join compGroup in context.qEntryToCompetitiveGroup on abit.EntryId equals compGroup.EntryId
                             join extCompGroup in context.extCompetitiveGroup on compGroup.CompetitiveGroupId equals extCompGroup.Id
                             join SL in context.StudyLevel on abit.StudyLevelId equals SL.Id
-                            where (FacultyId.HasValue ? abit.FacultyId == FacultyId.Value : true)
-                            && (LicenseProgramId.HasValue ? abit.LicenseProgramId == LicenseProgramId.Value : true)
-                            && (abit.StudyLevelGroupId == StudyLevelGroupId)
+                            join qq in context.qAbiturientForeignApplicationsOnly on abit.Id equals qq.Id into qq2
+                            from qq in qq2.DefaultIfEmpty()
+                            where SL.LevelGroupId <= 3 && qq.Id == null
+                            && abit.CompetitionId != 11 && abit.CompetitionId != 12
                             select new
                             {
                                 AppUID = abit.Id,
                                 CompetitionId = abit.CompetitionId,
-                                IsGosline = abit.IsGosLine,
+                                IsForeign = abit.IsForeign,
                                 ApplicationNumber = abit.RegNum,
                                 RegistrationDate = abit.DocInsertDate,
                                 abit.StudyBasisFISName,
                                 abit.StudyFormFISName,
-                                StudyLevelFISName = SL.FISName,
+                                StudyLevelFISName = SL.FISName + (abit.IsReduced ? " (сокращ.)" : ""),
                                 compGroup.CompetitiveGroupId,
                                 extCompGroup.LicenseProgramCode,
                                 extCompGroup.LicenseProgramName,
@@ -1354,7 +1471,7 @@ namespace FIS_EGE_2013
                     root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "CompetitiveGroupUID", ""));
                     root.LastChild["CompetitiveGroupUID"].InnerXml = app.CompetitiveGroupId.ToString();
 
-                    if (app.IsGosline)
+                    if (app.IsForeign)
                     {
                         root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "IsForeigner", ""));
                         root.LastChild["IsForeigner"].InnerText = "true";
@@ -1397,7 +1514,22 @@ namespace FIS_EGE_2013
                 dgvCompGroup.DataSource = src.Distinct();
             }
         }
-        private void UpdateDictionaries()
+        private void UpdateDictionaries_Local()
+        {
+            //обновляем по очереди словари
+            XmlDocument result_doc = new XmlDocument();
+            List<int> list_codes = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 15, 17, 18, 19, 22, 23, 30, 31, 33, 34, 35, 36 };
+            foreach (int code in list_codes)
+            {
+                using (System.IO.StreamReader sr = new System.IO.StreamReader(System.Windows.Forms.Application.StartupPath + "/dics/dic" + code + ".xml"))
+                {
+                    result_doc.LoadXml(sr.ReadToEnd());
+                }
+
+                UpdateDictionary(code, ref result_doc);
+            }
+        }
+        private void UpdateDictionaries_Web()
         {
             //обновляем по очереди словари
             XmlDocument query_doc = new XmlDocument();
@@ -1416,7 +1548,7 @@ namespace FIS_EGE_2013
             query_doc["Root"]["GetDictionaryContent"].AppendChild(query_doc.CreateNode(XmlNodeType.Element, "DictionaryCode", ""));
             XmlNode DictionaryCodeNode = query_doc["Root"]["GetDictionaryContent"]["DictionaryCode"];
 
-            List<int> list_codes = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 15, 17, 18, 19, 22, 23, 30, 31, 33, 34 };
+            List<int> list_codes = new List<int>() { 1, 2, 3, 4, 5, 6, 7, 10, 11, 12, 13, 14, 15, 17, 18, 19, 22, 23, 30, 31, 33, 34, 35, 36 };
 
             foreach (int code in list_codes)
             {
@@ -1444,7 +1576,7 @@ namespace FIS_EGE_2013
                             result_doc.LoadXml(sr.ReadToEnd());
                         }
                     }
-                        
+
                 }
                 catch (WebException ex)
                 {
@@ -1559,7 +1691,7 @@ namespace FIS_EGE_2013
         }
         private void btnExportXML_part1_Click(object sender, EventArgs e)
         {
-            ExportXML_Part1();
+            ExportXML_Part1(chbIsCrimea.Checked);
         }
         private void btnExportXML_part3_Click(object sender, EventArgs e)
         {
@@ -1592,7 +1724,7 @@ namespace FIS_EGE_2013
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void btnUpdateExanInCompetitiveGroup_Click(object sender, EventArgs e)
         {
             using (PriemEntities ctx = new PriemEntities())
             {
@@ -1633,36 +1765,33 @@ namespace FIS_EGE_2013
 
         private void btnImportOrdersOfAdmission_Click(object sender, EventArgs e)
         {
-            if (!chbFullImport.Checked)
-            {
-                SaveFileDialog sf = new SaveFileDialog();
-                sf.Filter = "XML File|*.xml";
-                if (sf.ShowDialog() != System.Windows.Forms.DialogResult.OK)
-                    return;
-
-                ExportXML_Part4(sf.FileName);
-            }
-            else
-            {
-                FolderBrowserDialog dlg = new FolderBrowserDialog();
-                if (dlg.ShowDialog() != System.Windows.Forms.DialogResult.OK)
-                    return;
-                string folderPath = dlg.SelectedPath + "\\";
-                using (PriemEntities context = new PriemEntities())
-                {
-                    var facs = context.extEntry.Where(x => x.StudyLevelGroupId == StudyLevelGroupId).Select(x => new { Id = x.FacultyId, Acronym = x.FacultyAcr })
-                        .Distinct().ToList().Select(x => new { x.Acronym, x.Id }).ToList();
-                    foreach (var x in facs)
-                    {
-                        FacultyId = x.Id;
-                        ExportXML_Part4(folderPath + (x.Id < 10 ? "0" : "") + x.Id.ToString() + "_" + x.Acronym + ".xml");
-                    }
-                    MessageBox.Show("OK");
-                }
-            }
-            
+            //if (!chbFullImport.Checked)
+            //{
+            SaveFileDialog sf = new SaveFileDialog();
+            sf.Filter = "XML File|*.xml";
+            if (sf.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+                return;
+            ExportXML_Part4(sf.FileName);
+            //}
+            //else
+            //{
+            //    FolderBrowserDialog dlg = new FolderBrowserDialog();
+            //    if (dlg.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+            //        return;
+            //    string folderPath = dlg.SelectedPath + "\\";
+            //    using (PriemEntities context = new PriemEntities())
+            //    {
+            //        var facs = context.extEntry.Where(x => x.StudyLevelGroupId == StudyLevelGroupId).Select(x => new { Id = x.FacultyId, Acronym = x.FacultyAcr })
+            //            .Distinct().ToList().Select(x => new { x.Acronym, x.Id }).ToList();
+            //        foreach (var x in facs)
+            //        {
+            //            FacultyId = x.Id;
+            //            ExportXML_Part4(folderPath + (x.Id < 10 ? "0" : "") + x.Id.ToString() + "_" + x.Acronym + ".xml");
+            //        }
+            //        MessageBox.Show("OK");
+            //    }
+            //}
         }
-
         private void btnDeleteApplications_Click(object sender, EventArgs e)
         {
             if (!chbFullImport.Checked)
@@ -1692,6 +1821,11 @@ namespace FIS_EGE_2013
                 }
             }
 
+        }
+
+        private void btnUpdateDics_Click(object sender, EventArgs e)
+        {
+            UpdateDictionaries_Web();
         }
     }
 }

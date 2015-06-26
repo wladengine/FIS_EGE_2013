@@ -46,10 +46,12 @@
             this.label1 = new System.Windows.Forms.Label();
             this.btnExportXML_part1 = new System.Windows.Forms.Button();
             this.btnExportXML_part3 = new System.Windows.Forms.Button();
-            this.button1 = new System.Windows.Forms.Button();
+            this.btnUpdateExanInCompetitiveGroup = new System.Windows.Forms.Button();
             this.chbFullImport = new System.Windows.Forms.CheckBox();
             this.btnImportOrdersOfAdmission = new System.Windows.Forms.Button();
             this.btnDeleteApplications = new System.Windows.Forms.Button();
+            this.btnUpdateDics = new System.Windows.Forms.Button();
+            this.chbIsCrimea = new System.Windows.Forms.CheckBox();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCompGroup)).BeginInit();
             this.groupBox3.SuspendLayout();
@@ -104,9 +106,9 @@
             // 
             this.cbLicenseProgram.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbLicenseProgram.FormattingEnabled = true;
-            this.cbLicenseProgram.Location = new System.Drawing.Point(107, 45);
+            this.cbLicenseProgram.Location = new System.Drawing.Point(87, 45);
             this.cbLicenseProgram.Name = "cbLicenseProgram";
-            this.cbLicenseProgram.Size = new System.Drawing.Size(292, 21);
+            this.cbLicenseProgram.Size = new System.Drawing.Size(306, 21);
             this.cbLicenseProgram.TabIndex = 3;
             this.cbLicenseProgram.SelectedIndexChanged += new System.EventHandler(this.cbLicenseProgram_SelectedIndexChanged);
             // 
@@ -138,6 +140,7 @@
             // groupBox2
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.chbIsCrimea);
             this.groupBox2.Controls.Add(this.cbLicenseProgram);
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.cbFaculty);
@@ -161,9 +164,9 @@
             // 
             this.cbFaculty.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbFaculty.FormattingEnabled = true;
-            this.cbFaculty.Location = new System.Drawing.Point(107, 19);
+            this.cbFaculty.Location = new System.Drawing.Point(87, 19);
             this.cbFaculty.Name = "cbFaculty";
-            this.cbFaculty.Size = new System.Drawing.Size(292, 21);
+            this.cbFaculty.Size = new System.Drawing.Size(306, 21);
             this.cbFaculty.TabIndex = 1;
             this.cbFaculty.SelectedIndexChanged += new System.EventHandler(this.cbFaculty_SelectedIndexChanged);
             // 
@@ -244,22 +247,22 @@
             this.btnExportXML_part3.UseVisualStyleBackColor = true;
             this.btnExportXML_part3.Click += new System.EventHandler(this.btnExportXML_part3_Click);
             // 
-            // button1
+            // btnUpdateExanInCompetitiveGroup
             // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(577, 374);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(101, 34);
-            this.button1.TabIndex = 18;
-            this.button1.Text = "UpdateExamInCompetitiveGroup";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.btnUpdateExanInCompetitiveGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUpdateExanInCompetitiveGroup.Location = new System.Drawing.Point(577, 387);
+            this.btnUpdateExanInCompetitiveGroup.Name = "btnUpdateExanInCompetitiveGroup";
+            this.btnUpdateExanInCompetitiveGroup.Size = new System.Drawing.Size(101, 34);
+            this.btnUpdateExanInCompetitiveGroup.TabIndex = 18;
+            this.btnUpdateExanInCompetitiveGroup.Text = "UpdateExamInCompetitiveGroup";
+            this.btnUpdateExanInCompetitiveGroup.UseVisualStyleBackColor = true;
+            this.btnUpdateExanInCompetitiveGroup.Click += new System.EventHandler(this.btnUpdateExanInCompetitiveGroup_Click);
             // 
             // chbFullImport
             // 
             this.chbFullImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chbFullImport.AutoSize = true;
-            this.chbFullImport.Location = new System.Drawing.Point(577, 351);
+            this.chbFullImport.Location = new System.Drawing.Point(577, 325);
             this.chbFullImport.Name = "chbFullImport";
             this.chbFullImport.Size = new System.Drawing.Size(74, 17);
             this.chbFullImport.TabIndex = 19;
@@ -281,7 +284,7 @@
             // btnDeleteApplications
             // 
             this.btnDeleteApplications.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDeleteApplications.Location = new System.Drawing.Point(577, 414);
+            this.btnDeleteApplications.Location = new System.Drawing.Point(577, 427);
             this.btnDeleteApplications.Name = "btnDeleteApplications";
             this.btnDeleteApplications.Size = new System.Drawing.Size(101, 21);
             this.btnDeleteApplications.TabIndex = 21;
@@ -289,15 +292,37 @@
             this.btnDeleteApplications.UseVisualStyleBackColor = true;
             this.btnDeleteApplications.Click += new System.EventHandler(this.btnDeleteApplications_Click);
             // 
+            // btnUpdateDics
+            // 
+            this.btnUpdateDics.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnUpdateDics.Location = new System.Drawing.Point(577, 360);
+            this.btnUpdateDics.Name = "btnUpdateDics";
+            this.btnUpdateDics.Size = new System.Drawing.Size(101, 21);
+            this.btnUpdateDics.TabIndex = 22;
+            this.btnUpdateDics.Text = "UpdateDics";
+            this.btnUpdateDics.UseVisualStyleBackColor = true;
+            this.btnUpdateDics.Click += new System.EventHandler(this.btnUpdateDics_Click);
+            // 
+            // chbIsCrimea
+            // 
+            this.chbIsCrimea.AutoSize = true;
+            this.chbIsCrimea.Location = new System.Drawing.Point(399, 21);
+            this.chbIsCrimea.Name = "chbIsCrimea";
+            this.chbIsCrimea.Size = new System.Drawing.Size(55, 17);
+            this.chbIsCrimea.TabIndex = 4;
+            this.chbIsCrimea.Text = "Крым";
+            this.chbIsCrimea.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(690, 516);
+            this.Controls.Add(this.btnUpdateDics);
             this.Controls.Add(this.btnDeleteApplications);
             this.Controls.Add(this.btnImportOrdersOfAdmission);
             this.Controls.Add(this.chbFullImport);
-            this.Controls.Add(this.button1);
+            this.Controls.Add(this.btnUpdateExanInCompetitiveGroup);
             this.Controls.Add(this.btnExportXML_part3);
             this.Controls.Add(this.btnExportXML_part1);
             this.Controls.Add(this.groupBox4);
@@ -341,10 +366,12 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnExportXML_part1;
         private System.Windows.Forms.Button btnExportXML_part3;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button btnUpdateExanInCompetitiveGroup;
         private System.Windows.Forms.CheckBox chbFullImport;
         private System.Windows.Forms.Button btnImportOrdersOfAdmission;
         private System.Windows.Forms.Button btnDeleteApplications;
+        private System.Windows.Forms.Button btnUpdateDics;
+        private System.Windows.Forms.CheckBox chbIsCrimea;
     }
 }
 

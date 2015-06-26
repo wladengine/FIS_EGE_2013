@@ -26,6 +26,7 @@ namespace FIS_EGE_2013
             {
                 var data =
                     (from pers in context.extPerson
+                     join CurrEduc in context.extPerson_EducationInfo_Current on pers.Id equals CurrEduc.PersonId
                      join Abit in context.Abiturient on pers.Id equals Abit.PersonId
                      join forApps in context.qAbiturientForeignApplicationsOnly on Abit.Id equals forApps.Id into forApps2
                      from forApps in forApps2.DefaultIfEmpty()
@@ -33,7 +34,7 @@ namespace FIS_EGE_2013
                      join cer in context.EgeCertificate on pers.Id equals cer.PersonId into cer2
                      from cer in cer2.DefaultIfEmpty()
 
-                     where /*(cer.Id != null || cer.FBSStatusId == 0) && cer.Year != "2014" &&*/ pers.SchoolTypeId != 4 && pers.PassportTypeId == 1 && forApps.Id == null
+                     where CurrEduc.SchoolTypeId != 4 && pers.PassportTypeId == 1 && forApps.Id == null
                      select new
                      {
                          pers.Id,
@@ -54,19 +55,6 @@ namespace FIS_EGE_2013
         private void GetDataAsync(Guid PersonId)
         {
             string queryXML = GetPersonSingleCheckXML(PersonId);
-
-            //bw = new BackgroundWorker();
-            //bw.DoWork += bw_DoWork;
-            //bw.RunWorkerCompleted += bw_GetAnswerAndUpdateCerts;
-
-            //var rData = new
-            //{
-            //    queryXML = queryXML
-            //};
-
-            //tbReq.Text = queryXML;
-
-            //bw.RunWorkerAsync(rData);
 
             FisEgeService.WSChecksSoapClient client = new FisEgeService.WSChecksSoapClient();
             string outXml = client.SingleCheck(new FisEgeService.UserCredentials() { Login = "p.karpenko@spbu.ru", Password = "E0k02II", Client = "p.karpenko@spbu.ru" }, queryXML);
@@ -91,52 +79,10 @@ namespace FIS_EGE_2013
         {
             string queryXML = GetCertSingleCheckXML(EgeCertificateId);
 
-            //bw = new BackgroundWorker();
-            //bw.DoWork += bw_DoWork;
-            //bw.RunWorkerCompleted += bw_GetAnswerAndUpdateCerts;
-
-            //var rData = new
-            //{
-            //    queryXML = queryXML
-            //};
-
-            //tbReq.Text = queryXML;
-
-            //bw.RunWorkerAsync(rData);
-
             FisEgeService.WSChecksSoapClient client = new FisEgeService.WSChecksSoapClient();
             string outXml = client.SingleCheck(new FisEgeService.UserCredentials() { Login = "p.karpenko@spbu.ru", Password = "E0k02II", Client = "p.karpenko@spbu.ru" }, queryXML);
 
             bwSaveAll.ReportProgress(0, new { inXml = queryXML, outXml = outXml });
-            var certs = GetCertsFromXML(outXml);
-            foreach (var c in certs)
-                SaveEgeCertificate(c);
-        }
-
-        void bw_GetAnswerAndUpdateCerts(object sender, RunWorkerCompletedEventArgs e)
-        {
-            string outXml = e.Result.ToString();
-            tbAns.Text = outXml;
-
-            BackgroundWorker bw = new BackgroundWorker();
-            bw.DoWork += bw_doWork_2;
-            bw.RunWorkerCompleted += bw_FinishAndUpdateGrid;
-
-            var rData = new
-            {
-                queryXML = outXml
-            };
-
-            bw.RunWorkerAsync(rData);
-        }
-        void bw_FinishAndUpdateGrid(object sender, RunWorkerCompletedEventArgs e)
-        {
-            //FillGrid();
-        }
-
-        void bw_doWork_2(object sender, DoWorkEventArgs e)
-        {
-            string outXml = ((dynamic)e.Argument).queryXML;
             var certs = GetCertsFromXML(outXml);
             foreach (var c in certs)
                 SaveEgeCertificate(c);
@@ -220,13 +166,6 @@ namespace FIS_EGE_2013
                 }
             }
             return lstCerts;
-        }
-
-        void bw_DoWork(object sender, DoWorkEventArgs e)
-        {
-            string queryXML = ((dynamic)e.Argument).queryXML;
-            FisEgeService.WSChecksSoapClient client = new FisEgeService.WSChecksSoapClient();
-            e.Result = client.SingleCheck(new FisEgeService.UserCredentials() { Login = "p.karpenko@spbu.ru", Password = "E0k02II", Client = "p.karpenko@spbu.ru" }, queryXML);
         }
 
         private string GetPersonSingleCheckXML(Guid PersonId)
@@ -397,7 +336,6 @@ namespace FIS_EGE_2013
 
             foreach (int rwInd in lstRwIds)
             {
-                //int rwInd = dgvAbits.SelectedCells[0].RowIndex;
                 if (rwInd < 0)
                     return;
 
@@ -406,9 +344,6 @@ namespace FIS_EGE_2013
 
                 GetData(PersonId);
             }
-            //var certs = GetCertsFromXML(tbOutXML.Text);
-            //foreach (var c in certs)
-            //    SaveEgeCertificate(c);
         }
         private void btnImport_Click(object sender, EventArgs e)
         {
@@ -425,6 +360,7 @@ namespace FIS_EGE_2013
             {
                 var data =
                     (from pers in context.Person
+                     join CurrEduc in context.extPerson_EducationInfo_Current on pers.Id equals CurrEduc.PersonId
                      join Abit in context.Abiturient on pers.Id equals Abit.PersonId
                      join forApps in context.qAbiturientForeignApplicationsOnly on Abit.Id equals forApps.Id into forApps2
                      from forApps in forApps2.DefaultIfEmpty()
@@ -432,7 +368,7 @@ namespace FIS_EGE_2013
                      join cer in context.EgeCertificate on pers.Id equals cer.PersonId into cer2
                      from cer in cer2.DefaultIfEmpty()
 
-                     where cer.Id == null && pers.Person_EducationInfo.SchoolTypeId != 4 && pers.PassportTypeId == 1 && forApps.Id == null
+                     where cer.Id == null && CurrEduc.SchoolTypeId != 4 && pers.PassportTypeId == 1 && forApps.Id == null
                      select pers.Id).Distinct().ToList();
 
                 bwBatchRequestWorker = new BackgroundWorker();
@@ -733,7 +669,7 @@ namespace FIS_EGE_2013
         {
             using (PriemEntities context = new PriemEntities())
             {
-                var certs = context.Abiturient.Where(x => x.Person.Person_EducationInfo.SchoolTypeId != 4 && x.Entry.StudyLevel.StudyLevelGroup.Id == 1).Select(x => x.PersonId).Distinct().ToList();
+                var certs = context.Abiturient.Where(x => x.Entry.StudyLevel.StudyLevelGroup.Id == 1).Select(x => x.PersonId).Distinct().ToList();
                 int iMax = certs.Count;
                 int iCntr = 0;
                 int iPerc = 0;
