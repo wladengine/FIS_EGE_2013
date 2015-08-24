@@ -44,6 +44,9 @@
           <Property Name="CommitNumber" Type="int" />
           <Property Name="IsViewed" Type="bit" Nullable="false" />
           <Property Name="InnerEntryInEntryId" Type="uniqueidentifier" />
+          <Property Name="Author" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="BackDocByAdmissionHigh" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="ChangeType">
           <Key>
@@ -135,6 +138,7 @@
           <Property Name="KCPQuota" Type="int" />
           <Property Name="DateFinishEduc" Type="date" />
           <Property Name="DateStartEduc" Type="date" />
+          <Property Name="ParentEntryId" Type="uniqueidentifier" />
         </EntityType>
         <EntityType Name="EntryHeader">
           <Key>
@@ -144,6 +148,18 @@
           <Property Name="Name" Type="nvarchar" MaxLength="500" />
           <Property Name="Acronym" Type="nvarchar" MaxLength="50" />
           <Property Name="SortNum" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Exam">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="ExamNameId" Type="int" Nullable="false" />
+          <Property Name="IsAdditional" Type="bit" Nullable="false" />
+          <Property Name="IsOpen" Type="bit" Nullable="false" />
+          <Property Name="Holder" Type="nvarchar" MaxLength="50" />
+          <Property Name="IsPortfolioCommonPart" Type="bit" Nullable="false" />
+          <Property Name="IsPortfolioAnonymPart" Type="bit" Nullable="false" />
         </EntityType>
         <EntityType Name="ExamInEntry">
           <Key>
@@ -160,6 +176,16 @@
           <Property Name="IsGosLine" Type="bit" Nullable="false" />
           <Property Name="IsCrimea" Type="bit" Nullable="false" />
           <Property Name="OrderNumber" Type="tinyint" Nullable="false" />
+          <Property Name="ParentExamInEntryId" Type="int" />
+        </EntityType>
+        <EntityType Name="ExamName">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="500" />
+          <Property Name="Acronym" Type="nvarchar" MaxLength="50" />
+          <Property Name="NamePad" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="ExamsVedHistory">
           <Key>
@@ -169,10 +195,10 @@
           <Property Name="ExamsVedId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="PersonId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="PersonVedNumber" Type="int" />
-          <Property Name="Mark" Type="tinyint" />
-          <Property Name="OralMark" Type="tinyint" />
-          <Property Name="AppealMark" Type="tinyint" />
-          <Property Name="OralAppealMark" Type="tinyint" />
+          <Property Name="Mark" Type="decimal" Precision="4" Scale="1" />
+          <Property Name="OralMark" Type="decimal" Precision="4" Scale="1" />
+          <Property Name="AppealMark" Type="decimal" Precision="4" Scale="1" />
+          <Property Name="OralAppealMark" Type="decimal" Precision="4" Scale="1" />
           <Property Name="ExaminerName" Type="nvarchar" MaxLength="250" />
         </EntityType>
         <EntityType Name="FBSStatus">
@@ -181,6 +207,7 @@
           </Key>
           <Property Name="Id" Type="int" Nullable="false" />
           <Property Name="Name" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="SortGrade" Type="int" />
         </EntityType>
         <EntityType Name="ForeignCountry">
           <Key>
@@ -214,6 +241,7 @@
           <Property Name="Holder" Type="nvarchar" MaxLength="50" />
           <Property Name="Author" Type="nvarchar" MaxLength="150" Nullable="false" />
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="OlympYear" Type="smallint" Nullable="false" />
         </EntityType>
         <EntityType Name="OlympLevel">
           <Key>
@@ -234,6 +262,19 @@
           <Property Name="IsOpen" Type="bit" Nullable="false" />
           <Property Name="Holder" Type="nvarchar" MaxLength="150" />
         </EntityType>
+        <EntityType Name="OlympResultToCommonBenefit">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EntryId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="OlympTypeId" Type="int" Nullable="false" />
+          <Property Name="OlympSubjectId" Type="int" Nullable="false" />
+          <Property Name="OlympLevelId" Type="int" Nullable="false" />
+          <Property Name="OlympValueId" Type="int" Nullable="false" />
+          <Property Name="IsOpen" Type="bit" Nullable="false" />
+          <Property Name="Holder" Type="nvarchar" MaxLength="150" />
+        </EntityType>
         <EntityType Name="OlympSubject">
           <Key>
             <PropertyRef Name="Id" />
@@ -245,6 +286,14 @@
           <Property Name="Holder" Type="nvarchar" MaxLength="150" />
           <Property Name="ExamId" Type="int" />
           <Property Name="IsInVseross" Type="bit" />
+        </EntityType>
+        <EntityType Name="OlympSubjectToExam">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OlympSubjectId" Type="int" Nullable="false" />
+          <Property Name="ExamId" Type="int" Nullable="false" />
         </EntityType>
         <EntityType Name="OlympType">
           <Key>
@@ -408,6 +457,22 @@
           <Property Name="Author" Type="nvarchar" MaxLength="150" Nullable="false" />
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
         </EntityType>
+        <EntityType Name="PersonOtherPassport">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PersonId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="PassportTypeId" Type="int" Nullable="false" />
+          <Property Name="PassportSeries" Type="nvarchar" MaxLength="50" />
+          <Property Name="PassportNumber" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="PassportDate" Type="date" />
+          <Property Name="Surname" Type="nvarchar" MaxLength="150" />
+          <Property Name="Name" Type="nvarchar" MaxLength="150" />
+          <Property Name="SecondName" Type="nvarchar" MaxLength="150" />
+          <Property Name="IsOpen" Type="bit" Nullable="false" />
+          <Property Name="Holder" Type="nvarchar" MaxLength="150" />
+        </EntityType>
         <EntityType Name="Region">
           <Key>
             <PropertyRef Name="Id" />
@@ -464,6 +529,7 @@
           <Property Name="LevelGroupPrint" Type="nvarchar" MaxLength="50" />
           <Property Name="FISName" Type="nvarchar" MaxLength="50" />
           <Property Name="NameRod" Type="nvarchar" MaxLength="100" />
+          <Property Name="PostName" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="StudyLevelGroup">
           <Key>
@@ -489,6 +555,7 @@ warning 6002: The table/view 'Priem.ed.extAbit' does not have a primary key defi
             <PropertyRef Name="Checked" />
             <PropertyRef Name="NotEnabled" />
             <PropertyRef Name="CompFromOlymp" />
+            
             <PropertyRef Name="HasOriginals" />
             <PropertyRef Name="FacultyId" />
             <PropertyRef Name="LicenseProgramId" />
@@ -513,6 +580,7 @@ warning 6002: The table/view 'Priem.ed.extAbit' does not have a primary key defi
             <PropertyRef Name="IsParallel" />
             <PropertyRef Name="IsForeign" />
             <PropertyRef Name="IsCrimea" />
+            <PropertyRef Name="BackDocByAdmissionHigh" />
             <PropertyRef Name="StudyPlanId" />
           </Key>
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
@@ -534,7 +602,7 @@ warning 6002: The table/view 'Priem.ed.extAbit' does not have a primary key defi
           <Property Name="CelCompetitionId" Type="int" />
           <Property Name="CelCompetitionText" Type="nvarchar" MaxLength="50" />
           <Property Name="CompFromOlymp" Type="bit" Nullable="false" />
-          <Property Name="LanguageId" Type="int" />
+          <Property Name="LanguageId" Type="int" Nullable="false" />
           <Property Name="HasOriginals" Type="bit" Nullable="false" />
           <Property Name="StudyNumber" Type="nvarchar" MaxLength="50" />
           <Property Name="StudentStatus" Type="int" />
@@ -587,6 +655,7 @@ warning 6002: The table/view 'Priem.ed.extAbit' does not have a primary key defi
           <Property Name="InnerEntryInEntryObrazProgramId" Type="int" />
           <Property Name="IsForeign" Type="bit" Nullable="false" />
           <Property Name="IsCrimea" Type="bit" Nullable="false" />
+          <Property Name="BackDocByAdmissionHigh" Type="bit" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'Priem.ed.extAbitMarksSum' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -599,7 +668,7 @@ warning 6002: The table/view 'Priem.ed.extAbitMarksSum' does not have a primary 
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="StudyFormId" Type="int" Nullable="false" />
           <Property Name="StudyBasisId" Type="int" Nullable="false" />
-          <Property Name="TotalSum" Type="int" />
+          <Property Name="TotalSum" Type="decimal" Precision="38" Scale="1" />
           <Property Name="TotalSumFiveGrade" Type="int" />
           <Property Name="TotalCount" Type="int" />
         </EntityType>
@@ -644,6 +713,9 @@ warning 6002: The table/view 'Priem.ed.extCompetitiveGroup' does not have a prim
           <Property Name="KCP_ZP" Type="int" />
           <Property Name="KCP_Cel_B" Type="int" />
           <Property Name="KCP_Cel_P" Type="int" />
+          <Property Name="KCP_QuotaO" Type="int" />
+          <Property Name="KCP_QuotaOZ" Type="int" />
+          <Property Name="KCP_QuotaZ" Type="int" />
           <Property Name="QualificationCode" Type="nvarchar" MaxLength="5" />
           <Property Name="StudyLevelFISName" Type="nvarchar" MaxLength="50" />
           <Property Name="IsForeign" Type="bit" Nullable="false" />
@@ -748,6 +820,10 @@ warning 6002: The table/view 'Priem.ed.extEntry' does not have a primary key def
           <Property Name="StudyLevelGroupName" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="DateOfClose" Type="datetime" Nullable="false" />
           <Property Name="DateOfStart" Type="datetime" Nullable="false" />
+          <Property Name="DateStartEduc" Type="date" />
+          <Property Name="DateFinishEduc" Type="date" />
+          <Property Name="ParentEntryId" Type="uniqueidentifier" />
+          <Property Name="FacultyCode" Type="nvarchar" MaxLength="10" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'Priem.ed.extEntryView' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -756,6 +832,7 @@ warning 6002: The table/view 'Priem.ed.extEntryView' does not have a primary key
             <PropertyRef Name="Id" />
             <PropertyRef Name="AbiturientId" />
             <PropertyRef Name="Excluded" />
+            
             
             
             
@@ -769,6 +846,7 @@ warning 6002: The table/view 'Priem.ed.extEntryView' does not have a primary key
             <PropertyRef Name="ProtocolHistoryId" />
             <PropertyRef Name="PersonId" />
             <PropertyRef Name="IsCrimea" />
+            <PropertyRef Name="IsForeign" />
             <PropertyRef Name="IsQuota" />
             <PropertyRef Name="IsCel" />
             <PropertyRef Name="IsBE" />
@@ -781,7 +859,7 @@ warning 6002: The table/view 'Priem.ed.extEntryView' does not have a primary key
           <Property Name="StudyLevelGroupId" Type="int" Nullable="false" />
           <Property Name="LicenseProgramId" Type="int" />
           <Property Name="FacultyId" Type="int" />
-          <Property Name="StudyFormId" Type="int" />
+          <Property Name="StudyFormId" Type="int" Nullable="false" />
           <Property Name="StudyBasisId" Type="int" />
           <Property Name="Number" Type="nvarchar" MaxLength="15" />
           <Property Name="Date" Type="datetime" Nullable="false" />
@@ -803,10 +881,12 @@ warning 6002: The table/view 'Priem.ed.extEntryView' does not have a primary key
           <Property Name="EntryId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="ProtocolHistoryId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="PersonId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="IsCrimea" Type="int" Nullable="false" />
-          <Property Name="IsQuota" Type="int" Nullable="false" />
-          <Property Name="IsCel" Type="int" Nullable="false" />
-          <Property Name="IsBE" Type="int" Nullable="false" />
+          <Property Name="IsCrimea" Type="bit" Nullable="false" />
+          <Property Name="IsQuota" Type="bit" Nullable="false" />
+          <Property Name="IsCel" Type="bit" Nullable="false" />
+          <Property Name="IsBE" Type="bit" Nullable="false" />
+          <Property Name="IsForeign" Type="bit" Nullable="false" />
+          <Property Name="Priority" Type="int" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'Priem.ed.extExamInEntry' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -829,6 +909,9 @@ warning 6002: The table/view 'Priem.ed.extExamInEntry' does not have a primary k
             <PropertyRef Name="IsSecond" />
             <PropertyRef Name="IsReduced" />
             <PropertyRef Name="IsParallel" />
+            
+            <PropertyRef Name="IsCrimea" />
+            <PropertyRef Name="IsGosLine" />
           </Key>
           <Property Name="Id" Type="int" Nullable="false" />
           <Property Name="EntryId" Type="uniqueidentifier" Nullable="false" />
@@ -837,7 +920,7 @@ warning 6002: The table/view 'Priem.ed.extExamInEntry' does not have a primary k
           <Property Name="EgeMin" Type="int" />
           <Property Name="ExamNameId" Type="int" Nullable="false" />
           <Property Name="IsAdditional" Type="bit" Nullable="false" />
-          <Property Name="ExamName" Type="nvarchar" MaxLength="506" />
+          <Property Name="ExamName" Type="nvarchar" MaxLength="539" />
           <Property Name="FacultyId" Type="int" Nullable="false" />
           <Property Name="LicenseProgramId" Type="int" Nullable="false" />
           <Property Name="ObrazProgramId" Type="int" Nullable="false" />
@@ -851,7 +934,45 @@ warning 6002: The table/view 'Priem.ed.extExamInEntry' does not have a primary k
           <Property Name="IsReduced" Type="bit" Nullable="false" />
           <Property Name="IsParallel" Type="bit" Nullable="false" />
           <Property Name="ExamInEntryToCompetitiveGroupId" Type="uniqueidentifier" />
-          <Property Name="OrderNumber" Type="tinyint" />
+          <Property Name="OrderNumber" Type="tinyint" Nullable="false" />
+          <Property Name="IsCrimea" Type="bit" Nullable="false" />
+          <Property Name="IsGosLine" Type="bit" Nullable="false" />
+          <Property Name="ParentExamInEntryId" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Priem.ed.extExamsVed' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="extExamsVed">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="Number" />
+            <PropertyRef Name="StudyLevelGroupId" />
+            <PropertyRef Name="FacultyId" />
+            <PropertyRef Name="Date" />
+            <PropertyRef Name="ExamId" />
+            <PropertyRef Name="IsLocked" />
+            <PropertyRef Name="IsLoad" />
+            <PropertyRef Name="IsAddVed" />
+            <PropertyRef Name="ExamNameId" />
+            <PropertyRef Name="IsAdditional" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="Number" Type="int" Nullable="false" />
+          <Property Name="StudyLevelGroupId" Type="int" Nullable="false" />
+          <Property Name="FacultyId" Type="int" Nullable="false" />
+          <Property Name="StudyBasisId" Type="int" />
+          <Property Name="Date" Type="smalldatetime" Nullable="false" />
+          <Property Name="ExamId" Type="int" Nullable="false" />
+          <Property Name="IsLocked" Type="bit" Nullable="false" />
+          <Property Name="IsLoad" Type="bit" Nullable="false" />
+          <Property Name="IsAddVed" Type="bit" Nullable="false" />
+          <Property Name="AddCount" Type="int" />
+          <Property Name="ExamNameId" Type="int" Nullable="false" />
+          <Property Name="IsAdditional" Type="bit" Nullable="false" />
+          <Property Name="ExamName" Type="nvarchar" MaxLength="533" />
+          <Property Name="ExamAcronym" Type="nvarchar" MaxLength="50" />
+          <Property Name="StudyBasisName" Type="nvarchar" MaxLength="50" />
+          <Property Name="StudyBasisAcr" Type="nvarchar" MaxLength="10" />
+          <Property Name="FacultyName" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'Priem.ed.extOlympiadsAll' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -860,6 +981,7 @@ warning 6002: The table/view 'Priem.ed.extOlympiadsAll' does not have a primary 
             <PropertyRef Name="Id" />
             
             <PropertyRef Name="OriginDoc" />
+            <PropertyRef Name="OlympYear" />
           </Key>
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="OlympTypeId" Type="int" />
@@ -880,6 +1002,7 @@ warning 6002: The table/view 'Priem.ed.extOlympiadsAll' does not have a primary 
           <Property Name="DocumentNumber" Type="nvarchar" MaxLength="50" />
           <Property Name="DocumentDate" Type="date" />
           <Property Name="OlympValueSortOrder" Type="int" />
+          <Property Name="OlympYear" Type="smallint" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'Priem.ed.extPerson' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -908,6 +1031,8 @@ warning 6002: The table/view 'Priem.ed.extPerson' does not have a primary key de
             <PropertyRef Name="HasTRKI" />
             <PropertyRef Name="HasRussianNationality" />
             <PropertyRef Name="LanguageName" />
+            <PropertyRef Name="Author" />
+            <PropertyRef Name="DateCreated" />
           </Key>
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="Barcode" Type="int" />
@@ -984,6 +1109,9 @@ warning 6002: The table/view 'Priem.ed.extPerson' does not have a primary key de
           <Property Name="PassportTypeName" Type="nvarchar" MaxLength="50" />
           <Property Name="PassportTypeFISName" Type="nvarchar" MaxLength="50" />
           <Property Name="LanguageName" Type="nvarchar" MaxLength="50" Nullable="false" />
+          <Property Name="Author" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="HasOriginals" Type="bit" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'Priem.ed.extPerson_EducationInfo_Current' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -1108,6 +1236,7 @@ warning 6002: The table/view 'Priem.ed.qAbiturient' does not have a primary key 
             <PropertyRef Name="IsViewed" />
             <PropertyRef Name="IsForeign" />
             <PropertyRef Name="IsCrimea" />
+            <PropertyRef Name="BackDocByAdmissionHigh" />
           </Key>
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="PersonId" Type="uniqueidentifier" Nullable="false" />
@@ -1172,6 +1301,7 @@ warning 6002: The table/view 'Priem.ed.qAbiturient' does not have a primary key 
           <Property Name="InnerEntryInEntryId" Type="uniqueidentifier" />
           <Property Name="IsForeign" Type="bit" Nullable="false" />
           <Property Name="IsCrimea" Type="bit" Nullable="false" />
+          <Property Name="BackDocByAdmissionHigh" Type="bit" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'Priem.ed.qAbiturientForeignApplicationsOnly' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -1211,10 +1341,11 @@ warning 6002: The table/view 'Priem.ed.qEntryToCompetitiveGroup' does not have a
           <Key>
             <PropertyRef Name="EntryId" />
             <PropertyRef Name="CompetitiveGroupId" />
+            
           </Key>
           <Property Name="EntryId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="CompetitiveGroupId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="CompetitiveGroupName" Type="nvarchar" MaxLength="250" />
+          <Property Name="CompetitiveGroupName" Type="nvarchar" MaxLength="1000" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'Priem.ed.qMark' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -1234,18 +1365,21 @@ warning 6002: The table/view 'Priem.ed.qMark' does not have a primary key define
             <PropertyRef Name="ExamId" />
             <PropertyRef Name="ExamNameId" />
             <PropertyRef Name="EntranceTestType" />
+            
+            <PropertyRef Name="PersonId" />
+            <PropertyRef Name="StudyBasisId" />
           </Key>
           <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
           <Property Name="AbiturientId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="ExamInEntryId" Type="int" Nullable="false" />
-          <Property Name="Value" Type="tinyint" Nullable="false" />
+          <Property Name="Value" Type="decimal" Precision="4" Scale="1" Nullable="false" />
           <Property Name="PassDate" Type="smalldatetime" />
           <Property Name="IsFromEge" Type="bit" Nullable="false" />
           <Property Name="IsFromOlymp" Type="bit" Nullable="false" />
           <Property Name="IsManual" Type="bit" Nullable="false" />
           <Property Name="ExamVedId" Type="uniqueidentifier" />
           <Property Name="EntryId" Type="uniqueidentifier" Nullable="false" />
-          <Property Name="ExamName" Type="nvarchar" MaxLength="506" />
+          <Property Name="ExamName" Type="nvarchar" MaxLength="539" />
           <Property Name="IsAdditional" Type="bit" Nullable="false" />
           <Property Name="IsProfil" Type="bit" Nullable="false" />
           <Property Name="StudyLevelGroupId" Type="int" Nullable="false" />
@@ -1254,8 +1388,11 @@ warning 6002: The table/view 'Priem.ed.qMark' does not have a primary key define
           <Property Name="EntranceTestType" Type="varchar" MaxLength="74" Nullable="false" />
           <Property Name="OlympiadId" Type="uniqueidentifier" />
           <Property Name="EgeCertificateId" Type="uniqueidentifier" />
-          <Property Name="OrderNumber" Type="tinyint" />
+          <Property Name="OrderNumber" Type="tinyint" Nullable="false" />
           <Property Name="FiveGradeValue" Type="tinyint" />
+          <Property Name="ParentExamInEntryId" Type="int" />
+          <Property Name="PersonId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="StudyBasisId" Type="int" Nullable="false" />
         </EntityType>
         <Association Name="FK_Abiturient_Entry">
           <End Role="Entry" Type="Self.Entry" Multiplicity="1" />
@@ -1367,6 +1504,20 @@ warning 6002: The table/view 'Priem.ed.qMark' does not have a primary key define
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="fk_Exam_ExamName">
+          <End Role="ExamName" Type="Self.ExamName" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Exam" Type="Self.Exam" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ExamName">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Exam">
+              <PropertyRef Name="ExamNameId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_ExamInEntry_Entry">
           <End Role="Entry" Type="Self.Entry" Multiplicity="1">
             <OnDelete Action="Cascade" />
@@ -1378,6 +1529,30 @@ warning 6002: The table/view 'Priem.ed.qMark' does not have a primary key define
             </Principal>
             <Dependent Role="ExamInEntry">
               <PropertyRef Name="EntryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ExamInEntry_Exam">
+          <End Role="Exam" Type="Self.Exam" Multiplicity="1" />
+          <End Role="ExamInEntry" Type="Self.ExamInEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Exam">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ExamInEntry">
+              <PropertyRef Name="ExamId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ExamInEntry_ParentExamInEntry">
+          <End Role="ExamInEntry" Type="Self.ExamInEntry" Multiplicity="0..1" />
+          <End Role="ExamInEntry1" Type="Self.ExamInEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ExamInEntry">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ExamInEntry1">
+              <PropertyRef Name="ParentExamInEntryId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1458,6 +1633,90 @@ warning 6002: The table/view 'Priem.ed.qMark' does not have a primary key define
             </Principal>
             <Dependent Role="Olympiads">
               <PropertyRef Name="OlympValueId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OlympResultToCommonBenefit_Entry">
+          <End Role="Entry" Type="Self.Entry" Multiplicity="1" />
+          <End Role="OlympResultToCommonBenefit" Type="Self.OlympResultToCommonBenefit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Entry">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OlympResultToCommonBenefit">
+              <PropertyRef Name="EntryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OlympResultToCommonBenefit_OlympName">
+          <End Role="OlympLevel" Type="Self.OlympLevel" Multiplicity="1" />
+          <End Role="OlympResultToCommonBenefit" Type="Self.OlympResultToCommonBenefit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OlympLevel">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OlympResultToCommonBenefit">
+              <PropertyRef Name="OlympLevelId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OlympResultToCommonBenefit_OlympSubject">
+          <End Role="OlympSubject" Type="Self.OlympSubject" Multiplicity="1" />
+          <End Role="OlympResultToCommonBenefit" Type="Self.OlympResultToCommonBenefit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OlympSubject">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OlympResultToCommonBenefit">
+              <PropertyRef Name="OlympSubjectId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OlympResultToCommonBenefit_OlympType">
+          <End Role="OlympType" Type="Self.OlympType" Multiplicity="1" />
+          <End Role="OlympResultToCommonBenefit" Type="Self.OlympResultToCommonBenefit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OlympType">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OlympResultToCommonBenefit">
+              <PropertyRef Name="OlympTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OlympResultToCommonBenefit_OlympValue">
+          <End Role="OlympValue" Type="Self.OlympValue" Multiplicity="1" />
+          <End Role="OlympResultToCommonBenefit" Type="Self.OlympResultToCommonBenefit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OlympValue">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OlympResultToCommonBenefit">
+              <PropertyRef Name="OlympValueId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OlympSubjectToExam_Exam">
+          <End Role="Exam" Type="Self.Exam" Multiplicity="1" />
+          <End Role="OlympSubjectToExam" Type="Self.OlympSubjectToExam" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Exam">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OlympSubjectToExam">
+              <PropertyRef Name="ExamId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OlympSubjectToExam_OlympSubject">
+          <End Role="OlympSubject" Type="Self.OlympSubject" Multiplicity="1" />
+          <End Role="OlympSubjectToExam" Type="Self.OlympSubjectToExam" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OlympSubject">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OlympSubjectToExam">
+              <PropertyRef Name="OlympSubjectId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1635,6 +1894,32 @@ warning 6002: The table/view 'Priem.ed.qMark' does not have a primary key define
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_PersonOtherPassport_PassportType">
+          <End Role="PassportType" Type="Self.PassportType" Multiplicity="1" />
+          <End Role="PersonOtherPassport" Type="Self.PersonOtherPassport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PassportType">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PersonOtherPassport">
+              <PropertyRef Name="PassportTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PersonOtherPassport_Person">
+          <End Role="Person" Type="Self.Person" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="PersonOtherPassport" Type="Self.PersonOtherPassport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PersonOtherPassport">
+              <PropertyRef Name="PersonId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_StudyLevel_StudyLevelGroup">
           <End Role="StudyLevelGroup" Type="Self.StudyLevelGroup" Multiplicity="1" />
           <End Role="StudyLevel" Type="Self.StudyLevel" Multiplicity="*" />
@@ -1703,14 +1988,18 @@ warning 6002: The table/view 'Priem.ed.qMark' does not have a primary key define
           <EntitySet Name="EgeMark" EntityType="Self.EgeMark" Schema="ed" store:Type="Tables" />
           <EntitySet Name="Entry" EntityType="Self.Entry" Schema="ed" store:Type="Tables" />
           <EntitySet Name="EntryHeader" EntityType="Self.EntryHeader" Schema="ed" store:Type="Tables" />
+          <EntitySet Name="Exam" EntityType="Self.Exam" Schema="ed" store:Type="Tables" />
           <EntitySet Name="ExamInEntry" EntityType="Self.ExamInEntry" Schema="ed" store:Type="Tables" />
+          <EntitySet Name="ExamName" EntityType="Self.ExamName" Schema="ed" store:Type="Tables" />
           <EntitySet Name="ExamsVedHistory" EntityType="Self.ExamsVedHistory" Schema="ed" store:Type="Tables" />
           <EntitySet Name="FBSStatus" EntityType="Self.FBSStatus" Schema="ed" store:Type="Tables" />
           <EntitySet Name="ForeignCountry" EntityType="Self.ForeignCountry" Schema="ed" store:Type="Tables" />
           <EntitySet Name="Olympiads" EntityType="Self.Olympiads" Schema="ed" store:Type="Tables" />
           <EntitySet Name="OlympLevel" EntityType="Self.OlympLevel" Schema="ed" store:Type="Tables" />
           <EntitySet Name="OlympName" EntityType="Self.OlympName" Schema="ed" store:Type="Tables" />
+          <EntitySet Name="OlympResultToCommonBenefit" EntityType="Self.OlympResultToCommonBenefit" Schema="ed" store:Type="Tables" />
           <EntitySet Name="OlympSubject" EntityType="Self.OlympSubject" Schema="ed" store:Type="Tables" />
+          <EntitySet Name="OlympSubjectToExam" EntityType="Self.OlympSubjectToExam" Schema="ed" store:Type="Tables" />
           <EntitySet Name="OlympType" EntityType="Self.OlympType" Schema="ed" store:Type="Tables" />
           <EntitySet Name="OlympValue" EntityType="Self.OlympValue" Schema="ed" store:Type="Tables" />
           <EntitySet Name="OrderNumbers" EntityType="Self.OrderNumbers" Schema="ed" store:Type="Tables" />
@@ -1719,6 +2008,7 @@ warning 6002: The table/view 'Priem.ed.qMark' does not have a primary key define
           <EntitySet Name="Person_AdditionalInfo" EntityType="Self.Person_AdditionalInfo" Schema="ed" store:Type="Tables" />
           <EntitySet Name="Person_Contacts" EntityType="Self.Person_Contacts" Schema="ed" store:Type="Tables" />
           <EntitySet Name="Person_EducationInfo" EntityType="Self.Person_EducationInfo" Schema="ed" store:Type="Tables" />
+          <EntitySet Name="PersonOtherPassport" EntityType="Self.PersonOtherPassport" Schema="ed" store:Type="Tables" />
           <EntitySet Name="Region" EntityType="Self.Region" Schema="ed" store:Type="Tables" />
           <EntitySet Name="SchoolType" EntityType="Self.SchoolType" Schema="ed" store:Type="Tables" />
           <EntitySet Name="SP_Faculty" EntityType="Self.SP_Faculty" Schema="ed" store:Type="Tables" />
@@ -1798,7 +2088,8 @@ warning 6002: The table/view 'Priem.ed.qMark' does not have a primary key define
 [extAbit].[InnerEntryInEntryObrazProgramName] AS [InnerEntryInEntryObrazProgramName], 
 [extAbit].[InnerEntryInEntryObrazProgramId] AS [InnerEntryInEntryObrazProgramId], 
 [extAbit].[IsForeign] AS [IsForeign], 
-[extAbit].[IsCrimea] AS [IsCrimea]
+[extAbit].[IsCrimea] AS [IsCrimea], 
+[extAbit].[BackDocByAdmissionHigh] AS [BackDocByAdmissionHigh]
 FROM [ed].[extAbit] AS [extAbit]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="extAbitMarksSum" EntityType="Self.extAbitMarksSum" store:Type="Views" store:Schema="ed">
@@ -1836,6 +2127,9 @@ FROM [ed].[extAbitMarksSum] AS [extAbitMarksSum]</DefiningQuery>
 [extCompetitiveGroup].[KCP_ZP] AS [KCP_ZP], 
 [extCompetitiveGroup].[KCP_Cel_B] AS [KCP_Cel_B], 
 [extCompetitiveGroup].[KCP_Cel_P] AS [KCP_Cel_P], 
+[extCompetitiveGroup].[KCP_QuotaO] AS [KCP_QuotaO], 
+[extCompetitiveGroup].[KCP_QuotaOZ] AS [KCP_QuotaOZ], 
+[extCompetitiveGroup].[KCP_QuotaZ] AS [KCP_QuotaZ], 
 [extCompetitiveGroup].[QualificationCode] AS [QualificationCode], 
 [extCompetitiveGroup].[StudyLevelFISName] AS [StudyLevelFISName], 
 [extCompetitiveGroup].[IsForeign] AS [IsForeign], 
@@ -1900,7 +2194,11 @@ FROM [ed].[extEgeMark] AS [extEgeMark]</DefiningQuery>
 [extEntry].[IsCrimea] AS [IsCrimea], 
 [extEntry].[StudyLevelGroupName] AS [StudyLevelGroupName], 
 [extEntry].[DateOfClose] AS [DateOfClose], 
-[extEntry].[DateOfStart] AS [DateOfStart]
+[extEntry].[DateOfStart] AS [DateOfStart], 
+[extEntry].[DateStartEduc] AS [DateStartEduc], 
+[extEntry].[DateFinishEduc] AS [DateFinishEduc], 
+[extEntry].[ParentEntryId] AS [ParentEntryId], 
+[extEntry].[FacultyCode] AS [FacultyCode]
 FROM [ed].[extEntry] AS [extEntry]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="extEntryView" EntityType="Self.extEntryView" store:Type="Views" store:Schema="ed">
@@ -1938,7 +2236,9 @@ FROM [ed].[extEntry] AS [extEntry]</DefiningQuery>
 [extEntryView].[IsCrimea] AS [IsCrimea], 
 [extEntryView].[IsQuota] AS [IsQuota], 
 [extEntryView].[IsCel] AS [IsCel], 
-[extEntryView].[IsBE] AS [IsBE]
+[extEntryView].[IsBE] AS [IsBE], 
+[extEntryView].[IsForeign] AS [IsForeign], 
+[extEntryView].[Priority] AS [Priority]
 FROM [ed].[extEntryView] AS [extEntryView]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="extExamInEntry" EntityType="Self.extExamInEntry" store:Type="Views" store:Schema="ed">
@@ -1964,8 +2264,33 @@ FROM [ed].[extEntryView] AS [extEntryView]</DefiningQuery>
 [extExamInEntry].[IsReduced] AS [IsReduced], 
 [extExamInEntry].[IsParallel] AS [IsParallel], 
 [extExamInEntry].[ExamInEntryToCompetitiveGroupId] AS [ExamInEntryToCompetitiveGroupId], 
-[extExamInEntry].[OrderNumber] AS [OrderNumber]
+[extExamInEntry].[OrderNumber] AS [OrderNumber], 
+[extExamInEntry].[IsCrimea] AS [IsCrimea], 
+[extExamInEntry].[IsGosLine] AS [IsGosLine], 
+[extExamInEntry].[ParentExamInEntryId] AS [ParentExamInEntryId]
 FROM [ed].[extExamInEntry] AS [extExamInEntry]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="extExamsVed" EntityType="Self.extExamsVed" store:Type="Views" store:Schema="ed">
+            <DefiningQuery>SELECT 
+[extExamsVed].[Id] AS [Id], 
+[extExamsVed].[Number] AS [Number], 
+[extExamsVed].[StudyLevelGroupId] AS [StudyLevelGroupId], 
+[extExamsVed].[FacultyId] AS [FacultyId], 
+[extExamsVed].[StudyBasisId] AS [StudyBasisId], 
+[extExamsVed].[Date] AS [Date], 
+[extExamsVed].[ExamId] AS [ExamId], 
+[extExamsVed].[IsLocked] AS [IsLocked], 
+[extExamsVed].[IsLoad] AS [IsLoad], 
+[extExamsVed].[IsAddVed] AS [IsAddVed], 
+[extExamsVed].[AddCount] AS [AddCount], 
+[extExamsVed].[ExamNameId] AS [ExamNameId], 
+[extExamsVed].[IsAdditional] AS [IsAdditional], 
+[extExamsVed].[ExamName] AS [ExamName], 
+[extExamsVed].[ExamAcronym] AS [ExamAcronym], 
+[extExamsVed].[StudyBasisName] AS [StudyBasisName], 
+[extExamsVed].[StudyBasisAcr] AS [StudyBasisAcr], 
+[extExamsVed].[FacultyName] AS [FacultyName]
+FROM [ed].[extExamsVed] AS [extExamsVed]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="extOlympiadsAll" EntityType="Self.extOlympiadsAll" store:Type="Views" store:Schema="ed">
             <DefiningQuery>SELECT 
@@ -1987,7 +2312,8 @@ FROM [ed].[extExamInEntry] AS [extExamInEntry]</DefiningQuery>
 [extOlympiadsAll].[DocumentSeries] AS [DocumentSeries], 
 [extOlympiadsAll].[DocumentNumber] AS [DocumentNumber], 
 [extOlympiadsAll].[DocumentDate] AS [DocumentDate], 
-[extOlympiadsAll].[OlympValueSortOrder] AS [OlympValueSortOrder]
+[extOlympiadsAll].[OlympValueSortOrder] AS [OlympValueSortOrder], 
+[extOlympiadsAll].[OlympYear] AS [OlympYear]
 FROM [ed].[extOlympiadsAll] AS [extOlympiadsAll]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="extPerson" EntityType="Self.extPerson" store:Type="Views" store:Schema="ed">
@@ -2066,7 +2392,10 @@ FROM [ed].[extOlympiadsAll] AS [extOlympiadsAll]</DefiningQuery>
 [extPerson].[HasRussianNationality] AS [HasRussianNationality], 
 [extPerson].[PassportTypeName] AS [PassportTypeName], 
 [extPerson].[PassportTypeFISName] AS [PassportTypeFISName], 
-[extPerson].[LanguageName] AS [LanguageName]
+[extPerson].[LanguageName] AS [LanguageName], 
+[extPerson].[Author] AS [Author], 
+[extPerson].[DateCreated] AS [DateCreated], 
+[extPerson].[HasOriginals] AS [HasOriginals]
 FROM [ed].[extPerson] AS [extPerson]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="extPerson_EducationInfo_Current" EntityType="Self.extPerson_EducationInfo_Current" store:Type="Views" store:Schema="ed">
@@ -2197,7 +2526,8 @@ FROM [ed].[hlpLicenseProgramKCP] AS [hlpLicenseProgramKCP]</DefiningQuery>
 [qAbiturient].[IsViewed] AS [IsViewed], 
 [qAbiturient].[InnerEntryInEntryId] AS [InnerEntryInEntryId], 
 [qAbiturient].[IsForeign] AS [IsForeign], 
-[qAbiturient].[IsCrimea] AS [IsCrimea]
+[qAbiturient].[IsCrimea] AS [IsCrimea], 
+[qAbiturient].[BackDocByAdmissionHigh] AS [BackDocByAdmissionHigh]
 FROM [ed].[qAbiturient] AS [qAbiturient]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="qAbiturientForeignApplicationsOnly" EntityType="Self.qAbiturientForeignApplicationsOnly" store:Type="Views" store:Schema="ed">
@@ -2251,7 +2581,10 @@ FROM [ed].[qEntryToCompetitiveGroup] AS [qEntryToCompetitiveGroup]</DefiningQuer
 [qMark].[OlympiadId] AS [OlympiadId], 
 [qMark].[EgeCertificateId] AS [EgeCertificateId], 
 [qMark].[OrderNumber] AS [OrderNumber], 
-[qMark].[FiveGradeValue] AS [FiveGradeValue]
+[qMark].[FiveGradeValue] AS [FiveGradeValue], 
+[qMark].[ParentExamInEntryId] AS [ParentExamInEntryId], 
+[qMark].[PersonId] AS [PersonId], 
+[qMark].[StudyBasisId] AS [StudyBasisId]
 FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           </EntitySet>
           <AssociationSet Name="FK_Abiturient_Entry" Association="Self.FK_Abiturient_Entry">
@@ -2290,9 +2623,21 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
             <End Role="StudyLevel" EntitySet="StudyLevel" />
             <End Role="Entry" EntitySet="Entry" />
           </AssociationSet>
+          <AssociationSet Name="fk_Exam_ExamName" Association="Self.fk_Exam_ExamName">
+            <End Role="ExamName" EntitySet="ExamName" />
+            <End Role="Exam" EntitySet="Exam" />
+          </AssociationSet>
           <AssociationSet Name="FK_ExamInEntry_Entry" Association="Self.FK_ExamInEntry_Entry">
             <End Role="Entry" EntitySet="Entry" />
             <End Role="ExamInEntry" EntitySet="ExamInEntry" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ExamInEntry_Exam" Association="Self.FK_ExamInEntry_Exam">
+            <End Role="Exam" EntitySet="Exam" />
+            <End Role="ExamInEntry" EntitySet="ExamInEntry" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ExamInEntry_ParentExamInEntry" Association="Self.FK_ExamInEntry_ParentExamInEntry">
+            <End Role="ExamInEntry" EntitySet="ExamInEntry" />
+            <End Role="ExamInEntry1" EntitySet="ExamInEntry" />
           </AssociationSet>
           <AssociationSet Name="FK_Olympiads_Abiturient" Association="Self.FK_Olympiads_Abiturient">
             <End Role="Abiturient" EntitySet="Abiturient" />
@@ -2317,6 +2662,34 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <AssociationSet Name="fk_Olympiads_OlympValue" Association="Self.fk_Olympiads_OlympValue">
             <End Role="OlympValue" EntitySet="OlympValue" />
             <End Role="Olympiads" EntitySet="Olympiads" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OlympResultToCommonBenefit_Entry" Association="Self.FK_OlympResultToCommonBenefit_Entry">
+            <End Role="Entry" EntitySet="Entry" />
+            <End Role="OlympResultToCommonBenefit" EntitySet="OlympResultToCommonBenefit" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OlympResultToCommonBenefit_OlympName" Association="Self.FK_OlympResultToCommonBenefit_OlympName">
+            <End Role="OlympLevel" EntitySet="OlympLevel" />
+            <End Role="OlympResultToCommonBenefit" EntitySet="OlympResultToCommonBenefit" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OlympResultToCommonBenefit_OlympSubject" Association="Self.FK_OlympResultToCommonBenefit_OlympSubject">
+            <End Role="OlympSubject" EntitySet="OlympSubject" />
+            <End Role="OlympResultToCommonBenefit" EntitySet="OlympResultToCommonBenefit" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OlympResultToCommonBenefit_OlympType" Association="Self.FK_OlympResultToCommonBenefit_OlympType">
+            <End Role="OlympType" EntitySet="OlympType" />
+            <End Role="OlympResultToCommonBenefit" EntitySet="OlympResultToCommonBenefit" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OlympResultToCommonBenefit_OlympValue" Association="Self.FK_OlympResultToCommonBenefit_OlympValue">
+            <End Role="OlympValue" EntitySet="OlympValue" />
+            <End Role="OlympResultToCommonBenefit" EntitySet="OlympResultToCommonBenefit" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OlympSubjectToExam_Exam" Association="Self.FK_OlympSubjectToExam_Exam">
+            <End Role="Exam" EntitySet="Exam" />
+            <End Role="OlympSubjectToExam" EntitySet="OlympSubjectToExam" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OlympSubjectToExam_OlympSubject" Association="Self.FK_OlympSubjectToExam_OlympSubject">
+            <End Role="OlympSubject" EntitySet="OlympSubject" />
+            <End Role="OlympSubjectToExam" EntitySet="OlympSubjectToExam" />
           </AssociationSet>
           <AssociationSet Name="FK_Person_AdditionalInfo_Person" Association="Self.FK_Person_AdditionalInfo_Person">
             <End Role="Person" EntitySet="Person" />
@@ -2373,6 +2746,14 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <AssociationSet Name="FK_Person_PassportType" Association="Self.FK_Person_PassportType">
             <End Role="PassportType" EntitySet="PassportType" />
             <End Role="Person" EntitySet="Person" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonOtherPassport_PassportType" Association="Self.FK_PersonOtherPassport_PassportType">
+            <End Role="PassportType" EntitySet="PassportType" />
+            <End Role="PersonOtherPassport" EntitySet="PersonOtherPassport" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonOtherPassport_Person" Association="Self.FK_PersonOtherPassport_Person">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="PersonOtherPassport" EntitySet="PersonOtherPassport" />
           </AssociationSet>
           <AssociationSet Name="FK_StudyLevel_StudyLevelGroup" Association="Self.FK_StudyLevel_StudyLevelGroup">
             <End Role="StudyLevelGroup" EntitySet="StudyLevelGroup" />
@@ -2600,6 +2981,60 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
             <End Role="Person_EducationInfo" EntitySet="Person_EducationInfo" />
           </AssociationSet>
           <EntitySet Name="extPerson_EducationInfo_Current" EntityType="Priem2012Model.extPerson_EducationInfo_Current" />
+          <AssociationSet Name="FK_ExamInEntry_ParentExamInEntry" Association="Priem2012Model.FK_ExamInEntry_ParentExamInEntry">
+            <End Role="ExamInEntry" EntitySet="ExamInEntry" />
+            <End Role="ExamInEntry1" EntitySet="ExamInEntry" />
+          </AssociationSet>
+          <EntitySet Name="extExamsVed" EntityType="Priem2012Model.extExamsVed" />
+          <EntitySet Name="OlympResultToCommonBenefit" EntityType="Priem2012Model.OlympResultToCommonBenefit" />
+          <AssociationSet Name="FK_OlympResultToCommonBenefit_Entry" Association="Priem2012Model.FK_OlympResultToCommonBenefit_Entry">
+            <End Role="Entry" EntitySet="Entry" />
+            <End Role="OlympResultToCommonBenefit" EntitySet="OlympResultToCommonBenefit" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OlympResultToCommonBenefit_OlympName" Association="Priem2012Model.FK_OlympResultToCommonBenefit_OlympName">
+            <End Role="OlympLevel" EntitySet="OlympLevel" />
+            <End Role="OlympResultToCommonBenefit" EntitySet="OlympResultToCommonBenefit" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OlympResultToCommonBenefit_OlympSubject" Association="Priem2012Model.FK_OlympResultToCommonBenefit_OlympSubject">
+            <End Role="OlympSubject" EntitySet="OlympSubject" />
+            <End Role="OlympResultToCommonBenefit" EntitySet="OlympResultToCommonBenefit" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OlympResultToCommonBenefit_OlympType" Association="Priem2012Model.FK_OlympResultToCommonBenefit_OlympType">
+            <End Role="OlympType" EntitySet="OlympType" />
+            <End Role="OlympResultToCommonBenefit" EntitySet="OlympResultToCommonBenefit" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OlympResultToCommonBenefit_OlympValue" Association="Priem2012Model.FK_OlympResultToCommonBenefit_OlympValue">
+            <End Role="OlympValue" EntitySet="OlympValue" />
+            <End Role="OlympResultToCommonBenefit" EntitySet="OlympResultToCommonBenefit" />
+          </AssociationSet>
+          <EntitySet Name="OlympSubjectToExam" EntityType="Priem2012Model.OlympSubjectToExam" />
+          <AssociationSet Name="FK_OlympSubjectToExam_OlympSubject" Association="Priem2012Model.FK_OlympSubjectToExam_OlympSubject">
+            <End Role="OlympSubject" EntitySet="OlympSubject" />
+            <End Role="OlympSubjectToExam" EntitySet="OlympSubjectToExam" />
+          </AssociationSet>
+          <EntitySet Name="ExamName" EntityType="Priem2012Model.ExamName" />
+          <EntitySet Name="Exam" EntityType="Priem2012Model.Exam" />
+          <AssociationSet Name="fk_Exam_ExamName" Association="Priem2012Model.fk_Exam_ExamName">
+            <End Role="ExamName" EntitySet="ExamName" />
+            <End Role="Exam" EntitySet="Exam" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ExamInEntry_Exam" Association="Priem2012Model.FK_ExamInEntry_Exam">
+            <End Role="Exam" EntitySet="Exam" />
+            <End Role="ExamInEntry" EntitySet="ExamInEntry" />
+          </AssociationSet>
+          <AssociationSet Name="FK_OlympSubjectToExam_Exam" Association="Priem2012Model.FK_OlympSubjectToExam_Exam">
+            <End Role="Exam" EntitySet="Exam" />
+            <End Role="OlympSubjectToExam" EntitySet="OlympSubjectToExam" />
+          </AssociationSet>
+          <EntitySet Name="PersonOtherPassport" EntityType="Priem2012Model.PersonOtherPassport" />
+          <AssociationSet Name="FK_PersonOtherPassport_PassportType" Association="Priem2012Model.FK_PersonOtherPassport_PassportType">
+            <End Role="PassportType" EntitySet="PassportType" />
+            <End Role="PersonOtherPassport" EntitySet="PersonOtherPassport" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonOtherPassport_Person" Association="Priem2012Model.FK_PersonOtherPassport_Person">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="PersonOtherPassport" EntitySet="PersonOtherPassport" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Abiturient">
           <Key>
@@ -2643,6 +3078,9 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Type="Int32" Name="CommitNumber" />
           <Property Type="Boolean" Name="IsViewed" Nullable="false" />
           <Property Type="Guid" Name="InnerEntryInEntryId" />
+          <Property Name="Author" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="BackDocByAdmissionHigh" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="Country">
           <Key>
@@ -2729,6 +3167,8 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Type="DateTime" Name="DateStartEduc" Precision="0" />
           <Property Type="Boolean" Name="IsForeign" Nullable="false" />
           <Property Type="Boolean" Name="IsCrimea" Nullable="false" />
+          <Property Name="ParentEntryId" Type="Guid" />
+          <NavigationProperty Name="OlympResultToCommonBenefit" Relationship="Priem2012Model.FK_OlympResultToCommonBenefit_Entry" FromRole="Entry" ToRole="OlympResultToCommonBenefit" />
         </EntityType>
         <EntityType Name="EntryHeader">
           <Key>
@@ -2746,6 +3186,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Name="Id" Type="Int32" Nullable="false" />
           <Property Name="Name" Type="String" Nullable="false" MaxLength="50" Unicode="true" FixedLength="false" />
           <NavigationProperty Name="EgeCertificate" Relationship="Priem2012Model.fk_ed_EgeCertificate_FBSStatus" FromRole="FBSStatus" ToRole="EgeCertificate" />
+          <Property Name="SortGrade" Type="Int32" />
         </EntityType>
         <EntityType Name="Olympiads">
           <Key>
@@ -2772,6 +3213,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <NavigationProperty Name="OlympName" Relationship="Priem2012Model.FK_Olympiads_OlympName" FromRole="Olympiads" ToRole="OlympName" />
           <Property Type="String" Name="Author" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Type="DateTime" Name="DateCreated" Nullable="false" Precision="3" />
+          <Property Name="OlympYear" Type="Int16" Nullable="false" />
         </EntityType>
         <EntityType Name="OlympLevel">
           <Key>
@@ -2782,6 +3224,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <NavigationProperty Name="Olympiads" Relationship="Priem2012Model.fk_Olympiads_OlympLevel" FromRole="OlympLevel" ToRole="Olympiads" />
           <Property Type="Boolean" Name="IsOpen" Nullable="false" />
           <Property Type="String" Name="Holder" MaxLength="150" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="OlympResultToCommonBenefit" Relationship="Priem2012Model.FK_OlympResultToCommonBenefit_OlympName" FromRole="OlympLevel" ToRole="OlympResultToCommonBenefit" />
         </EntityType>
         <EntityType Name="OlympName">
           <Key>
@@ -2806,6 +3249,8 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Type="String" Name="Holder" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="ExamId" />
           <Property Type="Boolean" Name="IsInVseross" />
+          <NavigationProperty Name="OlympResultToCommonBenefit" Relationship="Priem2012Model.FK_OlympResultToCommonBenefit_OlympSubject" FromRole="OlympSubject" ToRole="OlympResultToCommonBenefit" />
+          <NavigationProperty Name="OlympSubjectToExam" Relationship="Priem2012Model.FK_OlympSubjectToExam_OlympSubject" FromRole="OlympSubject" ToRole="OlympSubjectToExam" />
         </EntityType>
         <EntityType Name="OlympType">
           <Key>
@@ -2817,6 +3262,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Type="Boolean" Name="IsOpen" Nullable="false" />
           <Property Type="String" Name="Holder" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Type="Boolean" Name="IsVseross" Nullable="false" />
+          <NavigationProperty Name="OlympResultToCommonBenefit" Relationship="Priem2012Model.FK_OlympResultToCommonBenefit_OlympType" FromRole="OlympType" ToRole="OlympResultToCommonBenefit" />
         </EntityType>
         <EntityType Name="OlympValue">
           <Key>
@@ -2829,6 +3275,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <NavigationProperty Name="Olympiads" Relationship="Priem2012Model.fk_Olympiads_OlympValue" FromRole="OlympValue" ToRole="Olympiads" />
           <Property Type="Boolean" Name="IsOpen" Nullable="false" />
           <Property Type="String" Name="Holder" MaxLength="150" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="OlympResultToCommonBenefit" Relationship="Priem2012Model.FK_OlympResultToCommonBenefit_OlympValue" FromRole="OlympValue" ToRole="OlympResultToCommonBenefit" />
         </EntityType>
         <EntityType Name="OrderNumbers">
           <Key>
@@ -2851,6 +3298,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Name="Name" Type="String" MaxLength="50" Unicode="true" FixedLength="false" />
           <Property Type="String" Name="FISName" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Person" Relationship="Priem2012Model.FK_Person_PassportType" FromRole="PassportType" ToRole="Person" />
+          <NavigationProperty Name="PersonOtherPassport" Relationship="Priem2012Model.FK_PersonOtherPassport_PassportType" FromRole="PassportType" ToRole="PersonOtherPassport" />
         </EntityType>
         <EntityType Name="Region">
           <Key>
@@ -2917,6 +3365,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <NavigationProperty Name="Entry" Relationship="Priem2012Model.FK_Entry_StudyLevel" FromRole="StudyLevel" ToRole="Entry" />
           <NavigationProperty Name="StudyLevelGroup" Relationship="Priem2012Model.FK_StudyLevel_StudyLevelGroup" FromRole="StudyLevel" ToRole="StudyLevelGroup" />
           <Property Type="String" Name="NameRod" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Name="PostName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="StudyLevelGroup">
           <Key>
@@ -3060,6 +3509,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
             <PropertyRef Name="IsParallel" />
             <PropertyRef Name="IsForeign" />
             <PropertyRef Name="IsCrimea" />
+            <PropertyRef Name="BackDocByAdmissionHigh" />
           </Key>
           <Property Type="Guid" Name="Id" Nullable="false" />
           <Property Type="Guid" Name="PersonId" Nullable="false" />
@@ -3080,7 +3530,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Type="Int32" Name="CelCompetitionId" />
           <Property Type="String" Name="CelCompetitionText" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Type="Boolean" Name="CompFromOlymp" Nullable="false" />
-          <Property Type="Int32" Name="LanguageId" />
+          <Property Type="Int32" Name="LanguageId" Nullable="false" />
           <Property Type="Boolean" Name="HasOriginals" Nullable="false" />
           <Property Type="String" Name="StudyNumber" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="StudentStatus" />
@@ -3133,6 +3583,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Type="Int32" Name="InnerEntryInEntryObrazProgramId" />
           <Property Name="IsForeign" Type="Boolean" Nullable="false" />
           <Property Name="IsCrimea" Type="Boolean" Nullable="false" />
+          <Property Name="BackDocByAdmissionHigh" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="extAbitMarksSum">
           <Key>
@@ -3186,6 +3637,9 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Type="Guid" Name="CompetitiveGroupItemId" Nullable="false" />
           <Property Name="IsForeign" Type="Boolean" Nullable="false" />
           <Property Name="IsCrimea" Type="Boolean" Nullable="false" />
+          <Property Name="KCP_QuotaO" Type="Int32" />
+          <Property Name="KCP_QuotaOZ" Type="Int32" />
+          <Property Name="KCP_QuotaZ" Type="Int32" />
         </EntityType>
         <EntityType Name="extEntryView">
           <Key>
@@ -3201,6 +3655,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
             <PropertyRef Name="IsQuota" />
             <PropertyRef Name="IsCel" />
             <PropertyRef Name="IsBE" />
+            <PropertyRef Name="IsForeign" />
           </Key>
           <Property Type="Guid" Name="Id" Nullable="false" />
           <Property Type="Guid" Name="AbiturientId" Nullable="false" />
@@ -3210,7 +3665,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Type="Int32" Name="StudyLevelGroupId" Nullable="false" />
           <Property Type="Int32" Name="LicenseProgramId" />
           <Property Type="Int32" Name="FacultyId" />
-          <Property Type="Int32" Name="StudyFormId" />
+          <Property Type="Int32" Name="StudyFormId" Nullable="false" />
           <Property Type="Int32" Name="StudyBasisId" />
           <Property Type="String" Name="Number" MaxLength="15" FixedLength="false" Unicode="true" />
           <Property Type="DateTime" Name="Date" Precision="3" Nullable="false" />
@@ -3232,15 +3687,18 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Type="Guid" Name="EntryId" Nullable="false" />
           <Property Type="Guid" Name="ProtocolHistoryId" Nullable="false" />
           <Property Type="Guid" Name="PersonId" Nullable="false" />
-          <Property Type="Int32" Name="IsCrimea" Nullable="false" />
-          <Property Type="Int32" Name="IsQuota" Nullable="false" />
-          <Property Type="Int32" Name="IsCel" Nullable="false" />
-          <Property Type="Int32" Name="IsBE" Nullable="false" />
+          <Property Type="Boolean" Name="IsCrimea" Nullable="false" />
+          <Property Type="Boolean" Name="IsQuota" Nullable="false" />
+          <Property Type="Boolean" Name="IsCel" Nullable="false" />
+          <Property Type="Boolean" Name="IsBE" Nullable="false" />
+          <Property Name="IsForeign" Type="Boolean" Nullable="false" />
+          <Property Name="Priority" Type="Int32" />
         </EntityType>
         <EntityType Name="extOlympiadsAll">
           <Key>
             <PropertyRef Name="Id" />
             <PropertyRef Name="OriginDoc" />
+            <PropertyRef Name="OlympYear" />
           </Key>
           <Property Type="Guid" Name="Id" Nullable="false" />
           <Property Type="Int32" Name="OlympTypeId" />
@@ -3261,6 +3719,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Type="String" Name="DocumentNumber" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Type="DateTime" Name="DocumentDate" Precision="0" />
           <Property Type="Int32" Name="OlympValueSortOrder" />
+          <Property Name="OlympYear" Type="Int16" Nullable="false" />
         </EntityType>
         <EntityType Name="extPerson">
           <Key>
@@ -3275,6 +3734,8 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
             <PropertyRef Name="HasTRKI" />
             <PropertyRef Name="HasRussianNationality" />
             <PropertyRef Name="LanguageName" />
+            <PropertyRef Name="Author" />
+            <PropertyRef Name="DateCreated" />
           </Key>
           <Property Type="Guid" Name="Id" Nullable="false" />
           <Property Type="Int32" Name="Barcode" />
@@ -3351,6 +3812,9 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Type="String" Name="PassportTypeName" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="PassportTypeFISName" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="LanguageName" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Author" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="HasOriginals" Type="Boolean" />
         </EntityType>
         <EntityType Name="qCompetitiveGroup">
           <Key>
@@ -3411,6 +3875,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Type="String" Name="Author" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Type="DateTime" Name="DateCreated" Nullable="false" Precision="3" />
           <NavigationProperty Name="Person_EducationInfo" Relationship="Priem2012Model.FK_Person_EducationInfo_Person" FromRole="Person" ToRole="Person_EducationInfo" />
+          <NavigationProperty Name="PersonOtherPassport" Relationship="Priem2012Model.FK_PersonOtherPassport_Person" FromRole="Person" ToRole="PersonOtherPassport" />
         </EntityType>
         <Association Name="FK_Abiturient_Person">
           <End Type="Priem2012Model.Person" Role="Person" Multiplicity="1" />
@@ -3723,6 +4188,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
             <PropertyRef Name="IsViewed" />
             <PropertyRef Name="IsForeign" />
             <PropertyRef Name="IsCrimea" />
+            <PropertyRef Name="BackDocByAdmissionHigh" />
           </Key>
           <Property Type="Guid" Name="Id" Nullable="false" />
           <Property Type="Guid" Name="PersonId" Nullable="false" />
@@ -3787,6 +4253,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Type="Guid" Name="InnerEntryInEntryId" />
           <Property Name="IsForeign" Type="Boolean" Nullable="false" />
           <Property Name="IsCrimea" Type="Boolean" Nullable="false" />
+          <Property Name="BackDocByAdmissionHigh" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="qMark">
           <Key>
@@ -3804,6 +4271,8 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
             <PropertyRef Name="ExamId" />
             <PropertyRef Name="ExamNameId" />
             <PropertyRef Name="EntranceTestType" />
+            <PropertyRef Name="PersonId" />
+            <PropertyRef Name="StudyBasisId" />
           </Key>
           <Property Type="Guid" Name="Id" Nullable="false" />
           <Property Type="Guid" Name="AbiturientId" Nullable="false" />
@@ -3815,7 +4284,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Type="Boolean" Name="IsManual" Nullable="false" />
           <Property Type="Guid" Name="ExamVedId" />
           <Property Type="Guid" Name="EntryId" Nullable="false" />
-          <Property Type="String" Name="ExamName" MaxLength="506" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="ExamName" MaxLength="539" FixedLength="false" Unicode="true" />
           <Property Type="Boolean" Name="IsAdditional" Nullable="false" />
           <Property Type="Boolean" Name="IsProfil" Nullable="false" />
           <Property Type="Int32" Name="StudyLevelGroupId" Nullable="false" />
@@ -3824,8 +4293,11 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Type="String" Name="EntranceTestType" Nullable="false" MaxLength="74" FixedLength="false" Unicode="false" />
           <Property Type="Guid" Name="OlympiadId" />
           <Property Type="Guid" Name="EgeCertificateId" />
-          <Property Type="Byte" Name="OrderNumber" />
+          <Property Type="Byte" Name="OrderNumber" Nullable="false" />
           <Property Type="Byte" Name="FiveGradeValue" />
+          <Property Name="ParentExamInEntryId" Type="Int32" />
+          <Property Name="PersonId" Type="Guid" Nullable="false" />
+          <Property Name="StudyBasisId" Type="Int32" Nullable="false" />
         </EntityType>
         <EntityType Name="extExamInEntry">
           <Key>
@@ -3845,6 +4317,8 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
             <PropertyRef Name="IsSecond" />
             <PropertyRef Name="IsReduced" />
             <PropertyRef Name="IsParallel" />
+            <PropertyRef Name="IsCrimea" />
+            <PropertyRef Name="IsGosLine" />
           </Key>
           <Property Type="Int32" Name="Id" Nullable="false" />
           <Property Type="Guid" Name="EntryId" Nullable="false" />
@@ -3853,7 +4327,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Type="Int32" Name="EgeMin" />
           <Property Type="Int32" Name="ExamNameId" Nullable="false" />
           <Property Type="Boolean" Name="IsAdditional" Nullable="false" />
-          <Property Type="String" Name="ExamName" MaxLength="506" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="ExamName" MaxLength="539" FixedLength="false" Unicode="true" />
           <Property Type="Int32" Name="FacultyId" Nullable="false" />
           <Property Type="Int32" Name="LicenseProgramId" Nullable="false" />
           <Property Type="Int32" Name="ObrazProgramId" Nullable="false" />
@@ -3867,7 +4341,10 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Type="Boolean" Name="IsReduced" Nullable="false" />
           <Property Type="Boolean" Name="IsParallel" Nullable="false" />
           <Property Type="Guid" Name="ExamInEntryToCompetitiveGroupId" />
-          <Property Type="Byte" Name="OrderNumber" />
+          <Property Type="Byte" Name="OrderNumber" Nullable="false" />
+          <Property Name="IsCrimea" Type="Boolean" Nullable="false" />
+          <Property Name="IsGosLine" Type="Boolean" Nullable="false" />
+          <Property Name="ParentExamInEntryId" Type="Int32" />
         </EntityType>
         <EntityType Name="extEgeMark">
           <Key>
@@ -4000,6 +4477,10 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Type="String" Name="StudyLevelGroupName" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
           <Property Name="DateOfClose" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="DateOfStart" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="DateStartEduc" Type="DateTime" Precision="0" />
+          <Property Name="DateFinishEduc" Type="DateTime" Precision="0" />
+          <Property Name="ParentEntryId" Type="Guid" />
+          <Property Name="FacultyCode" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="ExamInEntry">
           <Key>
@@ -4017,6 +4498,10 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Type="Boolean" Name="IsCrimea" Nullable="false" />
           <NavigationProperty Name="Entry" Relationship="Priem2012Model.FK_ExamInEntry_Entry" FromRole="ExamInEntry" ToRole="Entry" />
           <Property Type="Byte" Name="OrderNumber" Nullable="false" />
+          <Property Name="ParentExamInEntryId" Type="Int32" />
+          <NavigationProperty Name="ExamInEntry1" Relationship="Priem2012Model.FK_ExamInEntry_ParentExamInEntry" FromRole="ExamInEntry" ToRole="ExamInEntry1" />
+          <NavigationProperty Name="ExamInEntry2" Relationship="Priem2012Model.FK_ExamInEntry_ParentExamInEntry" FromRole="ExamInEntry1" ToRole="ExamInEntry" />
+          <NavigationProperty Name="Exam" Relationship="Priem2012Model.FK_ExamInEntry_Exam" FromRole="ExamInEntry" ToRole="Exam" />
         </EntityType>
         <Association Name="FK_ExamInEntry_Entry">
           <End Type="Priem2012Model.Entry" Role="Entry" Multiplicity="1">
@@ -4039,7 +4524,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           </Key>
           <Property Type="Guid" Name="EntryId" Nullable="false" />
           <Property Type="Guid" Name="CompetitiveGroupId" Nullable="false" />
-          <Property Type="String" Name="CompetitiveGroupName" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="CompetitiveGroupName" MaxLength="1000" FixedLength="false" Unicode="true" Nullable="false" />
         </EntityType>
         <EntityType Name="hlpLicenseProgramKCP">
           <Key>
@@ -4220,6 +4705,258 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Type="String" Name="HEWork" MaxLength="500" FixedLength="false" Unicode="true" />
           <Property Type="String" Name="EducDocument" MaxLength="42" FixedLength="false" Unicode="true" />
         </EntityType>
+        <Association Name="FK_ExamInEntry_ParentExamInEntry">
+          <End Type="Priem2012Model.ExamInEntry" Role="ExamInEntry" Multiplicity="0..1" />
+          <End Type="Priem2012Model.ExamInEntry" Role="ExamInEntry1" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ExamInEntry">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ExamInEntry1">
+              <PropertyRef Name="ParentExamInEntryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="extExamsVed">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="Number" />
+            <PropertyRef Name="StudyLevelGroupId" />
+            <PropertyRef Name="FacultyId" />
+            <PropertyRef Name="Date" />
+            <PropertyRef Name="ExamId" />
+            <PropertyRef Name="IsLocked" />
+            <PropertyRef Name="IsLoad" />
+            <PropertyRef Name="IsAddVed" />
+            <PropertyRef Name="ExamNameId" />
+            <PropertyRef Name="IsAdditional" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="Number" Type="Int32" Nullable="false" />
+          <Property Name="StudyLevelGroupId" Type="Int32" Nullable="false" />
+          <Property Name="FacultyId" Type="Int32" Nullable="false" />
+          <Property Name="StudyBasisId" Type="Int32" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="0" />
+          <Property Name="ExamId" Type="Int32" Nullable="false" />
+          <Property Name="IsLocked" Type="Boolean" Nullable="false" />
+          <Property Name="IsLoad" Type="Boolean" Nullable="false" />
+          <Property Name="IsAddVed" Type="Boolean" Nullable="false" />
+          <Property Name="AddCount" Type="Int32" />
+          <Property Name="ExamNameId" Type="Int32" Nullable="false" />
+          <Property Name="IsAdditional" Type="Boolean" Nullable="false" />
+          <Property Name="ExamName" Type="String" MaxLength="533" FixedLength="false" Unicode="true" />
+          <Property Name="ExamAcronym" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="StudyBasisName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="StudyBasisAcr" Type="String" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="FacultyName" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="OlympResultToCommonBenefit">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EntryId" Type="Guid" Nullable="false" />
+          <Property Name="OlympTypeId" Type="Int32" Nullable="false" />
+          <Property Name="OlympSubjectId" Type="Int32" Nullable="false" />
+          <Property Name="OlympLevelId" Type="Int32" Nullable="false" />
+          <Property Name="OlympValueId" Type="Int32" Nullable="false" />
+          <Property Name="IsOpen" Type="Boolean" Nullable="false" />
+          <Property Name="Holder" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Entry" Relationship="Priem2012Model.FK_OlympResultToCommonBenefit_Entry" FromRole="OlympResultToCommonBenefit" ToRole="Entry" />
+          <NavigationProperty Name="OlympLevel" Relationship="Priem2012Model.FK_OlympResultToCommonBenefit_OlympName" FromRole="OlympResultToCommonBenefit" ToRole="OlympLevel" />
+          <NavigationProperty Name="OlympSubject" Relationship="Priem2012Model.FK_OlympResultToCommonBenefit_OlympSubject" FromRole="OlympResultToCommonBenefit" ToRole="OlympSubject" />
+          <NavigationProperty Name="OlympType" Relationship="Priem2012Model.FK_OlympResultToCommonBenefit_OlympType" FromRole="OlympResultToCommonBenefit" ToRole="OlympType" />
+          <NavigationProperty Name="OlympValue" Relationship="Priem2012Model.FK_OlympResultToCommonBenefit_OlympValue" FromRole="OlympResultToCommonBenefit" ToRole="OlympValue" />
+        </EntityType>
+        <Association Name="FK_OlympResultToCommonBenefit_Entry">
+          <End Type="Priem2012Model.Entry" Role="Entry" Multiplicity="1" />
+          <End Type="Priem2012Model.OlympResultToCommonBenefit" Role="OlympResultToCommonBenefit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Entry">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OlympResultToCommonBenefit">
+              <PropertyRef Name="EntryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OlympResultToCommonBenefit_OlympName">
+          <End Type="Priem2012Model.OlympLevel" Role="OlympLevel" Multiplicity="1" />
+          <End Type="Priem2012Model.OlympResultToCommonBenefit" Role="OlympResultToCommonBenefit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OlympLevel">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OlympResultToCommonBenefit">
+              <PropertyRef Name="OlympLevelId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OlympResultToCommonBenefit_OlympSubject">
+          <End Type="Priem2012Model.OlympSubject" Role="OlympSubject" Multiplicity="1" />
+          <End Type="Priem2012Model.OlympResultToCommonBenefit" Role="OlympResultToCommonBenefit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OlympSubject">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OlympResultToCommonBenefit">
+              <PropertyRef Name="OlympSubjectId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OlympResultToCommonBenefit_OlympType">
+          <End Type="Priem2012Model.OlympType" Role="OlympType" Multiplicity="1" />
+          <End Type="Priem2012Model.OlympResultToCommonBenefit" Role="OlympResultToCommonBenefit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OlympType">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OlympResultToCommonBenefit">
+              <PropertyRef Name="OlympTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OlympResultToCommonBenefit_OlympValue">
+          <End Type="Priem2012Model.OlympValue" Role="OlympValue" Multiplicity="1" />
+          <End Type="Priem2012Model.OlympResultToCommonBenefit" Role="OlympResultToCommonBenefit" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OlympValue">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OlympResultToCommonBenefit">
+              <PropertyRef Name="OlympValueId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="OlympSubjectToExam">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OlympSubjectId" Type="Int32" Nullable="false" />
+          <Property Name="ExamId" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="OlympSubject" Relationship="Priem2012Model.FK_OlympSubjectToExam_OlympSubject" FromRole="OlympSubjectToExam" ToRole="OlympSubject" />
+          <NavigationProperty Name="Exam" Relationship="Priem2012Model.FK_OlympSubjectToExam_Exam" FromRole="OlympSubjectToExam" ToRole="Exam" />
+        </EntityType>
+        <Association Name="FK_OlympSubjectToExam_OlympSubject">
+          <End Type="Priem2012Model.OlympSubject" Role="OlympSubject" Multiplicity="1" />
+          <End Type="Priem2012Model.OlympSubjectToExam" Role="OlympSubjectToExam" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="OlympSubject">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OlympSubjectToExam">
+              <PropertyRef Name="OlympSubjectId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="ExamName">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="Acronym" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="NamePad" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Exam" Relationship="Priem2012Model.fk_Exam_ExamName" FromRole="ExamName" ToRole="Exam" />
+        </EntityType>
+        <EntityType Name="Exam">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="ExamNameId" Type="Int32" Nullable="false" />
+          <Property Name="IsAdditional" Type="Boolean" Nullable="false" />
+          <Property Name="IsOpen" Type="Boolean" Nullable="false" />
+          <Property Name="Holder" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsPortfolioCommonPart" Type="Boolean" Nullable="false" />
+          <Property Name="IsPortfolioAnonymPart" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="ExamName" Relationship="Priem2012Model.fk_Exam_ExamName" FromRole="Exam" ToRole="ExamName" />
+          <NavigationProperty Name="ExamInEntry" Relationship="Priem2012Model.FK_ExamInEntry_Exam" FromRole="Exam" ToRole="ExamInEntry" />
+          <NavigationProperty Name="OlympSubjectToExam" Relationship="Priem2012Model.FK_OlympSubjectToExam_Exam" FromRole="Exam" ToRole="OlympSubjectToExam" />
+        </EntityType>
+        <Association Name="fk_Exam_ExamName">
+          <End Type="Priem2012Model.ExamName" Role="ExamName" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="Priem2012Model.Exam" Role="Exam" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="ExamName">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Exam">
+              <PropertyRef Name="ExamNameId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ExamInEntry_Exam">
+          <End Type="Priem2012Model.Exam" Role="Exam" Multiplicity="1" />
+          <End Type="Priem2012Model.ExamInEntry" Role="ExamInEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Exam">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ExamInEntry">
+              <PropertyRef Name="ExamId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_OlympSubjectToExam_Exam">
+          <End Type="Priem2012Model.Exam" Role="Exam" Multiplicity="1" />
+          <End Type="Priem2012Model.OlympSubjectToExam" Role="OlympSubjectToExam" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Exam">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="OlympSubjectToExam">
+              <PropertyRef Name="ExamId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="PersonOtherPassport">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PersonId" Type="Guid" Nullable="false" />
+          <Property Name="PassportTypeId" Type="Int32" Nullable="false" />
+          <Property Name="PassportSeries" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PassportNumber" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="PassportDate" Type="DateTime" Precision="0" />
+          <Property Name="Surname" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Name" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="SecondName" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="IsOpen" Type="Boolean" Nullable="false" />
+          <Property Name="Holder" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="PassportType" Relationship="Priem2012Model.FK_PersonOtherPassport_PassportType" FromRole="PersonOtherPassport" ToRole="PassportType" />
+          <NavigationProperty Name="Person" Relationship="Priem2012Model.FK_PersonOtherPassport_Person" FromRole="PersonOtherPassport" ToRole="Person" />
+        </EntityType>
+        <Association Name="FK_PersonOtherPassport_PassportType">
+          <End Type="Priem2012Model.PassportType" Role="PassportType" Multiplicity="1" />
+          <End Type="Priem2012Model.PersonOtherPassport" Role="PersonOtherPassport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="PassportType">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PersonOtherPassport">
+              <PropertyRef Name="PassportTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PersonOtherPassport_Person">
+          <End Type="Priem2012Model.Person" Role="Person" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Type="Priem2012Model.PersonOtherPassport" Role="PersonOtherPassport" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PersonOtherPassport">
+              <PropertyRef Name="PersonId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -4227,6 +4964,9 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="Priem2012ModelStoreContainer" CdmEntityContainer="PriemEntities">
           <EntitySetMapping Name="Abiturient"><EntityTypeMapping TypeName="Priem2012Model.Abiturient"><MappingFragment StoreEntitySet="Abiturient">
+                <ScalarProperty Name="BackDocByAdmissionHigh" ColumnName="BackDocByAdmissionHigh" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Author" ColumnName="Author" />
                 <ScalarProperty Name="InnerEntryInEntryId" ColumnName="InnerEntryInEntryId" />
                 <ScalarProperty Name="IsViewed" ColumnName="IsViewed" />
                 <ScalarProperty Name="CommitNumber" ColumnName="CommitNumber" />
@@ -4295,7 +5035,8 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
             <ScalarProperty Name="IsCurrent" ColumnName="IsCurrent" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="Entry"><EntityTypeMapping TypeName="Priem2012Model.Entry"><MappingFragment StoreEntitySet="Entry">
-            <ScalarProperty Name="IsCrimea" ColumnName="IsCrimea" />
+            <ScalarProperty Name="ParentEntryId" ColumnName="ParentEntryId" />
+                <ScalarProperty Name="IsCrimea" ColumnName="IsCrimea" />
                 <ScalarProperty Name="IsForeign" ColumnName="IsForeign" />
                 <ScalarProperty Name="DateStartEduc" ColumnName="DateStartEduc" />
                 <ScalarProperty Name="DateFinishEduc" ColumnName="DateFinishEduc" />
@@ -4331,11 +5072,13 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
             <ScalarProperty Name="SortNum" ColumnName="SortNum" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="FBSStatus"><EntityTypeMapping TypeName="Priem2012Model.FBSStatus"><MappingFragment StoreEntitySet="FBSStatus">
-            <ScalarProperty Name="Id" ColumnName="Id" />
+            <ScalarProperty Name="SortGrade" ColumnName="SortGrade" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
             <ScalarProperty Name="Name" ColumnName="Name" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="Olympiads"><EntityTypeMapping TypeName="Priem2012Model.Olympiads"><MappingFragment StoreEntitySet="Olympiads">
-            <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+            <ScalarProperty Name="OlympYear" ColumnName="OlympYear" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="Author" ColumnName="Author" />
                 <ScalarProperty Name="DocumentDate" ColumnName="DocumentDate" />
                 <ScalarProperty Name="DocumentNumber" ColumnName="DocumentNumber" />
@@ -4437,6 +5180,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
             <ScalarProperty Name="OldName" ColumnName="OldName" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
           <EntitySetMapping Name="StudyLevel"><EntityTypeMapping TypeName="Priem2012Model.StudyLevel"><MappingFragment StoreEntitySet="StudyLevel">
+                <ScalarProperty Name="PostName" ColumnName="PostName" />
                 <ScalarProperty Name="NameRod" ColumnName="NameRod" />
                 <ScalarProperty Name="FISName" ColumnName="FISName" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
@@ -4453,6 +5197,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <EntitySetMapping Name="extAbit">
             <EntityTypeMapping TypeName="Priem2012Model.extAbit">
               <MappingFragment StoreEntitySet="extAbit">
+                <ScalarProperty Name="BackDocByAdmissionHigh" ColumnName="BackDocByAdmissionHigh" />
                 <ScalarProperty Name="IsCrimea" ColumnName="IsCrimea" />
                 <ScalarProperty Name="IsForeign" ColumnName="IsForeign" />
                 <ScalarProperty Name="InnerEntryInEntryObrazProgramId" ColumnName="InnerEntryInEntryObrazProgramId" />
@@ -4543,6 +5288,9 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <EntitySetMapping Name="extCompetitiveGroup">
             <EntityTypeMapping TypeName="Priem2012Model.extCompetitiveGroup">
               <MappingFragment StoreEntitySet="extCompetitiveGroup">
+                <ScalarProperty Name="KCP_QuotaZ" ColumnName="KCP_QuotaZ" />
+                <ScalarProperty Name="KCP_QuotaOZ" ColumnName="KCP_QuotaOZ" />
+                <ScalarProperty Name="KCP_QuotaO" ColumnName="KCP_QuotaO" />
                 <ScalarProperty Name="IsCrimea" ColumnName="IsCrimea" />
                 <ScalarProperty Name="IsForeign" ColumnName="IsForeign" />
                 <ScalarProperty Name="CompetitiveGroupItemId" ColumnName="CompetitiveGroupItemId" />
@@ -4576,6 +5324,8 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <EntitySetMapping Name="extEntryView">
             <EntityTypeMapping TypeName="Priem2012Model.extEntryView">
               <MappingFragment StoreEntitySet="extEntryView">
+                <ScalarProperty Name="Priority" ColumnName="Priority" />
+                <ScalarProperty Name="IsForeign" ColumnName="IsForeign" />
                 <ScalarProperty Name="IsBE" ColumnName="IsBE" />
                 <ScalarProperty Name="IsCel" ColumnName="IsCel" />
                 <ScalarProperty Name="IsQuota" ColumnName="IsQuota" />
@@ -4616,6 +5366,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <EntitySetMapping Name="extOlympiadsAll">
             <EntityTypeMapping TypeName="Priem2012Model.extOlympiadsAll">
               <MappingFragment StoreEntitySet="extOlympiadsAll">
+                <ScalarProperty Name="OlympYear" ColumnName="OlympYear" />
                 <ScalarProperty Name="OlympValueSortOrder" ColumnName="OlympValueSortOrder" />
                 <ScalarProperty Name="DocumentDate" ColumnName="DocumentDate" />
                 <ScalarProperty Name="DocumentNumber" ColumnName="DocumentNumber" />
@@ -4641,6 +5392,9 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <EntitySetMapping Name="extPerson">
             <EntityTypeMapping TypeName="Priem2012Model.extPerson">
               <MappingFragment StoreEntitySet="extPerson">
+                <ScalarProperty Name="HasOriginals" ColumnName="HasOriginals" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Author" ColumnName="Author" />
                 <ScalarProperty Name="LanguageName" ColumnName="LanguageName" />
                 <ScalarProperty Name="PassportTypeFISName" ColumnName="PassportTypeFISName" />
                 <ScalarProperty Name="PassportTypeName" ColumnName="PassportTypeName" />
@@ -4854,6 +5608,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <EntitySetMapping Name="qAbiturient">
             <EntityTypeMapping TypeName="Priem2012Model.qAbiturient">
               <MappingFragment StoreEntitySet="qAbiturient">
+                <ScalarProperty Name="BackDocByAdmissionHigh" ColumnName="BackDocByAdmissionHigh" />
                 <ScalarProperty Name="IsCrimea" ColumnName="IsCrimea" />
                 <ScalarProperty Name="IsForeign" ColumnName="IsForeign" />
                 <ScalarProperty Name="InnerEntryInEntryId" ColumnName="InnerEntryInEntryId" />
@@ -4923,6 +5678,9 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <EntitySetMapping Name="qMark">
             <EntityTypeMapping TypeName="Priem2012Model.qMark">
               <MappingFragment StoreEntitySet="qMark">
+                <ScalarProperty Name="StudyBasisId" ColumnName="StudyBasisId" />
+                <ScalarProperty Name="PersonId" ColumnName="PersonId" />
+                <ScalarProperty Name="ParentExamInEntryId" ColumnName="ParentExamInEntryId" />
                 <ScalarProperty Name="FiveGradeValue" ColumnName="FiveGradeValue" />
                 <ScalarProperty Name="OrderNumber" ColumnName="OrderNumber" />
                 <ScalarProperty Name="EgeCertificateId" ColumnName="EgeCertificateId" />
@@ -4950,6 +5708,9 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <EntitySetMapping Name="extExamInEntry">
             <EntityTypeMapping TypeName="Priem2012Model.extExamInEntry">
               <MappingFragment StoreEntitySet="extExamInEntry">
+                <ScalarProperty Name="ParentExamInEntryId" ColumnName="ParentExamInEntryId" />
+                <ScalarProperty Name="IsGosLine" ColumnName="IsGosLine" />
+                <ScalarProperty Name="IsCrimea" ColumnName="IsCrimea" />
                 <ScalarProperty Name="OrderNumber" ColumnName="OrderNumber" />
                 <ScalarProperty Name="ExamInEntryToCompetitiveGroupId" ColumnName="ExamInEntryToCompetitiveGroupId" />
                 <ScalarProperty Name="IsParallel" ColumnName="IsParallel" />
@@ -5021,6 +5782,10 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <EntitySetMapping Name="extEntry">
             <EntityTypeMapping TypeName="Priem2012Model.extEntry">
               <MappingFragment StoreEntitySet="extEntry">
+                <ScalarProperty Name="FacultyCode" ColumnName="FacultyCode" />
+                <ScalarProperty Name="ParentEntryId" ColumnName="ParentEntryId" />
+                <ScalarProperty Name="DateFinishEduc" ColumnName="DateFinishEduc" />
+                <ScalarProperty Name="DateStartEduc" ColumnName="DateStartEduc" />
                 <ScalarProperty Name="DateOfStart" ColumnName="DateOfStart" />
                 <ScalarProperty Name="DateOfClose" ColumnName="DateOfClose" />
                 <ScalarProperty Name="StudyLevelGroupName" ColumnName="StudyLevelGroupName" />
@@ -5068,6 +5833,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <EntitySetMapping Name="ExamInEntry">
             <EntityTypeMapping TypeName="Priem2012Model.ExamInEntry">
               <MappingFragment StoreEntitySet="ExamInEntry">
+                <ScalarProperty Name="ParentExamInEntryId" ColumnName="ParentExamInEntryId" />
                 <ScalarProperty Name="OrderNumber" ColumnName="OrderNumber" />
                 <ScalarProperty Name="IsCrimea" ColumnName="IsCrimea" />
                 <ScalarProperty Name="IsGosLine" ColumnName="IsGosLine" />
@@ -5195,6 +5961,93 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
                 <ScalarProperty Name="SchoolTypeFullName" ColumnName="SchoolTypeFullName" />
                 <ScalarProperty Name="SchoolTypeName" ColumnName="SchoolTypeName" />
                 <ScalarProperty Name="SchoolTypeId" ColumnName="SchoolTypeId" />
+                <ScalarProperty Name="PersonId" ColumnName="PersonId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="extExamsVed">
+            <EntityTypeMapping TypeName="Priem2012Model.extExamsVed">
+              <MappingFragment StoreEntitySet="extExamsVed">
+                <ScalarProperty Name="FacultyName" ColumnName="FacultyName" />
+                <ScalarProperty Name="StudyBasisAcr" ColumnName="StudyBasisAcr" />
+                <ScalarProperty Name="StudyBasisName" ColumnName="StudyBasisName" />
+                <ScalarProperty Name="ExamAcronym" ColumnName="ExamAcronym" />
+                <ScalarProperty Name="ExamName" ColumnName="ExamName" />
+                <ScalarProperty Name="IsAdditional" ColumnName="IsAdditional" />
+                <ScalarProperty Name="ExamNameId" ColumnName="ExamNameId" />
+                <ScalarProperty Name="AddCount" ColumnName="AddCount" />
+                <ScalarProperty Name="IsAddVed" ColumnName="IsAddVed" />
+                <ScalarProperty Name="IsLoad" ColumnName="IsLoad" />
+                <ScalarProperty Name="IsLocked" ColumnName="IsLocked" />
+                <ScalarProperty Name="ExamId" ColumnName="ExamId" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="StudyBasisId" ColumnName="StudyBasisId" />
+                <ScalarProperty Name="FacultyId" ColumnName="FacultyId" />
+                <ScalarProperty Name="StudyLevelGroupId" ColumnName="StudyLevelGroupId" />
+                <ScalarProperty Name="Number" ColumnName="Number" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OlympResultToCommonBenefit">
+            <EntityTypeMapping TypeName="Priem2012Model.OlympResultToCommonBenefit">
+              <MappingFragment StoreEntitySet="OlympResultToCommonBenefit">
+                <ScalarProperty Name="Holder" ColumnName="Holder" />
+                <ScalarProperty Name="IsOpen" ColumnName="IsOpen" />
+                <ScalarProperty Name="OlympValueId" ColumnName="OlympValueId" />
+                <ScalarProperty Name="OlympLevelId" ColumnName="OlympLevelId" />
+                <ScalarProperty Name="OlympSubjectId" ColumnName="OlympSubjectId" />
+                <ScalarProperty Name="OlympTypeId" ColumnName="OlympTypeId" />
+                <ScalarProperty Name="EntryId" ColumnName="EntryId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="OlympSubjectToExam">
+            <EntityTypeMapping TypeName="Priem2012Model.OlympSubjectToExam">
+              <MappingFragment StoreEntitySet="OlympSubjectToExam">
+                <ScalarProperty Name="ExamId" ColumnName="ExamId" />
+                <ScalarProperty Name="OlympSubjectId" ColumnName="OlympSubjectId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ExamName">
+            <EntityTypeMapping TypeName="Priem2012Model.ExamName">
+              <MappingFragment StoreEntitySet="ExamName">
+                <ScalarProperty Name="NamePad" ColumnName="NamePad" />
+                <ScalarProperty Name="Acronym" ColumnName="Acronym" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Exam">
+            <EntityTypeMapping TypeName="Priem2012Model.Exam">
+              <MappingFragment StoreEntitySet="Exam">
+                <ScalarProperty Name="IsPortfolioAnonymPart" ColumnName="IsPortfolioAnonymPart" />
+                <ScalarProperty Name="IsPortfolioCommonPart" ColumnName="IsPortfolioCommonPart" />
+                <ScalarProperty Name="Holder" ColumnName="Holder" />
+                <ScalarProperty Name="IsOpen" ColumnName="IsOpen" />
+                <ScalarProperty Name="IsAdditional" ColumnName="IsAdditional" />
+                <ScalarProperty Name="ExamNameId" ColumnName="ExamNameId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PersonOtherPassport">
+            <EntityTypeMapping TypeName="Priem2012Model.PersonOtherPassport">
+              <MappingFragment StoreEntitySet="PersonOtherPassport">
+                <ScalarProperty Name="Holder" ColumnName="Holder" />
+                <ScalarProperty Name="IsOpen" ColumnName="IsOpen" />
+                <ScalarProperty Name="SecondName" ColumnName="SecondName" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Surname" ColumnName="Surname" />
+                <ScalarProperty Name="PassportDate" ColumnName="PassportDate" />
+                <ScalarProperty Name="PassportNumber" ColumnName="PassportNumber" />
+                <ScalarProperty Name="PassportSeries" ColumnName="PassportSeries" />
+                <ScalarProperty Name="PassportTypeId" ColumnName="PassportTypeId" />
                 <ScalarProperty Name="PersonId" ColumnName="PersonId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
@@ -5416,6 +6269,24 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
         <AssociationConnector Association="Priem2012Model.FK_Person_EducationInfo_SchoolType" />
         <AssociationConnector Association="Priem2012Model.FK_Person_EducationInfo_StudyForm_HE_" />
         <EntityTypeShape EntityType="Priem2012Model.extPerson_EducationInfo_Current" Width="1.5" PointX="4.7545910965439822" PointY="29.117696686236979" />
+        <AssociationConnector Association="Priem2012Model.FK_ExamInEntry_ParentExamInEntry" />
+        <EntityTypeShape EntityType="Priem2012Model.extExamsVed" Width="1.5" PointX="13.375" PointY="0.75" />
+        <EntityTypeShape EntityType="Priem2012Model.OlympResultToCommonBenefit" Width="1.5" PointX="16.5" PointY="32.875" />
+        <AssociationConnector Association="Priem2012Model.FK_OlympResultToCommonBenefit_Entry" />
+        <AssociationConnector Association="Priem2012Model.FK_OlympResultToCommonBenefit_OlympName" />
+        <AssociationConnector Association="Priem2012Model.FK_OlympResultToCommonBenefit_OlympSubject" />
+        <AssociationConnector Association="Priem2012Model.FK_OlympResultToCommonBenefit_OlympType" />
+        <AssociationConnector Association="Priem2012Model.FK_OlympResultToCommonBenefit_OlympValue" />
+        <EntityTypeShape EntityType="Priem2012Model.OlympSubjectToExam" Width="1.5" PointX="16.5" PointY="37.25" />
+        <AssociationConnector Association="Priem2012Model.FK_OlympSubjectToExam_OlympSubject" />
+        <EntityTypeShape EntityType="Priem2012Model.ExamName" Width="1.5" PointX="8.375" PointY="7.75" />
+        <EntityTypeShape EntityType="Priem2012Model.Exam" Width="1.5" PointX="10.625" PointY="33.25" />
+        <AssociationConnector Association="Priem2012Model.fk_Exam_ExamName" />
+        <AssociationConnector Association="Priem2012Model.FK_ExamInEntry_Exam" />
+        <AssociationConnector Association="Priem2012Model.FK_OlympSubjectToExam_Exam" />
+        <EntityTypeShape EntityType="Priem2012Model.PersonOtherPassport" Width="1.5" PointX="20.25" PointY="9.625" />
+        <AssociationConnector Association="Priem2012Model.FK_PersonOtherPassport_PassportType" />
+        <AssociationConnector Association="Priem2012Model.FK_PersonOtherPassport_Person" />
       </Diagram>
     </Diagrams>
   </Designer>

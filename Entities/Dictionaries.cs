@@ -19,6 +19,14 @@ namespace FIS_EGE_2013
     //public class Dictionary06MarkDocument : CommonDictionary { }
     //public class Dictionary07Country : CommonDictionary { }
 
+    public class DictionaryOlympiad
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Year { get; set; }
+        public string Subject { get; set; }
+    }
+
     public class Dictionary10Direction
     {
         public string Id { get; set; }
