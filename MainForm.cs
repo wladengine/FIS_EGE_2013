@@ -260,10 +260,10 @@ namespace FIS_EGE_2013
                 root = root["AdmissionInfo"]["AdmissionVolume"];
                 
                 //объём для СПО не грузим совсем
-                var LPs = context.extEntry.Where(x => x.StudyLevelGroupId < 3 && (FacultyId.HasValue ? x.FacultyId == FacultyId.Value : true)
+                var LPs = context.extEntry.Where(x => x.StudyLevelGroupId <= 4 && (FacultyId.HasValue ? x.FacultyId == FacultyId.Value : true)
                     && (LicenseProgramId.HasValue ? x.LicenseProgramId == LicenseProgramId.Value : true)).Select(x => x.LicenseProgramId).Distinct();
 
-                var PriemHelps = context.hlpLicenseProgramKCP.Where(x => x.LevelGroupId < 3).ToList()
+                var PriemHelps = context.hlpLicenseProgramKCP.Where(x => x.LevelGroupId <= 4).ToList()
                     .Select(x => new 
                     { 
                         x.QualificationCode, 
@@ -449,11 +449,12 @@ namespace FIS_EGE_2013
                 lstStudLev.Add(16);
                 lstStudLev.Add(18);
                 lstStudLev.Add(17);
+                lstStudLev.Add(15);
                 lstStudLev.Add(8);
                 lstStudLev.Add(10);
 
                 root = root.ParentNode["CompetitiveGroups"];
-                var CompetitionGroups = context.extCompetitiveGroup.Where(x => x.StudyLevelId > 10 && x.IsForeign == false && x.IsCrimea == isCrimea &&
+                var CompetitionGroups = context.extCompetitiveGroup.Where(x => x.IsForeign == false && x.IsCrimea == isCrimea &&
                     (LicenseProgramId.HasValue ? x.LicenseProgramId == LicenseProgramId.Value : true)
                     && (FacultyId.HasValue ? x.FacultyId == FacultyId.Value : true)
                     && (lstStudLev.Contains(x.StudyLevelId)))
@@ -492,108 +493,167 @@ namespace FIS_EGE_2013
                     wc.PerformStep();
                     root.AppendChild(doc.CreateNode(XmlNodeType.Element, "CompetitiveGroup", ""));
 
-                    //идентификатор конкурсной группы в приёме
-                    root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
-                    root.LastChild["UID"].InnerXml = CompetitionGroup.Id.ToString();
-                    root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "CampaignUID", ""));
-                    root.LastChild["CampaignUID"].InnerXml = CampaignId;
-                    root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "Course", ""));
-                    root.LastChild["Course"].InnerXml = "1";
-                    root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "Name", ""));
-                    root.LastChild["Name"].InnerXml = CompetitionGroup.Name;
+                    var CompGroupNode = root.LastChild;
 
-                    root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "Items", ""));
-                    //root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "TargetOrganizations", ""));
+                    //идентификатор конкурсной группы в приёме
+                    CompGroupNode.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
+                    CompGroupNode["UID"].InnerXml = CompetitionGroup.Id.ToString();
+                    CompGroupNode.AppendChild(doc.CreateNode(XmlNodeType.Element, "CampaignUID", ""));
+                    CompGroupNode["CampaignUID"].InnerXml = CampaignId;
+                    CompGroupNode.AppendChild(doc.CreateNode(XmlNodeType.Element, "Course", ""));
+                    CompGroupNode["Course"].InnerXml = "1";
+                    CompGroupNode.AppendChild(doc.CreateNode(XmlNodeType.Element, "Name", ""));
+                    CompGroupNode["Name"].InnerXml = CompetitionGroup.Name;
+
+                    CompGroupNode.AppendChild(doc.CreateNode(XmlNodeType.Element, "Items", ""));
 
                     //добавляем направление подготовки конкурсной группы
-                    root.LastChild["Items"].AppendChild(doc.CreateNode(XmlNodeType.Element, "CompetitiveGroupItem", ""));
-                    //root.LastChild["Items"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "CompetitiveGroupItem", ""));
+                    CompGroupNode["Items"].AppendChild(doc.CreateNode(XmlNodeType.Element, "CompetitiveGroupItem", ""));
+
+                    var node = CompGroupNode["Items"]["CompetitiveGroupItem"];
 
                     //заполняем данные о направлении подготовки для конкурсной группы
                     //это сделано для ВУЗов, где ведётся один конкурс на НЕСКОЛЬКО направлений
-                    root.LastChild["Items"]["CompetitiveGroupItem"].AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
                     //поскольку у нас нет одного конкурса на несколько направлений, то мы просто возьмём тот же UID, что и для всей группы
-                    root.LastChild["Items"]["CompetitiveGroupItem"]["UID"].InnerXml = CompetitionGroup.Id.ToString();
+                    node.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
+                    node["UID"].InnerXml = CompetitionGroup.Id.ToString();
+                    
                     //Справочник №2 - Уровни образования
-                    root.LastChild["Items"]["CompetitiveGroupItem"].AppendChild(doc.CreateNode(XmlNodeType.Element, "EducationLevelID", ""));
-                    root.LastChild["Items"]["CompetitiveGroupItem"]["EducationLevelID"].InnerXml = SearchInDictionary(dic02_StudyLevel, CompetitionGroup.StudyLevelFISName);
+                    node.AppendChild(doc.CreateNode(XmlNodeType.Element, "EducationLevelID", ""));
+                    string sEducationLevelID = SearchInDictionary(dic02_StudyLevel, CompetitionGroup.StudyLevelFISName);
+                    node["EducationLevelID"].InnerXml = sEducationLevelID;
+                    
                     //id направления подготовки из справочника №10
-                    root.LastChild["Items"]["CompetitiveGroupItem"].AppendChild(doc.CreateNode(XmlNodeType.Element, "DirectionID", ""));
-                    root.LastChild["Items"]["CompetitiveGroupItem"]["DirectionID"].InnerXml = SearchInDictionary(dic10_Direction, CompetitionGroup.LicenseProgramName, CompetitionGroup.LicenseProgramCode, CompetitionGroup.QualificationCode);
-                    //CompetitionGroup.LicenseProgramCode; //пока пусть будет код направления
+                    node.AppendChild(doc.CreateNode(XmlNodeType.Element, "DirectionID", ""));
+                    string sDirectionID = SearchInDictionary(dic10_Direction, CompetitionGroup.LicenseProgramName, CompetitionGroup.LicenseProgramCode, CompetitionGroup.QualificationCode);
+                    node["DirectionID"].InnerXml = sDirectionID;
+
                     if (CompetitionGroup.KCP_OB.HasValue)
                     {
-                        root.LastChild["Items"]["CompetitiveGroupItem"].AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberBudgetO", ""));
-                        root.LastChild["Items"]["CompetitiveGroupItem"]["NumberBudgetO"].InnerXml = CompetitionGroup.KCP_OB.ToString();
+                        node.AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberBudgetO", ""));
+                        node["NumberBudgetO"].InnerXml = CompetitionGroup.KCP_OB.ToString();
                     }
                     if (CompetitionGroup.KCP_OZB.HasValue)
                     {
-                        root.LastChild["Items"]["CompetitiveGroupItem"].AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberBudgetOZ", ""));
-                        root.LastChild["Items"]["CompetitiveGroupItem"]["NumberBudgetOZ"].InnerXml = CompetitionGroup.KCP_OZB.ToString();
+                        node.AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberBudgetOZ", ""));
+                        node["NumberBudgetOZ"].InnerXml = CompetitionGroup.KCP_OZB.ToString();
                     }
                     if (CompetitionGroup.KCP_ZB.HasValue)
                     {
-                        root.LastChild["Items"]["CompetitiveGroupItem"].AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberBudgetZ", ""));
-                        root.LastChild["Items"]["CompetitiveGroupItem"]["NumberBudgetZ"].InnerXml = CompetitionGroup.KCP_ZB.ToString();
+                        node.AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberBudgetZ", ""));
+                        node["NumberBudgetZ"].InnerXml = CompetitionGroup.KCP_ZB.ToString();
                     }
                     if (CompetitionGroup.KCP_OP.HasValue)
                     {
-                        root.LastChild["Items"]["CompetitiveGroupItem"].AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberPaidO", ""));
-                        root.LastChild["Items"]["CompetitiveGroupItem"]["NumberPaidO"].InnerXml = CompetitionGroup.KCP_OP.ToString();
+                        node.AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberPaidO", ""));
+                        node["NumberPaidO"].InnerXml = CompetitionGroup.KCP_OP.ToString();
                     }
                     if (CompetitionGroup.KCP_OZP.HasValue)
                     {
-                        root.LastChild["Items"]["CompetitiveGroupItem"].AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberPaidOZ", ""));
-                        root.LastChild["Items"]["CompetitiveGroupItem"]["NumberPaidOZ"].InnerXml = CompetitionGroup.KCP_OZP.ToString();
+                        node.AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberPaidOZ", ""));
+                        node["NumberPaidOZ"].InnerXml = CompetitionGroup.KCP_OZP.ToString();
                     }
                     if (CompetitionGroup.KCP_ZP.HasValue)
                     {
-                        root.LastChild["Items"]["CompetitiveGroupItem"].AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberPaidZ", ""));
-                        root.LastChild["Items"]["CompetitiveGroupItem"]["NumberPaidZ"].InnerXml = CompetitionGroup.KCP_ZP.ToString();
+                        node.AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberPaidZ", ""));
+                        node["NumberPaidZ"].InnerXml = CompetitionGroup.KCP_ZP.ToString();
                     }
 
                     if (CompetitionGroup.KCP_QuotaO.HasValue)
                     {
-                        root.LastChild["Items"]["CompetitiveGroupItem"].AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberQuotaO", ""));
-                        root.LastChild["Items"]["CompetitiveGroupItem"]["NumberQuotaO"].InnerXml = CompetitionGroup.KCP_QuotaO.ToString();
+                        node.AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberQuotaO", ""));
+                        node["NumberQuotaO"].InnerXml = CompetitionGroup.KCP_QuotaO.ToString();
                     }
                     if (CompetitionGroup.KCP_QuotaOZ.HasValue)
                     {
-                        root.LastChild["Items"]["CompetitiveGroupItem"].AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberQuotaOZ", ""));
-                        root.LastChild["Items"]["CompetitiveGroupItem"]["NumberQuotaOZ"].InnerXml = CompetitionGroup.KCP_QuotaOZ.ToString();
+                        node.AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberQuotaOZ", ""));
+                        node["NumberQuotaOZ"].InnerXml = CompetitionGroup.KCP_QuotaOZ.ToString();
                     }
                     if (CompetitionGroup.KCP_QuotaZ.HasValue)
                     {
-                        root.LastChild["Items"]["CompetitiveGroupItem"].AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberQuotaZ", ""));
-                        root.LastChild["Items"]["CompetitiveGroupItem"]["NumberQuotaZ"].InnerXml = CompetitionGroup.KCP_QuotaZ.ToString();
+                        node.AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberQuotaZ", ""));
+                        node["NumberQuotaZ"].InnerXml = CompetitionGroup.KCP_QuotaZ.ToString();
                     }
 
-                    /*
                     if ((CompetitionGroup.KCP_Cel_B ?? 0) > 0)
                     {
-                        //добавляем сведения о целевом наборе (необяз)
-                        root.LastChild["TargetOrganizations"].AppendChild(doc.CreateNode(XmlNodeType.Element, "TargetOrganization", ""));
+                        var TargetOrganizations_RAW =
+                            (from CelComp in context.CelCompetitionInEntry
+                             join Ent in context.Entry on CelComp.EntryId equals Ent.Id
+                             join CompGroups in context.qEntryToCompetitiveGroup on Ent.Id equals CompGroups.EntryId
+                             where CompGroups.CompetitiveGroupId == CompetitionGroup.Id
+                             select new
+                             {
+                                 TargetOrganizationUID = CelComp.CelCompetitionId,
+                                 TargetOrganizationName = CelComp.CelCompetition.Name,
+                                 Ent.StudyFormId,
+                                 CelComp.KCP
+                             }).Distinct().ToList();
 
-                        root.LastChild["TargetOrganizations"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
-                        root.LastChild["TargetOrganizations"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "TargetOrganizationName", ""));
-                        root.LastChild["TargetOrganizations"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "Items", ""));
+                        if (TargetOrganizations_RAW.Count > 0)
+                        {
+                            var TargetOrganizationsList = TargetOrganizations_RAW.Select(x => new
+                            {
+                                x.TargetOrganizationUID,
+                                x.TargetOrganizationName,
+                                KCP_O = TargetOrganizations_RAW.Where(y => y.TargetOrganizationUID == x.TargetOrganizationUID && y.StudyFormId == 1).Select(y => y.KCP).DefaultIfEmpty(0).Sum(),
+                                KCP_OZ = TargetOrganizations_RAW.Where(y => y.TargetOrganizationUID == x.TargetOrganizationUID && y.StudyFormId == 2).Select(y => y.KCP).DefaultIfEmpty(0).Sum(),
+                                KCP_Z = TargetOrganizations_RAW.Where(y => y.TargetOrganizationUID == x.TargetOrganizationUID && y.StudyFormId == 3).Select(y => y.KCP).DefaultIfEmpty(0).Sum(),
+                            }).Distinct()
+                            .ToList();
 
-                        //направления подготовки целевого приёма
-                        root.LastChild["TargetOrganizations"].LastChild["Items"].AppendChild(doc.CreateNode(XmlNodeType.Element, "CompetitiveGroupTargetItem", ""));
+                            CompGroupNode.AppendChild(doc.CreateNode(XmlNodeType.Element, "TargetOrganizations", ""));
 
-                        root.LastChild["TargetOrganizations"].LastChild["Items"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
-                        root.LastChild["TargetOrganizations"].LastChild["Items"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "EducationLevelID", ""));
-                        root.LastChild["TargetOrganizations"].LastChild["Items"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberTargetO", ""));
-                        root.LastChild["TargetOrganizations"].LastChild["Items"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberTargetOZ", ""));
-                        root.LastChild["TargetOrganizations"].LastChild["Items"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberTargetZ", ""));
-                        //id направления подготовки из справочника №10
-                        root.LastChild["TargetOrganizations"].LastChild["Items"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DirectionID", ""));
+                            foreach (var TargetOrganization in TargetOrganizationsList)
+                            {
+                                //добавляем сведения о целевом наборе (необяз)
+                                CompGroupNode["TargetOrganizations"].AppendChild(doc.CreateNode(XmlNodeType.Element, "TargetOrganization", ""));
+
+                                var TargetOrgNode = CompGroupNode["TargetOrganizations"].LastChild;
+
+                                TargetOrgNode.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
+                                TargetOrgNode["UID"].InnerXml = string.Format("{0}_{1}", DateTime.Now.Year, TargetOrganization.TargetOrganizationUID);
+                                TargetOrgNode.AppendChild(doc.CreateNode(XmlNodeType.Element, "TargetOrganizationName", ""));
+                                TargetOrgNode["TargetOrganizationName"].InnerXml = TargetOrganization.TargetOrganizationName;
+
+                                TargetOrgNode.AppendChild(doc.CreateNode(XmlNodeType.Element, "Items", ""));
+
+                                //направления подготовки целевого приёма
+                                TargetOrgNode["Items"].AppendChild(doc.CreateNode(XmlNodeType.Element, "CompetitiveGroupTargetItem", ""));
+
+                                var t_node = TargetOrgNode["Items"].LastChild;
+
+                                t_node.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
+                                t_node["UID"].InnerXml = CompetitionGroup.Id.ToString();
+                                t_node.AppendChild(doc.CreateNode(XmlNodeType.Element, "EducationLevelID", ""));
+                                t_node["EducationLevelID"].InnerXml = sEducationLevelID;
+                                if (TargetOrganization.KCP_O > 0)
+                                {
+                                    t_node.AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberTargetO", ""));
+                                    t_node["NumberTargetO"].InnerXml = TargetOrganization.KCP_O.ToString();
+                                }
+                                if (TargetOrganization.KCP_OZ > 0)
+                                {
+                                    t_node.AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberTargetOZ", ""));
+                                    t_node["NumberTargetOZ"].InnerXml = TargetOrganization.KCP_OZ.ToString();
+                                }
+                                if (TargetOrganization.KCP_Z > 0)
+                                {
+                                    t_node.AppendChild(doc.CreateNode(XmlNodeType.Element, "NumberTargetZ", ""));
+                                    t_node["NumberTargetZ"].InnerXml = TargetOrganization.KCP_Z.ToString();
+                                }
+                                //id направления подготовки из справочника №10
+                                t_node.AppendChild(doc.CreateNode(XmlNodeType.Element, "DirectionID", ""));
+                                t_node["DirectionID"].InnerXml = sDirectionID;
+                            }
+                        }
                     }
-                     */
+
                     var EntryExams = (from ExInEnt in context.extExamInEntry
                                       join qComp in context.qEntryToCompetitiveGroup on ExInEnt.EntryId equals qComp.EntryId
                                       join Ent in context.extEntry on ExInEnt.EntryId equals Ent.Id
                                       where qComp.CompetitiveGroupId == CompetitionGroup.Id
+                                      && ExInEnt.ParentExamInEntryId == null
                                       select new
                                       {
                                           UID = ExInEnt.ExamInEntryToCompetitiveGroupId,
@@ -831,6 +891,7 @@ namespace FIS_EGE_2013
                             where (FacultyId.HasValue ? abit.FacultyId == FacultyId.Value : true)
                             && (abit.StudyLevelGroupId == StudyLevelGroupId)
                             &&  !abit.IsForeign && abit.IsCrimea == isCrimea
+                            && abit.CompetitionId == 6 //&& !abit.BackDoc && !abit.NotEnabled
                             select new
                             {
                                 AppUID = abit.Id,
@@ -866,7 +927,8 @@ namespace FIS_EGE_2013
                                 compGroup.CompetitiveGroupId,
                                 compGroup.CompetitiveGroupName,
                                 NotEnabled = abit.NotEnabled,
-                                abit.BackDoc
+                                abit.BackDoc,
+                                TargetOrganizationUID = abit.CelCompetitionId,
                             }).ToList();
 
                 var otherPassports = context.PersonOtherPassport.Where(x => x.PassportTypeId == 1).Select(x => new { x.Id, x.PersonId, x.PassportSeries, x.PassportNumber, x.PassportDate }).ToList();
@@ -903,17 +965,6 @@ namespace FIS_EGE_2013
                     root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "RegistrationDate", ""));
                     root.LastChild["RegistrationDate"].InnerText = app.RegistrationDate.ToString("yyyy-MM-ddTHH:mm:ss");
 
-                    //дата отзыва заявления (если была)
-                    if (app.LastDenyDate.HasValue)
-                    {
-                        DateTime LastDenyDate = app.LastDenyDate.Value < app.RegistrationDate ? app.RegistrationDate.AddHours(1) : app.LastDenyDate.Value;
-                        root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "LastDenyDate", ""));
-                        root.LastChild["LastDenyDate"].InnerText = LastDenyDate.ToString("yyyy-MM-ddTHH:mm:ss");
-                    }
-
-                    root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "NeedHostel", ""));
-                    root.LastChild["NeedHostel"].InnerText = app.NeedHostel.ToString().ToLower();
-
                     //статус заявления (справочник №4)
                     //для начала следует определить статус заявления:
                     //В приказе - есть в extEntryView и OrderNumbers
@@ -944,7 +995,28 @@ namespace FIS_EGE_2013
                         AppStatus = "Принято";
 
                     root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "StatusID", ""));
-                    root.LastChild["StatusID"].InnerXml = SearchInDictionary(dic04_ApplicationStatus, AppStatus);
+                    string sStatusID = SearchInDictionary(dic04_ApplicationStatus, AppStatus);
+                    root.LastChild["StatusID"].InnerXml = sStatusID;
+
+                    if (sStatusID == "6")
+                    {
+                        //дата отзыва заявления (если была)
+                        if (app.LastDenyDate.HasValue)
+                        {
+                            DateTime LastDenyDate = app.LastDenyDate.Value < app.RegistrationDate ? app.RegistrationDate.AddHours(1) : app.LastDenyDate.Value;
+                            root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "LastDenyDate", ""));
+                            root.LastChild["LastDenyDate"].InnerText = LastDenyDate.ToString("yyyy-MM-ddTHH:mm:ss");
+                        }
+                        else
+                        {
+                            DateTime LastDenyDate = app.RegistrationDate.AddHours(1);
+                            root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "LastDenyDate", ""));
+                            root.LastChild["LastDenyDate"].InnerText = LastDenyDate.ToString("yyyy-MM-ddTHH:mm:ss");
+                        }
+                    }
+
+                    root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "NeedHostel", ""));
+                    root.LastChild["NeedHostel"].InnerText = app.NeedHostel.ToString().ToLower();
 
                     //конкурсные группы для заявления
                     root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "SelectedCompetitiveGroups", ""));
@@ -993,10 +1065,13 @@ namespace FIS_EGE_2013
                     //id формы обучения (справочник №14 "Формы обучения")
                     root.LastChild["FinSourceAndEduForms"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "EducationFormID", ""));
                     root.LastChild["FinSourceAndEduForms"].LastChild["EducationFormID"].InnerXml = SearchInDictionary(dic14_EducationForm, app.StudyFormFISName);
-                    //UID организации
-                    root.LastChild["FinSourceAndEduForms"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "TargetOrganizationUID", ""));
                     
-                    List<int?> BEs = new List<int?>() { 1, 8 };//победител/призёр
+                    ////UID организации
+                    root.LastChild["FinSourceAndEduForms"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "TargetOrganizationUID", ""));
+                    root.LastChild["FinSourceAndEduForms"].LastChild["TargetOrganizationUID"].InnerXml = string.Format("{0}_{1}", DateTime.Now.Year, app.TargetOrganizationUID);
+                    
+                    List<int?> BEs = new List<int?>() { 1, 8 };//сведения о б/э
+                    
                     List<int?> regards = new List<int?>() { 5, 6, 7 };//победител/призёр
                     List<int?> OlympTypeList = new List<int?>() { 1, 2, 3, 4 };
                     //добавляем сведения о льготе, предоставленной абитуриенту
@@ -1028,23 +1103,32 @@ namespace FIS_EGE_2013
                                     string OlSubjId = SearchInDictionary(dic01_Subject, Ol.OlympSubjectName);
                                     if (!string.IsNullOrEmpty(OlSubjId))
                                     {
-                                        //диплом победителя/призёра всероссийской олимпиады школьников
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicTotalDocument", ""));
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["UID"].InnerXml = Ol.Id.ToString();
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["OriginalReceived"].InnerXml = app.HasOriginals ?? false ? "true" : "false";
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentSeries", ""));
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["DocumentSeries"].InnerXml = string.IsNullOrEmpty(Ol.DocumentSeries) ? "-" : Ol.DocumentSeries;
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentNumber", ""));
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["DocumentNumber"].InnerXml = string.IsNullOrEmpty(Ol.DocumentNumber) ? "---" : Ol.DocumentNumber;
+                                        var node = root.LastChild["ApplicationCommonBenefit"]["DocumentReason"];
 
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DiplomaTypeID", ""));
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["DiplomaTypeID"].InnerXml = Ol.OlympValueId == 7 ? "1" : "2";
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "Subjects", ""));
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["Subjects"].AppendChild(doc.CreateNode(XmlNodeType.Element, "SubjectBriefData", ""));
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["Subjects"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "SubjectID", ""));
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["Subjects"].LastChild["SubjectID"].InnerXml = OlSubjId;
+                                        //диплом победителя/призёра всероссийской олимпиады школьников
+                                        node.AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicTotalDocument", ""));
+                                        node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
+                                        node.LastChild["UID"].InnerXml = Ol.Id.ToString();
+                                        node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
+                                        node.LastChild["OriginalReceived"].InnerXml = app.HasOriginals ?? false ? "true" : "false";
+
+                                        if (app.HasOriginals ?? false)
+                                        {
+                                            node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceivedDate", ""));
+                                            node.LastChild["OriginalReceivedDate"].InnerXml = app.RegistrationDate.ToString("yyyy-MM-dd");
+                                        }
+
+                                        node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentSeries", ""));
+                                        node.LastChild["DocumentSeries"].InnerXml = string.IsNullOrEmpty(Ol.DocumentSeries) ? "-" : Ol.DocumentSeries;
+                                        node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentNumber", ""));
+                                        node.LastChild["DocumentNumber"].InnerXml = string.IsNullOrEmpty(Ol.DocumentNumber) ? "---" : Ol.DocumentNumber;
+
+                                        node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DiplomaTypeID", ""));
+                                        node.LastChild["DiplomaTypeID"].InnerXml = Ol.OlympValueId == 7 ? "1" : "2";
+                                        node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "Subjects", ""));
+                                        node.LastChild["Subjects"].AppendChild(doc.CreateNode(XmlNodeType.Element, "SubjectBriefData", ""));
+                                        node.LastChild["Subjects"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "SubjectID", ""));
+                                        node.LastChild["Subjects"].LastChild["SubjectID"].InnerXml = OlSubjId;
                                     }
                                 }
                             }
@@ -1065,24 +1149,195 @@ namespace FIS_EGE_2013
                                     if (!string.IsNullOrEmpty(OlympicID))
                                     {
                                         //диплом победителя/призёра всероссийской олимпиады школьников
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicDocument", ""));
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["UID"].InnerXml = Ol.Id.ToString();
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["OriginalReceived"].InnerXml = app.HasOriginals ?? false ? "true" : "false";
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentNumber", ""));
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["DocumentNumber"].InnerXml = string.IsNullOrEmpty(Ol.DocumentNumber) ? "---" : Ol.DocumentNumber;
+                                        var node = root.LastChild["ApplicationCommonBenefit"]["DocumentReason"];
+                                        node.AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicDocument", ""));
+                                        node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
+                                        node.LastChild["UID"].InnerXml = Ol.Id.ToString();
+                                        node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
+                                        node.LastChild["OriginalReceived"].InnerXml = app.HasOriginals ?? false ? "true" : "false";
 
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DiplomaTypeID", ""));
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["DiplomaTypeID"].InnerXml = Ol.OlympValueId == 7 ? "1" : "2";
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicID", ""));
+                                        if (app.HasOriginals ?? false)
+                                        {
+                                            node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceivedDate", ""));
+                                            node.LastChild["OriginalReceivedDate"].InnerXml = app.RegistrationDate.ToString("yyyy-MM-dd");
+                                        }
+
+                                        if (!string.IsNullOrEmpty(Ol.DocumentSeries))
+                                        {
+                                            node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentSeries", ""));
+                                            node.LastChild["DocumentSeries"].InnerXml = Ol.DocumentSeries;
+                                        }
+
+                                        node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentNumber", ""));
+                                        node.LastChild["DocumentNumber"].InnerXml = string.IsNullOrEmpty(Ol.DocumentNumber) ? "---" : Ol.DocumentNumber;
+
+                                        node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DiplomaTypeID", ""));
+                                        node.LastChild["DiplomaTypeID"].InnerXml = Ol.OlympValueId == 7 ? "1" : "2";
+                                        node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicID", ""));
                                         string OlNumber = (Ol.Number ?? 44).ToString();
-                                        root.LastChild["ApplicationCommonBenefit"]["DocumentReason"].LastChild["OlympicID"].InnerXml = OlympicID;
+                                        node.LastChild["OlympicID"].InnerXml = OlympicID;
                                     }
                                 }
                             }
                         }
                     }
+
+                    List<int?> VKs = new List<int?>() { 2, 7 };//сведения о в/к
+                    if (VKs.Contains(app.CompetitionId))
+                    {
+                        var MedDocs = context.PersonBenefitDocument.Where(x => x.PersonId == app.PersonId && x.BenefitDocumentTypeId < 4)//только основные типы документов
+                            .Select(x => new { x.Id, x.BenefitDocumentType.Name, x.BenefitDocumentTypeId, x.Series, x.Number, x.Date, x.DisabilityTypeId }).ToList();
+
+                        if (MedDocs.Count > 0)
+                        {
+                            root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "ApplicationCommonBenefit", ""));
+                            root.LastChild["ApplicationCommonBenefit"].AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
+                            root.LastChild["ApplicationCommonBenefit"].LastChild.InnerXml = app.AppUID.ToString();
+                            root.LastChild["ApplicationCommonBenefit"].AppendChild(doc.CreateNode(XmlNodeType.Element, "CompetitiveGroupID", ""));
+                            root.LastChild["ApplicationCommonBenefit"].LastChild.InnerXml = app.CompetitiveGroupId.ToString();
+                            //id типа документа-основания (Справочник №31 - "Тип документа") - необяз
+                            //root.LastChild["ApplicationCommonBenefit"].AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentTypeID", ""));
+
+                            //id вида льготы (Справочник №30 - "Вид льготы")
+                            root.LastChild["ApplicationCommonBenefit"].AppendChild(doc.CreateNode(XmlNodeType.Element, "BenefitKindID", ""));
+                            root.LastChild["ApplicationCommonBenefit"].LastChild.InnerXml = "4";
+
+                            root.LastChild["ApplicationCommonBenefit"].AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentReason", ""));
+                            var node = root.LastChild["ApplicationCommonBenefit"]["DocumentReason"];
+                            //медицинские документы
+                            node.AppendChild(doc.CreateNode(XmlNodeType.Element, "MedicalDocuments", ""));
+                            var par_node = node["MedicalDocuments"];
+                            foreach (var Doc in MedDocs)
+                            {
+                                switch (Doc.BenefitDocumentTypeId)
+                                {
+                                    //1	Справка об установлении инвалидности
+                                    case 1:
+                                        {
+                                            if (par_node.ChildNodes.Cast<XmlNode>().Where(x => x.Name == "BenefitDocument").Count() == 0)
+                                                par_node.AppendChild(doc.CreateNode(XmlNodeType.Element, "BenefitDocument", ""));
+                                            
+                                            if (par_node["BenefitDocument"].ChildNodes.Cast<XmlNode>().Where(x => x.Name == "DisabilityDocument").Count() == 1
+                                                || par_node["BenefitDocument"].ChildNodes.Cast<XmlNode>().Where(x => x.Name == "MedicalDocument").Count() == 1)
+                                                continue;
+
+                                            par_node["BenefitDocument"].AppendChild(doc.CreateNode(XmlNodeType.Element, "DisabilityDocument", ""));
+                                            node = par_node["BenefitDocument"]["DisabilityDocument"];
+                                            break;
+                                        }
+                                    //2	Заключение психолого-медико-педагогической комиссии
+                                    case 2:
+                                        {
+                                            if (par_node.ChildNodes.Cast<XmlNode>().Where(x => x.Name == "BenefitDocument").Count() == 0)
+                                                par_node.AppendChild(doc.CreateNode(XmlNodeType.Element, "BenefitDocument", ""));
+                                            
+                                            if (par_node["BenefitDocument"].ChildNodes.Cast<XmlNode>().Where(x => x.Name == "DisabilityDocument").Count() == 1
+                                                || par_node["BenefitDocument"].ChildNodes.Cast<XmlNode>().Where(x => x.Name == "MedicalDocument").Count() == 1)
+                                                continue;
+                                            
+                                            par_node["BenefitDocument"].AppendChild(doc.CreateNode(XmlNodeType.Element, "MedicalDocument", ""));
+                                            node = par_node["BenefitDocument"]["MedicalDocument"];
+                                            break;
+                                        }
+                                    //3 Заключение об отсутствии противопоказаний для обучения
+                                    case 3:
+                                        {
+                                            par_node.AppendChild(doc.CreateNode(XmlNodeType.Element, "AllowEducationDocument", ""));
+                                            node = par_node["AllowEducationDocument"];
+                                            break;
+                                        }
+                                }
+
+                                node.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
+                                node["UID"].InnerXml = Doc.Id.ToString();
+                                node.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
+                                node["OriginalReceived"].InnerXml = app.HasOriginals ?? false ? "true" : "false";
+
+                                if (app.HasOriginals ?? false)
+                                {
+                                    node.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceivedDate", ""));
+                                    node["OriginalReceivedDate"].InnerXml = app.RegistrationDate.ToString("yyyy-MM-dd");
+                                }
+
+                                if (Doc.BenefitDocumentTypeId != 3)
+                                {
+                                    node.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentSeries", ""));
+                                    node["DocumentSeries"].InnerXml = string.IsNullOrEmpty(Doc.Series) ? "-" : Doc.Series;
+                                }
+
+                                node.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentNumber", ""));
+                                node["DocumentNumber"].InnerXml = string.IsNullOrEmpty(Doc.Number) ? "---" : Doc.Number;
+
+                                if (Doc.Date.HasValue)
+                                {
+                                    node.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentDate", ""));
+                                    node["DocumentDate"].InnerXml = Doc.Date.Value.ToString("yyyy-MM-dd");
+                                }
+
+                                if (Doc.BenefitDocumentTypeId == 1)
+                                {
+                                    node.AppendChild(doc.CreateNode(XmlNodeType.Element, "DisabilityTypeID", ""));
+                                    node["DisabilityTypeID"].InnerXml = (Doc.DisabilityTypeId ?? 1).ToString();
+                                }
+                            }
+                        }
+                        else
+                        {
+                            var OtherDocs = context.PersonBenefitDocument.Where(x => x.PersonId == app.PersonId && x.BenefitDocumentTypeId == 4)//только доп
+                                .Select(x => new { x.Id, x.BenefitDocumentType.Name, x.Series, x.Number, x.Date }).ToList();
+
+                            if (OtherDocs.Count > 0)
+                            {
+                                root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "ApplicationCommonBenefit", ""));
+                                root.LastChild["ApplicationCommonBenefit"].AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
+                                root.LastChild["ApplicationCommonBenefit"].LastChild.InnerXml = app.AppUID.ToString();
+                                root.LastChild["ApplicationCommonBenefit"].AppendChild(doc.CreateNode(XmlNodeType.Element, "CompetitiveGroupID", ""));
+                                root.LastChild["ApplicationCommonBenefit"].LastChild.InnerXml = app.CompetitiveGroupId.ToString();
+
+                                //id вида льготы (Справочник №30 - "Вид льготы")
+                                root.LastChild["ApplicationCommonBenefit"].AppendChild(doc.CreateNode(XmlNodeType.Element, "BenefitKindID", ""));
+                                root.LastChild["ApplicationCommonBenefit"].LastChild.InnerXml = "4";
+
+                                root.LastChild["ApplicationCommonBenefit"].AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentReason", ""));
+                                var node = root.LastChild["ApplicationCommonBenefit"]["DocumentReason"];
+                                //медицинские документы
+                                node.AppendChild(doc.CreateNode(XmlNodeType.Element, "CustomDocument", ""));
+                                var Doc = OtherDocs.First();
+
+                                node = node["CustomDocument"];
+
+                                node.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
+                                node["UID"].InnerXml = Doc.Id.ToString();
+                                node.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
+                                node["OriginalReceived"].InnerXml = app.HasOriginals ?? false ? "true" : "false";
+
+                                if (app.HasOriginals ?? false)
+                                {
+                                    node.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceivedDate", ""));
+                                    node["OriginalReceivedDate"].InnerXml = app.RegistrationDate.ToString("yyyy-MM-dd");
+                                }
+
+                                node.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentTypeNameText", ""));
+                                node["DocumentTypeNameText"].InnerXml = "Справка";
+
+                                if (!string.IsNullOrEmpty(Doc.Series))
+                                {
+                                    node.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentSeries", ""));
+                                    node["DocumentSeries"].InnerXml = string.IsNullOrEmpty(Doc.Series) ? "-" : Doc.Series;
+                                }
+
+                                node.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentNumber", ""));
+                                node["DocumentNumber"].InnerXml = string.IsNullOrEmpty(Doc.Number) ? "---" : Doc.Number;
+
+                                if (Doc.Date.HasValue)
+                                {
+                                    node.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentDate", ""));
+                                    node["DocumentDate"].InnerXml = Doc.Date.Value.ToString("yyyy-MM-dd");
+                                }
+                            }
+                        }
+                    }
+                    
 
                     /*
                     //основание для льготы по медицинским показаниям - ПОКА ЧТО В БАЗЕ НЕТ
@@ -1108,6 +1363,7 @@ namespace FIS_EGE_2013
                                  qM.IsFromOlymp,
                                  qM.IsManual,
                                  qM.EgeCertificateId,
+                                 qM.ExamId,
                                  qM.ExamName,
                                  qM.EntranceTestType,
                                  qM.ExamVedId,
@@ -1129,7 +1385,22 @@ namespace FIS_EGE_2013
                             root.LastChild["EntranceTestResults"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
                             root.LastChild["EntranceTestResults"].LastChild["UID"].InnerXml = mrk.Id.ToString();
                             root.LastChild["EntranceTestResults"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "ResultValue", ""));
-                            root.LastChild["EntranceTestResults"].LastChild["ResultValue"].InnerXml = mrk.Value.ToString();
+
+                            if (mrk.IsFromOlymp)
+                            {
+                                List<int> lstEgeExamNameIds = context.EgeToExam.Where(x => x.ExamId == mrk.ExamId).Select(x => x.EgeExamNameId).ToList();
+                                int EgeVal = context.hlpEgeMarkMaxApprovedValue
+                                    .Where(x => x.PersonId == app.PersonId && lstEgeExamNameIds.Contains(x.EgeExamNameId))
+                                    .Select(x => x.EgeMarkValue)
+                                    .DefaultIfEmpty(100)
+                                    .Max(x => x ?? 0);
+
+                                root.LastChild["EntranceTestResults"].LastChild["ResultValue"].InnerXml = EgeVal.ToString();
+                            }
+                            else
+                            {
+                                root.LastChild["EntranceTestResults"].LastChild["ResultValue"].InnerXml = mrk.Value.ToString();
+                            }
                             //Тип основания для оценки (документа-основания)
 
                             string ResultSourceTypeName = "Вступительное испытание ОО";
@@ -1189,45 +1460,59 @@ namespace FIS_EGE_2013
                                 if (olymp != null)
                                 {
                                     root.LastChild["EntranceTestResults"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "ResultDocument", ""));
+                                    var node = root.LastChild["EntranceTestResults"].LastChild["ResultDocument"];
+
                                     if (olymp.OlympTypeId == 2)//vseross
                                     {
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicTotalDocument", ""));
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild["UID"].InnerXml = olymp.Id.ToString();
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild["OriginalReceived"].InnerXml = app.HasOriginals.ToString().ToLower();
+                                        node.AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicTotalDocument", ""));
+                                        node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
+                                        node.LastChild["UID"].InnerXml = olymp.Id.ToString();
+                                        node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
+                                        node.LastChild["OriginalReceived"].InnerXml = app.HasOriginals.ToString().ToLower();
 
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentSeries", ""));
+                                        if (app.HasOriginals ?? false)
+                                        {
+                                            node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceivedDate", ""));
+                                            node.LastChild["OriginalReceivedDate"].InnerXml = app.RegistrationDate.ToString("yyyy-MM-dd");
+                                        }
+
+                                        node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentSeries", ""));
                                         string DocSeries = olymp.DocumentSeries;
                                         if (string.IsNullOrEmpty(DocSeries))
                                             DocSeries = "нет";
                                         if (DocSeries.Length > 4)
                                             DocSeries = DocSeries.Substring(0, 4);
 
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild["DocumentSeries"].InnerXml = DocSeries;
+                                        node.LastChild["DocumentSeries"].InnerXml = DocSeries;
 
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentNumber", ""));
+                                        node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentNumber", ""));
                                         string DocNum = olymp.DocumentNumber;
                                         if (string.IsNullOrEmpty(DocNum))
                                             DocNum = "не указан";
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild["DocumentNumber"].InnerXml = DocNum;
+                                        node.LastChild["DocumentNumber"].InnerXml = DocNum;
 
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DiplomaTypeID", ""));
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild["DiplomaTypeID"].InnerXml = olymp.OlympValueId == 6 ? "1" : "2";
+                                        node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DiplomaTypeID", ""));
+                                        node.LastChild["DiplomaTypeID"].InnerXml = olymp.OlympValueId == 6 ? "1" : "2";
 
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "Subjects", ""));
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild["Subjects"].AppendChild(doc.CreateNode(XmlNodeType.Element, "SubjectBriefData", ""));
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild["Subjects"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "SubjectID", ""));
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild["Subjects"].LastChild["SubjectID"].InnerXml = SearchInDictionary(dic01_Subject, olymp.OlympSubjectName);
+                                        node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "Subjects", ""));
+                                        node.LastChild["Subjects"].AppendChild(doc.CreateNode(XmlNodeType.Element, "SubjectBriefData", ""));
+                                        node.LastChild["Subjects"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "SubjectID", ""));
+                                        node.LastChild["Subjects"].LastChild["SubjectID"].InnerXml = SearchInDictionary(dic01_Subject, olymp.OlympSubjectName);
 
                                     }
                                     else //all other
                                     {
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicDocument", ""));
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild["UID"].InnerXml = olymp.Id.ToString();
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild["OriginalReceived"].InnerXml = app.HasOriginals.ToString().ToLower();
+                                        node.AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicDocument", ""));
+                                        node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
+                                        node.LastChild["UID"].InnerXml = olymp.Id.ToString();
+                                        node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
+                                        node.LastChild["OriginalReceived"].InnerXml = app.HasOriginals.ToString().ToLower();
+                                        
+                                        if (app.HasOriginals ?? false)
+                                        {
+                                            node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceivedDate", ""));
+                                            node.LastChild["OriginalReceivedDate"].InnerXml = app.RegistrationDate.ToString("yyyy-MM-dd");
+                                        }
 
                                         if (!string.IsNullOrEmpty(olymp.DocumentSeries))
                                         {
@@ -1235,25 +1520,27 @@ namespace FIS_EGE_2013
                                             if (DocSeries.Length > 4)
                                                 DocSeries = DocSeries.Substring(0, 4);
 
-                                            root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentSeries", ""));
-                                            root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild["DocumentSeries"].InnerXml = DocSeries;
+                                            node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentSeries", ""));
+                                            node.LastChild["DocumentSeries"].InnerXml = DocSeries;
                                         }
 
                                         string DocNum = olymp.DocumentNumber;
                                         if (string.IsNullOrEmpty(DocNum))
                                             DocNum = "не указан";
 
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentNumber", ""));
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild["DocumentNumber"].InnerXml = DocNum;
+                                        node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentNumber", ""));
+                                        node.LastChild["DocumentNumber"].InnerXml = DocNum;
 
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DiplomaTypeID", ""));
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild["DiplomaTypeID"].InnerXml = olymp.OlympValueId == 6 ? "1" : "2";
+                                        node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DiplomaTypeID", ""));
+                                        node.LastChild["DiplomaTypeID"].InnerXml = olymp.OlympValueId == 6 ? "1" : "2";
 
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicID", ""));
+                                        node.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OlympicID", ""));
+                                        
                                         string OlympName = olymp.OlympName;
                                         string Year = olymp.OlympYear.ToString();
                                         string Subject = olymp.OlympSubjectName;
-                                        root.LastChild["EntranceTestResults"].LastChild["ResultDocument"].LastChild["OlympicID"].InnerXml = SearchInDictionary(dic19_Olympics, OlympName, Year, Subject);
+
+                                        node.LastChild["OlympicID"].InnerXml = SearchInDictionary(dic19_Olympics, OlympName, Year, Subject);
                                     }
                                 }
                             }
@@ -1309,28 +1596,38 @@ namespace FIS_EGE_2013
                         //Заполняем данные о сертификатах
                         root.LastChild["ApplicationDocuments"]["EgeDocuments"].AppendChild(doc.CreateNode(XmlNodeType.Element, "EgeDocument", ""));
 
-                        root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
-                        root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["UID"].InnerXml = cert.EgeCertificateId.ToString();
-                        root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
-                        root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["OriginalReceived"].InnerXml = app.HasOriginals.ToString().ToLower();
-                        //root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
-                        root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentNumber", ""));
-                        root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["DocumentNumber"].InnerXml = cert.Number;
-                        root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentYear", ""));
-                        root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["DocumentYear"].InnerXml = cert.Year;
-                        root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "Subjects", ""));
+                        var node = root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild;
+
+                        node.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
+                        node["UID"].InnerXml = cert.EgeCertificateId.ToString();
+                        node.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
+                        node["OriginalReceived"].InnerXml = app.HasOriginals.ToString().ToLower();
+
+                        if (app.HasOriginals ?? false)
+                        {
+                            node.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceivedDate", ""));
+                            node["OriginalReceivedDate"].InnerXml = app.RegistrationDate.ToString("yyyy-MM-dd");
+                        }
+
+                        node.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentNumber", ""));
+                        node["DocumentNumber"].InnerXml = cert.Number;
+                        node.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentYear", ""));
+                        node["DocumentYear"].InnerXml = cert.Year;
+                        node.AppendChild(doc.CreateNode(XmlNodeType.Element, "Subjects", ""));
 
                         var exams = egeDocs.Where(x => x.EgeCertificateId == cert.EgeCertificateId).Select(x => new { x.FISName, x.Value });
                         foreach (var exam in exams)
                         {
                             //заполняем оценки в сертификате ЕГЭ
-                            root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["Subjects"].AppendChild(doc.CreateNode(XmlNodeType.Element, "SubjectData", ""));
+                            node["Subjects"].AppendChild(doc.CreateNode(XmlNodeType.Element, "SubjectData", ""));
+
+                            var subjNode = node["Subjects"].LastChild;
 
                             //id дисциплины (справочник №1 - "Общеобразовательные предметы")
-                            root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["Subjects"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "SubjectID", ""));
-                            root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["Subjects"].LastChild["SubjectID"].InnerXml = SearchInDictionary(dic01_Subject, exam.FISName);
-                            root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["Subjects"].LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "Value", ""));
-                            root.LastChild["ApplicationDocuments"]["EgeDocuments"].LastChild["Subjects"].LastChild["Value"].InnerXml = exam.Value.ToString();
+                            subjNode.AppendChild(doc.CreateNode(XmlNodeType.Element, "SubjectID", ""));
+                            subjNode["SubjectID"].InnerXml = SearchInDictionary(dic01_Subject, exam.FISName);
+                            subjNode.AppendChild(doc.CreateNode(XmlNodeType.Element, "Value", ""));
+                            subjNode["Value"].InnerXml = exam.Value.ToString();
                         }
                     }
 
@@ -1339,9 +1636,15 @@ namespace FIS_EGE_2013
                     //заполняем данные о док-те, удостоверяющем личность
                     //UID необяз
                     //root.LastChild["ApplicationDocuments"]["IdentityDocument"].AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
-                    root.LastChild["ApplicationDocuments"]["IdentityDocument"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
-                    root.LastChild["ApplicationDocuments"]["IdentityDocument"]["OriginalReceived"].InnerXml = app.HasOriginals.ToString().ToLower();
-                    //root.LastChild["ApplicationDocuments"]["IdentityDocument"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceivedDate", ""));
+                    //root.LastChild["ApplicationDocuments"]["IdentityDocument"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
+                    //root.LastChild["ApplicationDocuments"]["IdentityDocument"]["OriginalReceived"].InnerXml = app.HasOriginals.ToString().ToLower();
+
+                    //if (app.HasOriginals ?? false)
+                    //{
+                    //    root.LastChild["ApplicationDocuments"]["IdentityDocument"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceivedDate", ""));
+                    //    root.LastChild["ApplicationDocuments"]["IdentityDocument"]["OriginalReceivedDate"].InnerXml = app.RegistrationDate.ToString("yyyy-MM-dd");
+                    //}
+
                     root.LastChild["ApplicationDocuments"]["IdentityDocument"].AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentSeries", ""));
                     root.LastChild["ApplicationDocuments"]["IdentityDocument"]["DocumentSeries"].InnerXml = string.IsNullOrEmpty(app.PassportSeries) ? "-" : app.PassportSeries;
                     root.LastChild["ApplicationDocuments"]["IdentityDocument"].AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentNumber", ""));
@@ -1372,15 +1675,21 @@ namespace FIS_EGE_2013
                         root.LastChild["ApplicationDocuments"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OtherIdentityDocuments", ""));
                         foreach (var OPP in otherPassList)
                         {
-                            root.LastChild["ApplicationDocuments"]["OtherIdentityDocuments"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OtherIdentityDocument", ""));
+                            root.LastChild["ApplicationDocuments"]["OtherIdentityDocuments"].AppendChild(doc.CreateNode(XmlNodeType.Element, "IdentityDocument", ""));
                             var node = root.LastChild["ApplicationDocuments"]["OtherIdentityDocuments"].LastChild;
                             //заполняем данные о док-те, удостоверяющем личность
                             //UID необяз
                             node.AppendChild(doc.CreateNode(XmlNodeType.Element, "UID", ""));
                             node["UID"].InnerXml = string.Format("{0}_{1}", DateTime.Now.Year, OPP.Id);
-                            node.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
-                            node["OriginalReceived"].InnerXml = app.HasOriginals.ToString().ToLower();
-                            //node.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceivedDate", ""));
+                            //node.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
+                            //node["OriginalReceived"].InnerXml = app.HasOriginals.ToString().ToLower();
+
+                            //if (app.HasOriginals ?? false)
+                            //{
+                            //    node.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceivedDate", ""));
+                            //    node["OriginalReceivedDate"].InnerXml = app.RegistrationDate.ToString("yyyy-MM-dd");
+                            //}
+
                             node.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentSeries", ""));
                             node["DocumentSeries"].InnerXml = string.IsNullOrEmpty(OPP.PassportSeries) ? "-" : OPP.PassportSeries;
                             node.AppendChild(doc.CreateNode(XmlNodeType.Element, "DocumentNumber", ""));
@@ -1390,6 +1699,10 @@ namespace FIS_EGE_2013
                             //ID типа документа, удостовер личность (Справочник №22)
                             node.AppendChild(doc.CreateNode(XmlNodeType.Element, "IdentityDocumentTypeID", ""));
                             node["IdentityDocumentTypeID"].InnerXml = "1";
+
+                            node.AppendChild(doc.CreateNode(XmlNodeType.Element, "NationalityTypeID", ""));
+                            node["NationalityTypeID"].InnerXml = "1";
+
                             node.AppendChild(doc.CreateNode(XmlNodeType.Element, "BirthDate", ""));
                             node["BirthDate"].InnerXml = app.BirthDate.ToString("yyyy-MM-dd");
                             //node.AppendChild(doc.CreateNode(XmlNodeType.Element, "BirthPlace", ""));
@@ -1455,6 +1768,12 @@ namespace FIS_EGE_2013
                     rootChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceived", ""));
                     rootChild["OriginalReceived"].InnerXml = app.HasOriginals.ToString().ToLower();
 
+                    if (app.HasOriginals ?? false)
+                    {
+                        rootChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OriginalReceivedDate", ""));
+                        rootChild["OriginalReceivedDate"].InnerXml = app.RegistrationDate.ToString("yyyy-MM-dd");
+                    }
+
                     ////вносим прочие документы
                     //root.LastChild["ApplicationDocuments"]["CustomDocuments"].AppendChild(doc.CreateNode(XmlNodeType.Element, "CustomDocument", ""));
 
@@ -1499,16 +1818,100 @@ namespace FIS_EGE_2013
         }
 
         //удаляет заявления
-        private void ExportXML_DataForDelete_Applications(string fname)
+        //private void ExportXML_DataForDelete_Applications(string fname)
+        //{
+        //    XmlDocument doc = new XmlDocument();
+
+        //    UpdateDictionaries_Local();
+        //    List<int?> BeneficiaryCompetitions = new List<int?>() { 1, 2, 7, 8 };
+
+        //    using (PriemEntities context = new PriemEntities())
+        //    {
+        //        DateTime dt = DateTime.Now;
+        //        TimeSpan dt4_EgeMarks = TimeSpan.MinValue, dt4_Marks = TimeSpan.MinValue;
+
+        //        //создаём корневой элемент
+        //        doc.AppendChild(doc.CreateNode(XmlNodeType.Element, "Root", ""));
+
+        //        //создаём элементы AuthData и PackageData
+        //        XmlNode root = doc["Root"];
+
+        //        root.AppendChild(doc.CreateNode(XmlNodeType.Element, "AuthData", ""));
+        //        root.AppendChild(doc.CreateNode(XmlNodeType.Element, "DataForDelete", ""));
+
+        //        //заполняем данные AuthData
+        //        root = root["AuthData"];
+        //        root.AppendChild(doc.CreateNode(XmlNodeType.Element, "Login", ""));
+        //        root.AppendChild(doc.CreateNode(XmlNodeType.Element, "Pass", ""));
+
+        //        bool isDefault = true;
+        //        root["Login"].InnerText = isDefault ? "p.karpenko@spbu.ru" : tbLogin.Text;
+        //        root["Pass"].InnerText = isDefault ? "E0k02II" : tbPassword.Text;
+
+        //        //----------------------------------------------------------------------------------------------------------
+        //        //заполняем данные PackageData
+        //        root = doc["Root"];
+        //        root["DataForDelete"].AppendChild(doc.CreateNode(XmlNodeType.Element, "Applications", ""));
+
+        //        NewWatch wc = new NewWatch();
+
+        //        wc.Show();
+        //        //--------------------------------------------------------------------------------------------------------------
+        //        //заполняем данные Applications
+        //        var apps = (from abit in context.qAbiturient
+        //                    join compGroup in context.qEntryToCompetitiveGroup on abit.EntryId equals compGroup.EntryId
+        //                    join extCompGroup in context.extCompetitiveGroup on compGroup.CompetitiveGroupId equals extCompGroup.Id
+        //                    join SL in context.StudyLevel on abit.StudyLevelId equals SL.Id
+        //                    where (FacultyId.HasValue ? abit.FacultyId == FacultyId.Value : true)
+        //                    && (LicenseProgramId.HasValue ? abit.LicenseProgramId == LicenseProgramId.Value : true)
+        //                    && (abit.StudyLevelGroupId == StudyLevelGroupId)
+        //                    select new
+        //                    {
+        //                        ApplicationNumber = abit.RegNum,
+        //                        RegistrationDate = abit.DocInsertDate,
+        //                    });
+
+        //        root = doc["Root"]["DataForDelete"]["Applications"];
+
+        //        int wcMax = apps.Count();
+        //        wc.SetText(fname + " - Заполняем данные DataForDelete - Applications");
+        //        wc.SetMax(wcMax);
+        //        wc.ZeroCount();
+
+        //        dt = DateTime.Now;
+        //        foreach (var app in apps)
+        //        {
+        //            wc.PerformStep();
+        //            root.AppendChild(doc.CreateNode(XmlNodeType.Element, "Application", ""));
+
+        //            //Номер заявления
+        //            root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "ApplicationNumber", ""));
+        //            root.LastChild["ApplicationNumber"].InnerText = DateTime.Now.Year.ToString() + "_" + app.ApplicationNumber.ToString();
+                    
+        //            //Дата регистрации заявления
+        //            root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "RegistrationDate", ""));
+        //            root.LastChild["RegistrationDate"].InnerText = app.RegistrationDate.ToString("yyyy-MM-ddTHH:mm:ss");
+        //        }
+      
+        //        wc.Close();
+        //        doc.Save(fname);
+
+        //        if (!chbFullImport.Checked)
+        //            MessageBox.Show("OK");
+        //    }
+        //}
+
+        //удаляет приказы
+        private void DeleteOrders(string fname)
         {
             XmlDocument doc = new XmlDocument();
 
             UpdateDictionaries_Local();
-            List<int?> BeneficiaryCompetitions = new List<int?>() { 1, 2, 7, 8 };
 
             using (PriemEntities context = new PriemEntities())
             {
                 DateTime dt = DateTime.Now;
+                TimeSpan dt1, dt2, dt3, dt4_allAbitList;
                 TimeSpan dt4_EgeMarks = TimeSpan.MinValue, dt4_Marks = TimeSpan.MinValue;
 
                 //создаём корневой элемент
@@ -1532,48 +1935,63 @@ namespace FIS_EGE_2013
                 //----------------------------------------------------------------------------------------------------------
                 //заполняем данные PackageData
                 root = doc["Root"];
-                root["DataForDelete"].AppendChild(doc.CreateNode(XmlNodeType.Element, "Applications", ""));
+                root["DataForDelete"].AppendChild(doc.CreateNode(XmlNodeType.Element, "OrdersOfAdmission", ""));
 
                 NewWatch wc = new NewWatch();
 
                 wc.Show();
                 //--------------------------------------------------------------------------------------------------------------
-                //заполняем данные Applications
                 var apps = (from abit in context.qAbiturient
+                            join person in context.Person on abit.PersonId equals person.Id
+                            join extEv in context.extEntryView on abit.Id equals extEv.AbiturientId
                             join compGroup in context.qEntryToCompetitiveGroup on abit.EntryId equals compGroup.EntryId
                             join extCompGroup in context.extCompetitiveGroup on compGroup.CompetitiveGroupId equals extCompGroup.Id
                             join SL in context.StudyLevel on abit.StudyLevelId equals SL.Id
-                            where (FacultyId.HasValue ? abit.FacultyId == FacultyId.Value : true)
-                            && (LicenseProgramId.HasValue ? abit.LicenseProgramId == LicenseProgramId.Value : true)
-                            && (abit.StudyLevelGroupId == StudyLevelGroupId)
+                            where SL.LevelGroupId <= 4
                             select new
                             {
+                                OrderId = extEv.Id,
+                                extEv.Date,
+                                AppUID = abit.Id,
+                                CompetitionId = abit.CompetitionId,
                                 ApplicationNumber = abit.RegNum,
                                 RegistrationDate = abit.DocInsertDate,
-                            });
+                                compGroup.CompetitiveGroupId,
+                                extCompGroup.LicenseProgramCode,
+                                extCompGroup.LicenseProgramName,
+                                extCompGroup.QualificationCode,
+                                abit.StudyLevelGroupId,
+                            }).ToList();
 
-                root = doc["Root"]["DataForDelete"]["Applications"];
+                root = doc["Root"]["DataForDelete"]["OrdersOfAdmission"];
 
                 int wcMax = apps.Count();
-                wc.SetText(fname + " - Заполняем данные DataForDelete - Applications");
+                wc.SetText(fname + " - Заполняем данные OrdersOfAdmission");
                 wc.SetMax(wcMax);
                 wc.ZeroCount();
 
+                dt4_allAbitList = DateTime.Now - dt;
+
                 dt = DateTime.Now;
-                foreach (var app in apps)
+
+                foreach (var eOrder in apps.OrderBy(x => x.QualificationCode).ThenBy(x => x.LicenseProgramCode))
                 {
-                    wc.PerformStep();
+                    //wc.SetText(string.Format("{0} {1}", eOrder.LicenseProgramCode, eOrder.LicenseProgramName));
                     root.AppendChild(doc.CreateNode(XmlNodeType.Element, "Application", ""));
 
+                    var node = root.LastChild;
+
+                    wc.PerformStep();
+
                     //Номер заявления
-                    root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "ApplicationNumber", ""));
-                    root.LastChild["ApplicationNumber"].InnerText = DateTime.Now.Year.ToString() + "_" + app.ApplicationNumber.ToString();
-                    
+                    node.AppendChild(doc.CreateNode(XmlNodeType.Element, "ApplicationNumber", ""));
+                    node["ApplicationNumber"].InnerText = string.Format("{0}_{1}", DateTime.Now.Year, eOrder.ApplicationNumber);
+
                     //Дата регистрации заявления
-                    root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "RegistrationDate", ""));
-                    root.LastChild["RegistrationDate"].InnerText = app.RegistrationDate.ToString("yyyy-MM-ddTHH:mm:ss");
+                    node.AppendChild(doc.CreateNode(XmlNodeType.Element, "RegistrationDate", ""));
+                    node["RegistrationDate"].InnerText = eOrder.RegistrationDate.ToString("yyyy-MM-ddTHH:mm:ss");
                 }
-      
+
                 wc.Close();
                 doc.Save(fname);
 
@@ -1629,22 +2047,25 @@ namespace FIS_EGE_2013
 
                 DateTime dtZeroWaveLastTime = new DateTime(2015, 7, 31);
                 var apps = (from abit in context.qAbiturient
+                            join person in context.Person on abit.PersonId equals person.Id
                             join extEv in context.extEntryView on abit.Id equals extEv.AbiturientId
                             join compGroup in context.qEntryToCompetitiveGroup on abit.EntryId equals compGroup.EntryId
                             join extCompGroup in context.extCompetitiveGroup on compGroup.CompetitiveGroupId equals extCompGroup.Id
                             join SL in context.StudyLevel on abit.StudyLevelId equals SL.Id
-                            where SL.LevelGroupId <= 3
+                            where SL.LevelGroupId <= 4
                             && abit.IsCrimea == isCrimea
+                            && !abit.IsForeign
                             //нулевая волна
                             && (bIsOnlyZeroWave ? extEv.Date <= dtZeroWaveLastTime : extEv.Date > dtZeroWaveLastTime)
                             select new
                             {
                                 OrderId = extEv.Id,
-                                //extEv.OrderNum,
-                                //extEv.OrderNumFor,
+                                extEv.OrderNum,
+                                extEv.OrderNumFor,
                                 extEv.OrderDate,
                                 extEv.OrderDateFor,
                                 extEv.Date,
+                                person.NationalityId,
                                 AppUID = abit.Id,
                                 CompetitionId = abit.CompetitionId,
                                 IsForeign = abit.IsForeign,
@@ -1674,7 +2095,6 @@ namespace FIS_EGE_2013
 
                 foreach (var eOrder in apps.OrderBy(x => x.QualificationCode).ThenBy(x => x.LicenseProgramCode))
                 {
-
                     wc.SetText(string.Format("{0} {1}", eOrder.LicenseProgramCode, eOrder.LicenseProgramName));
                     root.AppendChild(doc.CreateNode(XmlNodeType.Element, "OrderOfAdmission", ""));
 
@@ -1699,8 +2119,18 @@ namespace FIS_EGE_2013
 
                     //Идентификатор приказа в ИС
                     root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OrderOfAdmissionUID", ""));
-                    root.LastChild["OrderOfAdmissionUID"].InnerXml = eOrder.OrderId.ToString();
+                    root.LastChild["OrderOfAdmissionUID"].InnerXml = eOrder.OrderId.ToString() + "_" + (eOrder.NationalityId == 1 ? "0" : "1");
 
+                    if (eOrder.OrderDate.HasValue || eOrder.OrderDateFor.HasValue)
+                    {
+                        root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OrderNumber", ""));
+                        root.LastChild["OrderNumber"].InnerXml = eOrder.NationalityId == 1 ? eOrder.OrderNum : eOrder.OrderNumFor;
+
+                        root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OrderDate", ""));
+                        root.LastChild["OrderDate"].InnerXml = eOrder.NationalityId == 1 ? eOrder.OrderDate.Value.ToString("yyyy-MM-dd") : eOrder.OrderDateFor.Value.ToString("yyyy-MM-dd");
+                        root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OrderDatePublished", ""));
+                        root.LastChild["OrderDatePublished"].InnerXml = eOrder.NationalityId == 1 ? eOrder.OrderDate.Value.ToString("yyyy-MM-dd") : eOrder.OrderDateFor.Value.ToString("yyyy-MM-dd");
+                    }
                     //id направления подготовки (справочник №14 "Направления подготовки")
                     root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DirectionID", ""));
                     root.LastChild["DirectionID"].InnerXml = SearchInDictionary(dic10_Direction, eOrder.LicenseProgramName, eOrder.LicenseProgramCode, eOrder.QualificationCode);
@@ -1750,6 +2180,174 @@ namespace FIS_EGE_2013
                     else
                         root.LastChild["Stage"].InnerText = "0";
 
+                }
+                wc.Close();
+                doc.Save(fname);
+
+                if (!chbFullImport.Checked)
+                    MessageBox.Show("OK");
+            }
+        }
+
+        private void ExportXML_RecommendedList(string fname, bool isCrimea)
+        {
+            XmlDocument doc = new XmlDocument();
+            //XmlImplementation imp = new XmlImplementation();
+
+            UpdateDictionaries_Local();
+            List<int?> BeneficiaryCompetitions = new List<int?>() { 2, 7 };
+
+            using (PriemEntities context = new PriemEntities())
+            {
+                DateTime dt = DateTime.Now;
+                TimeSpan dt1, dt2, dt3, dt4_allAbitList;
+                TimeSpan dt4_EgeMarks = TimeSpan.MinValue, dt4_Marks = TimeSpan.MinValue;
+
+                //создаём корневой элемент
+                doc.AppendChild(doc.CreateNode(XmlNodeType.Element, "Root", ""));
+
+                //создаём элементы AuthData и PackageData
+                XmlNode root = doc["Root"];
+
+                root.AppendChild(doc.CreateNode(XmlNodeType.Element, "AuthData", ""));
+                root.AppendChild(doc.CreateNode(XmlNodeType.Element, "PackageData", ""));
+
+                //заполняем данные AuthData
+                root = root["AuthData"];
+                root.AppendChild(doc.CreateNode(XmlNodeType.Element, "Login", ""));
+                root.AppendChild(doc.CreateNode(XmlNodeType.Element, "Pass", ""));
+
+                bool isDefault = true;
+                root["Login"].InnerText = isDefault ? "p.karpenko@spbu.ru" : tbLogin.Text;
+                root["Pass"].InnerText = isDefault ? "E0k02II" : tbPassword.Text;
+
+                //----------------------------------------------------------------------------------------------------------
+                //заполняем данные PackageData
+                root = doc["Root"];
+                root["PackageData"].AppendChild(doc.CreateNode(XmlNodeType.Element, "RecommendedLists", ""));
+
+                NewWatch wc = new NewWatch();
+
+                wc.Show();
+                //--------------------------------------------------------------------------------------------------------------
+                //заполняем данные Applications
+                //bool bIsOnlyZeroWave = true;
+
+                DateTime dtZeroWaveLastTime = new DateTime(2015, 7, 31);
+                DateTime dtFirstWaveLastDate = new DateTime(2015, 8, 5);
+                DateTime dtSecondWaveLastDate = new DateTime(2015, 8, 8);
+
+                var apps = (from abit in context.qAbiturient
+                            join person in context.Person on abit.PersonId equals person.Id
+                            join extEv in context.extEntryView on abit.Id equals extEv.AbiturientId
+                            join compGroup in context.qEntryToCompetitiveGroup on abit.EntryId equals compGroup.EntryId
+                            join extCompGroup in context.extCompetitiveGroup on compGroup.CompetitiveGroupId equals extCompGroup.Id
+                            join SL in context.StudyLevel on abit.StudyLevelId equals SL.Id
+                            where SL.LevelGroupId <= 4
+                            && abit.IsCrimea == isCrimea
+                            && !abit.IsForeign
+                            //нулевая волна
+                            && extEv.Date > dtZeroWaveLastTime
+                            && extEv.StudyLevelGroupId == 1 && extEv.StudyBasisId == 1
+                            select new
+                            {
+                                extEv.OrderNum,
+                                extEv.OrderNumFor,
+                                extEv.OrderDate,
+                                extEv.OrderDateFor,
+                                extEv.Date,
+                                AppUID = abit.Id,
+                                CompetitionId = abit.CompetitionId,
+                                ApplicationNumber = abit.RegNum,
+                                RegistrationDate = abit.DocInsertDate,
+                                abit.StudyBasisFISName,
+                                abit.StudyBasisId,
+                                abit.StudyFormFISName,
+                                StudyLevelFISName = SL.FISName + (abit.IsReduced ? " (сокращ.)" : ""),
+                                compGroup.CompetitiveGroupId,
+                                extCompGroup.LicenseProgramCode,
+                                extCompGroup.LicenseProgramName,
+                                extCompGroup.QualificationCode,
+                                abit.StudyLevelGroupId,
+                            }).ToList()
+                            .Select(x => new {
+                                x.ApplicationNumber,
+                                x.AppUID,
+                                x.CompetitiveGroupId,
+                                x.Date,
+                                x.LicenseProgramCode,
+                                x.LicenseProgramName,
+                                x.QualificationCode,
+                                x.RegistrationDate,
+                                x.StudyBasisId,
+                                x.StudyLevelGroupId,
+                                x.StudyBasisFISName,
+                                x.StudyFormFISName,
+                                x.StudyLevelFISName,
+                                Stage = 
+                                (
+                                    (x.Date < dtFirstWaveLastDate && x.Date > dtZeroWaveLastTime) ?
+                                        (1) : (x.Date > dtFirstWaveLastDate && x.Date < dtSecondWaveLastDate ? 2 : 0)
+                                )
+                            }).ToList();
+
+                root = doc["Root"]["PackageData"]["RecommendedLists"];
+
+                int wcMax = apps.Count();
+                wc.SetText(fname + " - Заполняем данные RecommendedLists");
+                wc.SetMax(wcMax);
+                wc.ZeroCount();
+
+                dt4_allAbitList = DateTime.Now - dt;
+
+                dt = DateTime.Now;
+                foreach (var eStage in apps.Select(x => x.Stage).Distinct())
+                {
+                    root.AppendChild(doc.CreateNode(XmlNodeType.Element, "RecommendedList", ""));
+                    var node = root.LastChild;
+                    node.AppendChild(doc.CreateNode(XmlNodeType.Element, "Stage", ""));
+                    node["Stage"].InnerXml = eStage.ToString();
+                    node.AppendChild(doc.CreateNode(XmlNodeType.Element, "RecLists", ""));
+
+                    node = node["RecLists"];
+
+                    foreach (var eOrder in apps.Where(x => x.Stage == eStage).OrderBy(x => x.LicenseProgramCode))
+                    {
+                        node.AppendChild(doc.CreateNode(XmlNodeType.Element, "RecList", ""));
+                        var InnerNode = node.LastChild;
+                        wc.SetText(string.Format("{0} {1}", eOrder.LicenseProgramCode, eOrder.LicenseProgramName));
+
+                        InnerNode.AppendChild(doc.CreateNode(XmlNodeType.Element, "Application", ""));
+
+                        wc.PerformStep();
+
+                        //Номер заявления
+                        InnerNode["Application"].AppendChild(doc.CreateNode(XmlNodeType.Element, "ApplicationNumber", ""));
+                        InnerNode["Application"]["ApplicationNumber"].InnerText = string.Format("{0}_{1}", DateTime.Now.Year, eOrder.ApplicationNumber);
+
+                        //Дата регистрации заявления
+                        InnerNode["Application"].AppendChild(doc.CreateNode(XmlNodeType.Element, "RegistrationDate", ""));
+                        InnerNode["Application"]["RegistrationDate"].InnerText = eOrder.RegistrationDate.ToString("yyyy-MM-ddTHH:mm:ss");
+
+                        InnerNode.AppendChild(doc.CreateNode(XmlNodeType.Element, "FinSourceAndEduForms", ""));
+                        InnerNode["FinSourceAndEduForms"].AppendChild(doc.CreateNode(XmlNodeType.Element, "FinSourceEduForm", ""));
+
+                        InnerNode = InnerNode["FinSourceAndEduForms"]["FinSourceEduForm"];
+                        //id направления подготовки (справочник №14 "Направления подготовки")
+                        InnerNode.AppendChild(doc.CreateNode(XmlNodeType.Element, "DirectionID", ""));
+                        InnerNode["DirectionID"].InnerXml = SearchInDictionary(dic10_Direction, eOrder.LicenseProgramName, eOrder.LicenseProgramCode, eOrder.QualificationCode);
+
+                        //id формы обучения (справочник №14 "Формы обучения")
+                        InnerNode.AppendChild(doc.CreateNode(XmlNodeType.Element, "EducationFormID", ""));
+                        InnerNode["EducationFormID"].InnerXml = SearchInDictionary(dic14_EducationForm, eOrder.StudyFormFISName);
+
+                        //id Уровня образования (справочник №2 "Уровни Образования")
+                        InnerNode.AppendChild(doc.CreateNode(XmlNodeType.Element, "EducationalLevelID", ""));
+                        InnerNode["EducationalLevelID"].InnerXml = SearchInDictionary(dic02_StudyLevel, eOrder.StudyLevelFISName);
+
+                        InnerNode.AppendChild(doc.CreateNode(XmlNodeType.Element, "CompetitiveGroupID", ""));
+                        InnerNode["CompetitiveGroupID"].InnerXml = eOrder.CompetitiveGroupId.ToString();
+                    }
                 }
                 wc.Close();
                 doc.Save(fname);
@@ -1895,7 +2493,7 @@ namespace FIS_EGE_2013
                         { 
                             Id = node["ID"].InnerXml, 
                             Name = node["Name"].InnerXml,
-                            Code = node["NewCode"].InnerXml,
+                            Code = node["NewCode"] == null ? node["Code"].InnerXml : node["NewCode"].InnerXml,
                             QualificationCode = node["QualificationCode"].InnerXml 
                         });
                 }
@@ -2063,7 +2661,8 @@ namespace FIS_EGE_2013
                 if (sf.ShowDialog() != System.Windows.Forms.DialogResult.OK)
                     return;
 
-                ExportXML_DataForDelete_Applications(sf.FileName);
+                DeleteOrders(sf.FileName);
+                //ExportXML_DataForDelete_Applications(sf.FileName);
             }
             else
             {
@@ -2077,7 +2676,8 @@ namespace FIS_EGE_2013
                     foreach (var x in facs)
                     {
                         FacultyId = x.Id;
-                        ExportXML_DataForDelete_Applications(folderPath + (x.Id < 10 ? "0" : "") + x.Id.ToString() + "_" + x.Acronym + ".xml");
+                        DeleteOrders(folderPath + (x.Id < 10 ? "0" : "") + x.Id.ToString() + "_" + x.Acronym + ".xml");
+                        //ExportXML_DataForDelete_Applications(folderPath + (x.Id < 10 ? "0" : "") + x.Id.ToString() + "_" + x.Acronym + ".xml");
                     }
                     MessageBox.Show("OK");
                 }
@@ -2088,6 +2688,15 @@ namespace FIS_EGE_2013
         private void btnUpdateDics_Click(object sender, EventArgs e)
         {
             UpdateDictionaries_Web();
+        }
+
+        private void btnExportRecommendedList_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sf = new SaveFileDialog();
+            sf.Filter = "XML File|*.xml";
+            if (sf.ShowDialog() != System.Windows.Forms.DialogResult.OK)
+                return;
+            ExportXML_RecommendedList(sf.FileName, chbIsCrimea.Checked);
         }
     }
 }

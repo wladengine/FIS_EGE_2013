@@ -28,6 +28,7 @@
           <Property Name="CelCompetitionId" Type="int" />
           <Property Name="CelCompetitionText" Type="nvarchar" MaxLength="50" />
           <Property Name="CompFromOlymp" Type="bit" Nullable="false" />
+          <Property Name="OlympiadId" Type="uniqueidentifier" />
           <Property Name="LanguageId" Type="int" Nullable="false" />
           <Property Name="HasOriginals" Type="bit" Nullable="false" />
           <Property Name="StudyNumber" Type="nvarchar" MaxLength="50" />
@@ -48,6 +49,32 @@
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
           <Property Name="BackDocByAdmissionHigh" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="BenefitDocumentType">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" />
+        </EntityType>
+        <EntityType Name="CelCompetition">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="1000" Nullable="false" />
+          <Property Name="TvorName" Type="nvarchar" MaxLength="1000" />
+        </EntityType>
+        <EntityType Name="CelCompetitionInEntry">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="CelCompetitionId" Type="int" Nullable="false" />
+          <Property Name="EntryId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="KCP" Type="int" Nullable="false" />
+          <Property Name="IsOpen" Type="bit" Nullable="false" />
+          <Property Name="Holder" Type="nvarchar" MaxLength="150" />
+        </EntityType>
         <EntityType Name="ChangeType">
           <Key>
             <PropertyRef Name="Id" />
@@ -66,6 +93,13 @@
           <Property Name="NameRod" Type="nvarchar" MaxLength="100" />
           <Property Name="OSKMCode" Type="nvarchar" MaxLength="10" />
           <Property Name="FISName" Type="nvarchar" MaxLength="150" />
+        </EntityType>
+        <EntityType Name="DisabilityType">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="Name" Type="nvarchar" MaxLength="100" />
         </EntityType>
         <EntityType Name="EgeCertificate">
           <Key>
@@ -105,6 +139,14 @@
           <Property Name="EgeCertificateId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="IsAppeal" Type="bit" Nullable="false" />
           <Property Name="IsCurrent" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="EgeToExam">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="EgeExamNameId" Type="int" Nullable="false" />
+          <Property Name="ExamId" Type="int" />
         </EntityType>
         <EntityType Name="Entry">
           <Key>
@@ -455,6 +497,25 @@
           <Property Name="HEExitYear" Type="int" />
           <Property Name="HEWork" Type="nvarchar" MaxLength="500" />
           <Property Name="Author" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+        </EntityType>
+        <EntityType Name="PersonBenefitDocument">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="PersonId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="BenefitDocumentTypeId" Type="int" Nullable="false" />
+          <Property Name="Series" Type="nvarchar" MaxLength="50" />
+          <Property Name="Number" Type="nvarchar" MaxLength="50" />
+          <Property Name="Date" Type="date" />
+          <Property Name="DisabilityTypeId" Type="int" />
+          <Property Name="HasOriginals" Type="bit" Nullable="false" />
+          <Property Name="OriginalsDate" Type="date" />
+          <Property Name="IsOpen" Type="bit" Nullable="false" />
+          <Property Name="Author" Type="nvarchar" MaxLength="500" />
+          <Property Name="Holder" Type="nvarchar" MaxLength="150" />
+          <Property Name="_Author" Type="nvarchar" MaxLength="150" Nullable="false" />
           <Property Name="DateCreated" Type="datetime" Nullable="false" />
         </EntityType>
         <EntityType Name="PersonOtherPassport">
@@ -847,6 +908,7 @@ warning 6002: The table/view 'Priem.ed.extEntryView' does not have a primary key
             <PropertyRef Name="PersonId" />
             <PropertyRef Name="IsCrimea" />
             <PropertyRef Name="IsForeign" />
+            <PropertyRef Name="EntryIsForeign" />
             <PropertyRef Name="IsQuota" />
             <PropertyRef Name="IsCel" />
             <PropertyRef Name="IsBE" />
@@ -887,6 +949,7 @@ warning 6002: The table/view 'Priem.ed.extEntryView' does not have a primary key
           <Property Name="IsBE" Type="bit" Nullable="false" />
           <Property Name="IsForeign" Type="bit" Nullable="false" />
           <Property Name="Priority" Type="int" />
+          <Property Name="EntryIsForeign" Type="bit" Nullable="false" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'Priem.ed.extExamInEntry' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -1168,6 +1231,28 @@ warning 6002: The table/view 'Priem.ed.extPerson_EducationInfo_Current' does not
           <Property Name="EducDocument" Type="nvarchar" MaxLength="42" />
         </EntityType>
         <!--Errors Found During Generation:
+warning 6002: The table/view 'Priem.ed.hlpEgeMarkMaxApproved' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="hlpEgeMarkMaxApproved">
+          <Key>
+            <PropertyRef Name="PersonId" />
+            <PropertyRef Name="EgeExamNameId" />
+          </Key>
+          <Property Name="PersonId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="EgeExamNameId" Type="int" Nullable="false" />
+          <Property Name="EgeMarkId" Type="uniqueidentifier" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'Priem.ed.hlpEgeMarkMaxApprovedValue' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="hlpEgeMarkMaxApprovedValue">
+          <Key>
+            <PropertyRef Name="PersonId" />
+            <PropertyRef Name="EgeExamNameId" />
+          </Key>
+          <Property Name="PersonId" Type="uniqueidentifier" Nullable="false" />
+          <Property Name="EgeExamNameId" Type="int" Nullable="false" />
+          <Property Name="EgeMarkValue" Type="int" />
+        </EntityType>
+        <!--Errors Found During Generation:
 warning 6002: The table/view 'Priem.ed.hlpLicenseProgramKCP' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
         <EntityType Name="hlpLicenseProgramKCP">
           <Key>
@@ -1302,6 +1387,7 @@ warning 6002: The table/view 'Priem.ed.qAbiturient' does not have a primary key 
           <Property Name="IsForeign" Type="bit" Nullable="false" />
           <Property Name="IsCrimea" Type="bit" Nullable="false" />
           <Property Name="BackDocByAdmissionHigh" Type="bit" Nullable="false" />
+          <Property Name="OlympiadId" Type="uniqueidentifier" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'Priem.ed.qAbiturientForeignApplicationsOnly' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -1394,6 +1480,18 @@ warning 6002: The table/view 'Priem.ed.qMark' does not have a primary key define
           <Property Name="PersonId" Type="uniqueidentifier" Nullable="false" />
           <Property Name="StudyBasisId" Type="int" Nullable="false" />
         </EntityType>
+        <Association Name="FK_Abiturient_CelCompetition">
+          <End Role="CelCompetition" Type="Self.CelCompetition" Multiplicity="0..1" />
+          <End Role="Abiturient" Type="Self.Abiturient" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CelCompetition">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Abiturient">
+              <PropertyRef Name="CelCompetitionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Abiturient_Entry">
           <End Role="Entry" Type="Self.Entry" Multiplicity="1" />
           <End Role="Abiturient" Type="Self.Abiturient" Multiplicity="*" />
@@ -1415,6 +1513,30 @@ warning 6002: The table/view 'Priem.ed.qMark' does not have a primary key define
             </Principal>
             <Dependent Role="Abiturient">
               <PropertyRef Name="PersonId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CelCompetitionInEntry_CelCompetition">
+          <End Role="CelCompetition" Type="Self.CelCompetition" Multiplicity="1" />
+          <End Role="CelCompetitionInEntry" Type="Self.CelCompetitionInEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CelCompetition">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CelCompetitionInEntry">
+              <PropertyRef Name="CelCompetitionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CelCompetitionInEntry_Entry">
+          <End Role="Entry" Type="Self.Entry" Multiplicity="1" />
+          <End Role="CelCompetitionInEntry" Type="Self.CelCompetitionInEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Entry">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CelCompetitionInEntry">
+              <PropertyRef Name="EntryId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1465,6 +1587,30 @@ warning 6002: The table/view 'Priem.ed.qMark' does not have a primary key define
             </Principal>
             <Dependent Role="EgeCertificate">
               <PropertyRef Name="PersonId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EgeToExam_EgeExamName">
+          <End Role="EgeExamName" Type="Self.EgeExamName" Multiplicity="1" />
+          <End Role="EgeToExam" Type="Self.EgeToExam" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EgeExamName">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EgeToExam">
+              <PropertyRef Name="EgeExamNameId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EgeToExam_Exam">
+          <End Role="Exam" Type="Self.Exam" Multiplicity="0..1" />
+          <End Role="EgeToExam" Type="Self.EgeToExam" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Exam">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EgeToExam">
+              <PropertyRef Name="ExamId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -1894,6 +2040,30 @@ warning 6002: The table/view 'Priem.ed.qMark' does not have a primary key define
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_PersonBenefitDocument_BenefitDocumentType">
+          <End Role="BenefitDocumentType" Type="Self.BenefitDocumentType" Multiplicity="1" />
+          <End Role="PersonBenefitDocument" Type="Self.PersonBenefitDocument" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BenefitDocumentType">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PersonBenefitDocument">
+              <PropertyRef Name="BenefitDocumentTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PersonBenefitDocument_Person">
+          <End Role="Person" Type="Self.Person" Multiplicity="1" />
+          <End Role="PersonBenefitDocument" Type="Self.PersonBenefitDocument" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PersonBenefitDocument">
+              <PropertyRef Name="PersonId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_PersonOtherPassport_PassportType">
           <End Role="PassportType" Type="Self.PassportType" Multiplicity="1" />
           <End Role="PersonOtherPassport" Type="Self.PersonOtherPassport" Multiplicity="*" />
@@ -1981,11 +2151,16 @@ warning 6002: The table/view 'Priem.ed.qMark' does not have a primary key define
         </Function>
         <EntityContainer Name="Priem2012ModelStoreContainer">
           <EntitySet Name="Abiturient" EntityType="Self.Abiturient" Schema="ed" store:Type="Tables" />
+          <EntitySet Name="BenefitDocumentType" EntityType="Self.BenefitDocumentType" Schema="ed" store:Type="Tables" />
+          <EntitySet Name="CelCompetition" EntityType="Self.CelCompetition" Schema="ed" store:Type="Tables" />
+          <EntitySet Name="CelCompetitionInEntry" EntityType="Self.CelCompetitionInEntry" Schema="ed" store:Type="Tables" />
           <EntitySet Name="ChangeType" EntityType="Self.ChangeType" Schema="ed" store:Type="Tables" />
           <EntitySet Name="Country" EntityType="Self.Country" Schema="ed" store:Type="Tables" />
+          <EntitySet Name="DisabilityType" EntityType="Self.DisabilityType" Schema="ed" store:Type="Tables" />
           <EntitySet Name="EgeCertificate" EntityType="Self.EgeCertificate" Schema="ed" store:Type="Tables" />
           <EntitySet Name="EgeExamName" EntityType="Self.EgeExamName" Schema="ed" store:Type="Tables" />
           <EntitySet Name="EgeMark" EntityType="Self.EgeMark" Schema="ed" store:Type="Tables" />
+          <EntitySet Name="EgeToExam" EntityType="Self.EgeToExam" Schema="ed" store:Type="Tables" />
           <EntitySet Name="Entry" EntityType="Self.Entry" Schema="ed" store:Type="Tables" />
           <EntitySet Name="EntryHeader" EntityType="Self.EntryHeader" Schema="ed" store:Type="Tables" />
           <EntitySet Name="Exam" EntityType="Self.Exam" Schema="ed" store:Type="Tables" />
@@ -2008,6 +2183,7 @@ warning 6002: The table/view 'Priem.ed.qMark' does not have a primary key define
           <EntitySet Name="Person_AdditionalInfo" EntityType="Self.Person_AdditionalInfo" Schema="ed" store:Type="Tables" />
           <EntitySet Name="Person_Contacts" EntityType="Self.Person_Contacts" Schema="ed" store:Type="Tables" />
           <EntitySet Name="Person_EducationInfo" EntityType="Self.Person_EducationInfo" Schema="ed" store:Type="Tables" />
+          <EntitySet Name="PersonBenefitDocument" EntityType="Self.PersonBenefitDocument" Schema="ed" store:Type="Tables" />
           <EntitySet Name="PersonOtherPassport" EntityType="Self.PersonOtherPassport" Schema="ed" store:Type="Tables" />
           <EntitySet Name="Region" EntityType="Self.Region" Schema="ed" store:Type="Tables" />
           <EntitySet Name="SchoolType" EntityType="Self.SchoolType" Schema="ed" store:Type="Tables" />
@@ -2238,7 +2414,8 @@ FROM [ed].[extEntry] AS [extEntry]</DefiningQuery>
 [extEntryView].[IsCel] AS [IsCel], 
 [extEntryView].[IsBE] AS [IsBE], 
 [extEntryView].[IsForeign] AS [IsForeign], 
-[extEntryView].[Priority] AS [Priority]
+[extEntryView].[Priority] AS [Priority], 
+[extEntryView].[EntryIsForeign] AS [EntryIsForeign]
 FROM [ed].[extEntryView] AS [extEntryView]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="extExamInEntry" EntityType="Self.extExamInEntry" store:Type="Views" store:Schema="ed">
@@ -2439,6 +2616,20 @@ FROM [ed].[extPerson] AS [extPerson]</DefiningQuery>
 [extPerson_EducationInfo_Current].[EducDocument] AS [EducDocument]
 FROM [ed].[extPerson_EducationInfo_Current] AS [extPerson_EducationInfo_Current]</DefiningQuery>
           </EntitySet>
+          <EntitySet Name="hlpEgeMarkMaxApproved" EntityType="Self.hlpEgeMarkMaxApproved" store:Type="Views" store:Schema="ed">
+            <DefiningQuery>SELECT 
+[hlpEgeMarkMaxApproved].[PersonId] AS [PersonId], 
+[hlpEgeMarkMaxApproved].[EgeExamNameId] AS [EgeExamNameId], 
+[hlpEgeMarkMaxApproved].[EgeMarkId] AS [EgeMarkId]
+FROM [ed].[hlpEgeMarkMaxApproved] AS [hlpEgeMarkMaxApproved]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="hlpEgeMarkMaxApprovedValue" EntityType="Self.hlpEgeMarkMaxApprovedValue" store:Type="Views" store:Schema="ed">
+            <DefiningQuery>SELECT 
+[hlpEgeMarkMaxApprovedValue].[PersonId] AS [PersonId], 
+[hlpEgeMarkMaxApprovedValue].[EgeExamNameId] AS [EgeExamNameId], 
+[hlpEgeMarkMaxApprovedValue].[EgeMarkValue] AS [EgeMarkValue]
+FROM [ed].[hlpEgeMarkMaxApprovedValue] AS [hlpEgeMarkMaxApprovedValue]</DefiningQuery>
+          </EntitySet>
           <EntitySet Name="hlpLicenseProgramKCP" EntityType="Self.hlpLicenseProgramKCP" store:Type="Views" store:Schema="ed">
             <DefiningQuery>SELECT 
 [hlpLicenseProgramKCP].[LicenseProgramId] AS [LicenseProgramId], 
@@ -2527,7 +2718,8 @@ FROM [ed].[hlpLicenseProgramKCP] AS [hlpLicenseProgramKCP]</DefiningQuery>
 [qAbiturient].[InnerEntryInEntryId] AS [InnerEntryInEntryId], 
 [qAbiturient].[IsForeign] AS [IsForeign], 
 [qAbiturient].[IsCrimea] AS [IsCrimea], 
-[qAbiturient].[BackDocByAdmissionHigh] AS [BackDocByAdmissionHigh]
+[qAbiturient].[BackDocByAdmissionHigh] AS [BackDocByAdmissionHigh], 
+[qAbiturient].[OlympiadId] AS [OlympiadId]
 FROM [ed].[qAbiturient] AS [qAbiturient]</DefiningQuery>
           </EntitySet>
           <EntitySet Name="qAbiturientForeignApplicationsOnly" EntityType="Self.qAbiturientForeignApplicationsOnly" store:Type="Views" store:Schema="ed">
@@ -2587,6 +2779,10 @@ FROM [ed].[qEntryToCompetitiveGroup] AS [qEntryToCompetitiveGroup]</DefiningQuer
 [qMark].[StudyBasisId] AS [StudyBasisId]
 FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           </EntitySet>
+          <AssociationSet Name="FK_Abiturient_CelCompetition" Association="Self.FK_Abiturient_CelCompetition">
+            <End Role="CelCompetition" EntitySet="CelCompetition" />
+            <End Role="Abiturient" EntitySet="Abiturient" />
+          </AssociationSet>
           <AssociationSet Name="FK_Abiturient_Entry" Association="Self.FK_Abiturient_Entry">
             <End Role="Entry" EntitySet="Entry" />
             <End Role="Abiturient" EntitySet="Abiturient" />
@@ -2594,6 +2790,14 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <AssociationSet Name="FK_Abiturient_Person" Association="Self.FK_Abiturient_Person">
             <End Role="Person" EntitySet="Person" />
             <End Role="Abiturient" EntitySet="Abiturient" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CelCompetitionInEntry_CelCompetition" Association="Self.FK_CelCompetitionInEntry_CelCompetition">
+            <End Role="CelCompetition" EntitySet="CelCompetition" />
+            <End Role="CelCompetitionInEntry" EntitySet="CelCompetitionInEntry" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CelCompetitionInEntry_Entry" Association="Self.FK_CelCompetitionInEntry_Entry">
+            <End Role="Entry" EntitySet="Entry" />
+            <End Role="CelCompetitionInEntry" EntitySet="CelCompetitionInEntry" />
           </AssociationSet>
           <AssociationSet Name="fk_ed_EgeCertificate_FBSStatus" Association="Self.fk_ed_EgeCertificate_FBSStatus">
             <End Role="FBSStatus" EntitySet="FBSStatus" />
@@ -2610,6 +2814,14 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <AssociationSet Name="FK_EgeCertificate_Person" Association="Self.FK_EgeCertificate_Person">
             <End Role="Person" EntitySet="Person" />
             <End Role="EgeCertificate" EntitySet="EgeCertificate" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EgeToExam_EgeExamName" Association="Self.FK_EgeToExam_EgeExamName">
+            <End Role="EgeExamName" EntitySet="EgeExamName" />
+            <End Role="EgeToExam" EntitySet="EgeToExam" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EgeToExam_Exam" Association="Self.FK_EgeToExam_Exam">
+            <End Role="Exam" EntitySet="Exam" />
+            <End Role="EgeToExam" EntitySet="EgeToExam" />
           </AssociationSet>
           <AssociationSet Name="FK_Entry_SP_Faculty" Association="Self.FK_Entry_SP_Faculty">
             <End Role="SP_Faculty" EntitySet="SP_Faculty" />
@@ -2746,6 +2958,14 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <AssociationSet Name="FK_Person_PassportType" Association="Self.FK_Person_PassportType">
             <End Role="PassportType" EntitySet="PassportType" />
             <End Role="Person" EntitySet="Person" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonBenefitDocument_BenefitDocumentType" Association="Self.FK_PersonBenefitDocument_BenefitDocumentType">
+            <End Role="BenefitDocumentType" EntitySet="BenefitDocumentType" />
+            <End Role="PersonBenefitDocument" EntitySet="PersonBenefitDocument" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonBenefitDocument_Person" Association="Self.FK_PersonBenefitDocument_Person">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="PersonBenefitDocument" EntitySet="PersonBenefitDocument" />
           </AssociationSet>
           <AssociationSet Name="FK_PersonOtherPassport_PassportType" Association="Self.FK_PersonOtherPassport_PassportType">
             <End Role="PassportType" EntitySet="PassportType" />
@@ -3035,6 +3255,42 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
             <End Role="Person" EntitySet="Person" />
             <End Role="PersonOtherPassport" EntitySet="PersonOtherPassport" />
           </AssociationSet>
+          <EntitySet Name="hlpEgeMarkMaxApproved" EntityType="Priem2012Model.hlpEgeMarkMaxApproved" />
+          <EntitySet Name="hlpEgeMarkMaxApprovedValue" EntityType="Priem2012Model.hlpEgeMarkMaxApprovedValue" />
+          <EntitySet Name="EgeToExam" EntityType="Priem2012Model.EgeToExam" />
+          <AssociationSet Name="FK_EgeToExam_EgeExamName" Association="Priem2012Model.FK_EgeToExam_EgeExamName">
+            <End Role="EgeExamName" EntitySet="EgeExamName" />
+            <End Role="EgeToExam" EntitySet="EgeToExam" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EgeToExam_Exam" Association="Priem2012Model.FK_EgeToExam_Exam">
+            <End Role="Exam" EntitySet="Exam" />
+            <End Role="EgeToExam" EntitySet="EgeToExam" />
+          </AssociationSet>
+          <EntitySet Name="BenefitDocumentType" EntityType="Priem2012Model.BenefitDocumentType" />
+          <EntitySet Name="DisabilityType" EntityType="Priem2012Model.DisabilityType" />
+          <EntitySet Name="PersonBenefitDocument" EntityType="Priem2012Model.PersonBenefitDocument" />
+          <AssociationSet Name="FK_PersonBenefitDocument_BenefitDocumentType" Association="Priem2012Model.FK_PersonBenefitDocument_BenefitDocumentType">
+            <End Role="BenefitDocumentType" EntitySet="BenefitDocumentType" />
+            <End Role="PersonBenefitDocument" EntitySet="PersonBenefitDocument" />
+          </AssociationSet>
+          <AssociationSet Name="FK_PersonBenefitDocument_Person" Association="Priem2012Model.FK_PersonBenefitDocument_Person">
+            <End Role="Person" EntitySet="Person" />
+            <End Role="PersonBenefitDocument" EntitySet="PersonBenefitDocument" />
+          </AssociationSet>
+          <EntitySet Name="CelCompetitionInEntry" EntityType="Priem2012Model.CelCompetitionInEntry" />
+          <AssociationSet Name="FK_CelCompetitionInEntry_Entry" Association="Priem2012Model.FK_CelCompetitionInEntry_Entry">
+            <End Role="Entry" EntitySet="Entry" />
+            <End Role="CelCompetitionInEntry" EntitySet="CelCompetitionInEntry" />
+          </AssociationSet>
+          <EntitySet Name="CelCompetition" EntityType="Priem2012Model.CelCompetition" />
+          <AssociationSet Name="FK_Abiturient_CelCompetition" Association="Priem2012Model.FK_Abiturient_CelCompetition">
+            <End Role="CelCompetition" EntitySet="CelCompetition" />
+            <End Role="Abiturient" EntitySet="Abiturient" />
+          </AssociationSet>
+          <AssociationSet Name="FK_CelCompetitionInEntry_CelCompetition" Association="Priem2012Model.FK_CelCompetitionInEntry_CelCompetition">
+            <End Role="CelCompetition" EntitySet="CelCompetition" />
+            <End Role="CelCompetitionInEntry" EntitySet="CelCompetitionInEntry" />
+          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Abiturient">
           <Key>
@@ -3081,6 +3337,8 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Name="Author" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
           <Property Name="BackDocByAdmissionHigh" Type="Boolean" Nullable="false" />
+          <Property Name="OlympiadId" Type="Guid" />
+          <NavigationProperty Name="CelCompetition" Relationship="Priem2012Model.FK_Abiturient_CelCompetition" FromRole="Abiturient" ToRole="CelCompetition" />
         </EntityType>
         <EntityType Name="Country">
           <Key>
@@ -3169,6 +3427,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Type="Boolean" Name="IsCrimea" Nullable="false" />
           <Property Name="ParentEntryId" Type="Guid" />
           <NavigationProperty Name="OlympResultToCommonBenefit" Relationship="Priem2012Model.FK_OlympResultToCommonBenefit_Entry" FromRole="Entry" ToRole="OlympResultToCommonBenefit" />
+          <NavigationProperty Name="CelCompetitionInEntry" Relationship="Priem2012Model.FK_CelCompetitionInEntry_Entry" FromRole="Entry" ToRole="CelCompetitionInEntry" />
         </EntityType>
         <EntityType Name="EntryHeader">
           <Key>
@@ -3656,6 +3915,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
             <PropertyRef Name="IsCel" />
             <PropertyRef Name="IsBE" />
             <PropertyRef Name="IsForeign" />
+            <PropertyRef Name="EntryIsForeign" />
           </Key>
           <Property Type="Guid" Name="Id" Nullable="false" />
           <Property Type="Guid" Name="AbiturientId" Nullable="false" />
@@ -3693,6 +3953,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Type="Boolean" Name="IsBE" Nullable="false" />
           <Property Name="IsForeign" Type="Boolean" Nullable="false" />
           <Property Name="Priority" Type="Int32" />
+          <Property Name="EntryIsForeign" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="extOlympiadsAll">
           <Key>
@@ -3876,6 +4137,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Type="DateTime" Name="DateCreated" Nullable="false" Precision="3" />
           <NavigationProperty Name="Person_EducationInfo" Relationship="Priem2012Model.FK_Person_EducationInfo_Person" FromRole="Person" ToRole="Person_EducationInfo" />
           <NavigationProperty Name="PersonOtherPassport" Relationship="Priem2012Model.FK_PersonOtherPassport_Person" FromRole="Person" ToRole="PersonOtherPassport" />
+          <NavigationProperty Name="PersonBenefitDocument" Relationship="Priem2012Model.FK_PersonBenefitDocument_Person" FromRole="Person" ToRole="PersonBenefitDocument" />
         </EntityType>
         <Association Name="FK_Abiturient_Person">
           <End Type="Priem2012Model.Person" Role="Person" Multiplicity="1" />
@@ -4254,6 +4516,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Name="IsForeign" Type="Boolean" Nullable="false" />
           <Property Name="IsCrimea" Type="Boolean" Nullable="false" />
           <Property Name="BackDocByAdmissionHigh" Type="Boolean" Nullable="false" />
+          <Property Name="OlympiadId" Type="Guid" />
         </EntityType>
         <EntityType Name="qMark">
           <Key>
@@ -4396,6 +4659,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <Property Type="Int32" Name="EgeMin" Nullable="false" />
           <Property Type="String" Name="FISName" MaxLength="50" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="EgeMark" Relationship="Priem2012Model.fk_ed_EgeMark_EgeExamName" FromRole="EgeExamName" ToRole="EgeMark" />
+          <NavigationProperty Name="EgeToExam" Relationship="Priem2012Model.FK_EgeToExam_EgeExamName" FromRole="EgeExamName" ToRole="EgeToExam" />
         </EntityType>
         <Association Name="fk_ed_EgeMark_EgeExamName">
           <End Type="Priem2012Model.EgeExamName" Role="EgeExamName" Multiplicity="1" />
@@ -4874,6 +5138,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <NavigationProperty Name="ExamName" Relationship="Priem2012Model.fk_Exam_ExamName" FromRole="Exam" ToRole="ExamName" />
           <NavigationProperty Name="ExamInEntry" Relationship="Priem2012Model.FK_ExamInEntry_Exam" FromRole="Exam" ToRole="ExamInEntry" />
           <NavigationProperty Name="OlympSubjectToExam" Relationship="Priem2012Model.FK_OlympSubjectToExam_Exam" FromRole="Exam" ToRole="OlympSubjectToExam" />
+          <NavigationProperty Name="EgeToExam" Relationship="Priem2012Model.FK_EgeToExam_Exam" FromRole="Exam" ToRole="EgeToExam" />
         </EntityType>
         <Association Name="fk_Exam_ExamName">
           <End Type="Priem2012Model.ExamName" Role="ExamName" Multiplicity="1">
@@ -4957,6 +5222,177 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="hlpEgeMarkMaxApproved">
+          <Key>
+            <PropertyRef Name="PersonId" />
+            <PropertyRef Name="EgeExamNameId" />
+          </Key>
+          <Property Name="PersonId" Type="Guid" Nullable="false" />
+          <Property Name="EgeExamNameId" Type="Int32" Nullable="false" />
+          <Property Name="EgeMarkId" Type="Guid" />
+        </EntityType>
+        <EntityType Name="hlpEgeMarkMaxApprovedValue">
+          <Key>
+            <PropertyRef Name="PersonId" />
+            <PropertyRef Name="EgeExamNameId" />
+          </Key>
+          <Property Name="PersonId" Type="Guid" Nullable="false" />
+          <Property Name="EgeExamNameId" Type="Int32" Nullable="false" />
+          <Property Name="EgeMarkValue" Type="Int32" />
+        </EntityType>
+        <EntityType Name="EgeToExam">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="EgeExamNameId" Type="Int32" Nullable="false" />
+          <Property Name="ExamId" Type="Int32" />
+          <NavigationProperty Name="EgeExamName" Relationship="Priem2012Model.FK_EgeToExam_EgeExamName" FromRole="EgeToExam" ToRole="EgeExamName" />
+          <NavigationProperty Name="Exam" Relationship="Priem2012Model.FK_EgeToExam_Exam" FromRole="EgeToExam" ToRole="Exam" />
+        </EntityType>
+        <Association Name="FK_EgeToExam_EgeExamName">
+          <End Type="Priem2012Model.EgeExamName" Role="EgeExamName" Multiplicity="1" />
+          <End Type="Priem2012Model.EgeToExam" Role="EgeToExam" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EgeExamName">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EgeToExam">
+              <PropertyRef Name="EgeExamNameId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EgeToExam_Exam">
+          <End Type="Priem2012Model.Exam" Role="Exam" Multiplicity="0..1" />
+          <End Type="Priem2012Model.EgeToExam" Role="EgeToExam" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Exam">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="EgeToExam">
+              <PropertyRef Name="ExamId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="BenefitDocumentType">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="PersonBenefitDocument" Relationship="Priem2012Model.FK_PersonBenefitDocument_BenefitDocumentType" FromRole="BenefitDocumentType" ToRole="PersonBenefitDocument" />
+        </EntityType>
+        <EntityType Name="DisabilityType">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="Name" Type="String" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="PersonBenefitDocument">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="PersonId" Type="Guid" Nullable="false" />
+          <Property Name="BenefitDocumentTypeId" Type="Int32" Nullable="false" />
+          <Property Name="Series" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Number" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Date" Type="DateTime" Precision="0" />
+          <Property Name="DisabilityTypeId" Type="Int32" />
+          <Property Name="HasOriginals" Type="Boolean" Nullable="false" />
+          <Property Name="OriginalsDate" Type="DateTime" Precision="0" />
+          <Property Name="Author" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="IsOpen" Type="Boolean" Nullable="false" />
+          <Property Name="Holder" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="C_Author" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <NavigationProperty Name="BenefitDocumentType" Relationship="Priem2012Model.FK_PersonBenefitDocument_BenefitDocumentType" FromRole="PersonBenefitDocument" ToRole="BenefitDocumentType" />
+          <NavigationProperty Name="Person" Relationship="Priem2012Model.FK_PersonBenefitDocument_Person" FromRole="PersonBenefitDocument" ToRole="Person" />
+        </EntityType>
+        <Association Name="FK_PersonBenefitDocument_BenefitDocumentType">
+          <End Type="Priem2012Model.BenefitDocumentType" Role="BenefitDocumentType" Multiplicity="1" />
+          <End Type="Priem2012Model.PersonBenefitDocument" Role="PersonBenefitDocument" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="BenefitDocumentType">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PersonBenefitDocument">
+              <PropertyRef Name="BenefitDocumentTypeId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_PersonBenefitDocument_Person">
+          <End Type="Priem2012Model.Person" Role="Person" Multiplicity="1" />
+          <End Type="Priem2012Model.PersonBenefitDocument" Role="PersonBenefitDocument" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Person">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="PersonBenefitDocument">
+              <PropertyRef Name="PersonId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="CelCompetitionInEntry">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Guid" Nullable="false" />
+          <Property Name="CelCompetitionId" Type="Int32" Nullable="false" />
+          <Property Name="EntryId" Type="Guid" Nullable="false" />
+          <Property Name="KCP" Type="Int32" Nullable="false" />
+          <Property Name="IsOpen" Type="Boolean" Nullable="false" />
+          <Property Name="Holder" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Entry" Relationship="Priem2012Model.FK_CelCompetitionInEntry_Entry" FromRole="CelCompetitionInEntry" ToRole="Entry" />
+          <NavigationProperty Name="CelCompetition" Relationship="Priem2012Model.FK_CelCompetitionInEntry_CelCompetition" FromRole="CelCompetitionInEntry" ToRole="CelCompetition" />
+        </EntityType>
+        <Association Name="FK_CelCompetitionInEntry_Entry">
+          <End Type="Priem2012Model.Entry" Role="Entry" Multiplicity="1" />
+          <End Type="Priem2012Model.CelCompetitionInEntry" Role="CelCompetitionInEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Entry">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CelCompetitionInEntry">
+              <PropertyRef Name="EntryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="CelCompetition">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <Property Name="TvorName" Type="String" MaxLength="1000" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Abiturient" Relationship="Priem2012Model.FK_Abiturient_CelCompetition" FromRole="CelCompetition" ToRole="Abiturient" />
+          <NavigationProperty Name="CelCompetitionInEntry" Relationship="Priem2012Model.FK_CelCompetitionInEntry_CelCompetition" FromRole="CelCompetition" ToRole="CelCompetitionInEntry" />
+        </EntityType>
+        <Association Name="FK_Abiturient_CelCompetition">
+          <End Type="Priem2012Model.CelCompetition" Role="CelCompetition" Multiplicity="0..1" />
+          <End Type="Priem2012Model.Abiturient" Role="Abiturient" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CelCompetition">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Abiturient">
+              <PropertyRef Name="CelCompetitionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_CelCompetitionInEntry_CelCompetition">
+          <End Type="Priem2012Model.CelCompetition" Role="CelCompetition" Multiplicity="1" />
+          <End Type="Priem2012Model.CelCompetitionInEntry" Role="CelCompetitionInEntry" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="CelCompetition">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="CelCompetitionInEntry">
+              <PropertyRef Name="CelCompetitionId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -4964,6 +5400,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="Priem2012ModelStoreContainer" CdmEntityContainer="PriemEntities">
           <EntitySetMapping Name="Abiturient"><EntityTypeMapping TypeName="Priem2012Model.Abiturient"><MappingFragment StoreEntitySet="Abiturient">
+                <ScalarProperty Name="OlympiadId" ColumnName="OlympiadId" />
                 <ScalarProperty Name="BackDocByAdmissionHigh" ColumnName="BackDocByAdmissionHigh" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="Author" ColumnName="Author" />
@@ -5324,6 +5761,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <EntitySetMapping Name="extEntryView">
             <EntityTypeMapping TypeName="Priem2012Model.extEntryView">
               <MappingFragment StoreEntitySet="extEntryView">
+                <ScalarProperty Name="EntryIsForeign" ColumnName="EntryIsForeign" />
                 <ScalarProperty Name="Priority" ColumnName="Priority" />
                 <ScalarProperty Name="IsForeign" ColumnName="IsForeign" />
                 <ScalarProperty Name="IsBE" ColumnName="IsBE" />
@@ -5608,6 +6046,7 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
           <EntitySetMapping Name="qAbiturient">
             <EntityTypeMapping TypeName="Priem2012Model.qAbiturient">
               <MappingFragment StoreEntitySet="qAbiturient">
+                <ScalarProperty Name="OlympiadId" ColumnName="OlympiadId" />
                 <ScalarProperty Name="BackDocByAdmissionHigh" ColumnName="BackDocByAdmissionHigh" />
                 <ScalarProperty Name="IsCrimea" ColumnName="IsCrimea" />
                 <ScalarProperty Name="IsForeign" ColumnName="IsForeign" />
@@ -6053,6 +6492,90 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="hlpEgeMarkMaxApproved">
+            <EntityTypeMapping TypeName="Priem2012Model.hlpEgeMarkMaxApproved">
+              <MappingFragment StoreEntitySet="hlpEgeMarkMaxApproved">
+                <ScalarProperty Name="EgeMarkId" ColumnName="EgeMarkId" />
+                <ScalarProperty Name="EgeExamNameId" ColumnName="EgeExamNameId" />
+                <ScalarProperty Name="PersonId" ColumnName="PersonId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="hlpEgeMarkMaxApprovedValue">
+            <EntityTypeMapping TypeName="Priem2012Model.hlpEgeMarkMaxApprovedValue">
+              <MappingFragment StoreEntitySet="hlpEgeMarkMaxApprovedValue">
+                <ScalarProperty Name="EgeMarkValue" ColumnName="EgeMarkValue" />
+                <ScalarProperty Name="EgeExamNameId" ColumnName="EgeExamNameId" />
+                <ScalarProperty Name="PersonId" ColumnName="PersonId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EgeToExam">
+            <EntityTypeMapping TypeName="Priem2012Model.EgeToExam">
+              <MappingFragment StoreEntitySet="EgeToExam">
+                <ScalarProperty Name="ExamId" ColumnName="ExamId" />
+                <ScalarProperty Name="EgeExamNameId" ColumnName="EgeExamNameId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="BenefitDocumentType">
+            <EntityTypeMapping TypeName="Priem2012Model.BenefitDocumentType">
+              <MappingFragment StoreEntitySet="BenefitDocumentType">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DisabilityType">
+            <EntityTypeMapping TypeName="Priem2012Model.DisabilityType">
+              <MappingFragment StoreEntitySet="DisabilityType">
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="PersonBenefitDocument">
+            <EntityTypeMapping TypeName="Priem2012Model.PersonBenefitDocument">
+              <MappingFragment StoreEntitySet="PersonBenefitDocument">
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="C_Author" ColumnName="_Author" />
+                <ScalarProperty Name="Holder" ColumnName="Holder" />
+                <ScalarProperty Name="IsOpen" ColumnName="IsOpen" />
+                <ScalarProperty Name="Author" ColumnName="Author" />
+                <ScalarProperty Name="OriginalsDate" ColumnName="OriginalsDate" />
+                <ScalarProperty Name="HasOriginals" ColumnName="HasOriginals" />
+                <ScalarProperty Name="DisabilityTypeId" ColumnName="DisabilityTypeId" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Number" ColumnName="Number" />
+                <ScalarProperty Name="Series" ColumnName="Series" />
+                <ScalarProperty Name="BenefitDocumentTypeId" ColumnName="BenefitDocumentTypeId" />
+                <ScalarProperty Name="PersonId" ColumnName="PersonId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CelCompetitionInEntry">
+            <EntityTypeMapping TypeName="Priem2012Model.CelCompetitionInEntry">
+              <MappingFragment StoreEntitySet="CelCompetitionInEntry">
+                <ScalarProperty Name="Holder" ColumnName="Holder" />
+                <ScalarProperty Name="IsOpen" ColumnName="IsOpen" />
+                <ScalarProperty Name="KCP" ColumnName="KCP" />
+                <ScalarProperty Name="EntryId" ColumnName="EntryId" />
+                <ScalarProperty Name="CelCompetitionId" ColumnName="CelCompetitionId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CelCompetition">
+            <EntityTypeMapping TypeName="Priem2012Model.CelCompetition">
+              <MappingFragment StoreEntitySet="CelCompetition">
+                <ScalarProperty Name="TvorName" ColumnName="TvorName" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
@@ -6287,6 +6810,21 @@ FROM [ed].[qMark] AS [qMark]</DefiningQuery>
         <EntityTypeShape EntityType="Priem2012Model.PersonOtherPassport" Width="1.5" PointX="20.25" PointY="9.625" />
         <AssociationConnector Association="Priem2012Model.FK_PersonOtherPassport_PassportType" />
         <AssociationConnector Association="Priem2012Model.FK_PersonOtherPassport_Person" />
+        <EntityTypeShape EntityType="Priem2012Model.hlpEgeMarkMaxApproved" Width="1.5" PointX="5.375" PointY="17.75" />
+        <EntityTypeShape EntityType="Priem2012Model.hlpEgeMarkMaxApprovedValue" Width="1.5" PointX="5.375" PointY="20.75" />
+        <EntityTypeShape EntityType="Priem2012Model.EgeToExam" Width="1.5" PointX="21.5" PointY="29.5" />
+        <AssociationConnector Association="Priem2012Model.FK_EgeToExam_EgeExamName" />
+        <AssociationConnector Association="Priem2012Model.FK_EgeToExam_Exam" />
+        <EntityTypeShape EntityType="Priem2012Model.BenefitDocumentType" Width="1.5" PointX="21" PointY="32.375" />
+        <EntityTypeShape EntityType="Priem2012Model.DisabilityType" Width="1.5" PointX="22.375" PointY="7.75" />
+        <EntityTypeShape EntityType="Priem2012Model.PersonBenefitDocument" Width="1.5" PointX="23.25" PointY="22.125" />
+        <AssociationConnector Association="Priem2012Model.FK_PersonBenefitDocument_BenefitDocumentType" />
+        <AssociationConnector Association="Priem2012Model.FK_PersonBenefitDocument_Person" />
+        <EntityTypeShape EntityType="Priem2012Model.CelCompetitionInEntry" Width="1.5" PointX="14.25" PointY="38.25" />
+        <AssociationConnector Association="Priem2012Model.FK_CelCompetitionInEntry_Entry" />
+        <EntityTypeShape EntityType="Priem2012Model.CelCompetition" Width="1.5" PointX="22.375" PointY="10.875" />
+        <AssociationConnector Association="Priem2012Model.FK_Abiturient_CelCompetition" />
+        <AssociationConnector Association="Priem2012Model.FK_CelCompetitionInEntry_CelCompetition" />
       </Diagram>
     </Diagrams>
   </Designer>

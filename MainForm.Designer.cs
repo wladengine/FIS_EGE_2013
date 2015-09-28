@@ -36,6 +36,7 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.btnExportXML = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.chbIsCrimea = new System.Windows.Forms.CheckBox();
             this.label4 = new System.Windows.Forms.Label();
             this.cbFaculty = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -51,7 +52,7 @@
             this.btnImportOrdersOfAdmission = new System.Windows.Forms.Button();
             this.btnDeleteApplications = new System.Windows.Forms.Button();
             this.btnUpdateDics = new System.Windows.Forms.Button();
-            this.chbIsCrimea = new System.Windows.Forms.CheckBox();
+            this.btnExportRecommendedList = new System.Windows.Forms.Button();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvCompGroup)).BeginInit();
             this.groupBox3.SuspendLayout();
@@ -88,7 +89,7 @@
             this.dgvCompGroup.Location = new System.Drawing.Point(6, 19);
             this.dgvCompGroup.Name = "dgvCompGroup";
             this.dgvCompGroup.ReadOnly = true;
-            this.dgvCompGroup.Size = new System.Drawing.Size(547, 323);
+            this.dgvCompGroup.Size = new System.Drawing.Size(597, 396);
             this.dgvCompGroup.TabIndex = 0;
             // 
             // cbStudyLevelGroup
@@ -96,7 +97,7 @@
             this.cbStudyLevelGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbStudyLevelGroup.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbStudyLevelGroup.FormattingEnabled = true;
-            this.cbStudyLevelGroup.Location = new System.Drawing.Point(577, 148);
+            this.cbStudyLevelGroup.Location = new System.Drawing.Point(627, 148);
             this.cbStudyLevelGroup.Name = "cbStudyLevelGroup";
             this.cbStudyLevelGroup.Size = new System.Drawing.Size(101, 21);
             this.cbStudyLevelGroup.TabIndex = 14;
@@ -120,7 +121,7 @@
             this.groupBox3.Controls.Add(this.dgvCompGroup);
             this.groupBox3.Location = new System.Drawing.Point(12, 148);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(559, 348);
+            this.groupBox3.Size = new System.Drawing.Size(609, 421);
             this.groupBox3.TabIndex = 13;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Конкурсные группы";
@@ -129,7 +130,7 @@
             // 
             this.btnExportXML.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnExportXML.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnExportXML.Location = new System.Drawing.Point(577, 454);
+            this.btnExportXML.Location = new System.Drawing.Point(627, 528);
             this.btnExportXML.Name = "btnExportXML";
             this.btnExportXML.Size = new System.Drawing.Size(101, 41);
             this.btnExportXML.TabIndex = 10;
@@ -145,11 +146,21 @@
             this.groupBox2.Controls.Add(this.label4);
             this.groupBox2.Controls.Add(this.cbFaculty);
             this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Location = new System.Drawing.Point(218, 68);
+            this.groupBox2.Location = new System.Drawing.Point(268, 68);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(460, 74);
             this.groupBox2.TabIndex = 12;
             this.groupBox2.TabStop = false;
+            // 
+            // chbIsCrimea
+            // 
+            this.chbIsCrimea.AutoSize = true;
+            this.chbIsCrimea.Location = new System.Drawing.Point(399, 21);
+            this.chbIsCrimea.Name = "chbIsCrimea";
+            this.chbIsCrimea.Size = new System.Drawing.Size(55, 17);
+            this.chbIsCrimea.TabIndex = 4;
+            this.chbIsCrimea.Text = "Крым";
+            this.chbIsCrimea.UseVisualStyleBackColor = true;
             // 
             // label4
             // 
@@ -227,7 +238,7 @@
             // 
             this.btnExportXML_part1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnExportXML_part1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnExportXML_part1.Location = new System.Drawing.Point(577, 175);
+            this.btnExportXML_part1.Location = new System.Drawing.Point(627, 175);
             this.btnExportXML_part1.Name = "btnExportXML_part1";
             this.btnExportXML_part1.Size = new System.Drawing.Size(101, 44);
             this.btnExportXML_part1.TabIndex = 16;
@@ -239,7 +250,7 @@
             // 
             this.btnExportXML_part3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnExportXML_part3.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnExportXML_part3.Location = new System.Drawing.Point(577, 225);
+            this.btnExportXML_part3.Location = new System.Drawing.Point(627, 225);
             this.btnExportXML_part3.Name = "btnExportXML_part3";
             this.btnExportXML_part3.Size = new System.Drawing.Size(101, 44);
             this.btnExportXML_part3.TabIndex = 17;
@@ -250,7 +261,7 @@
             // btnUpdateExanInCompetitiveGroup
             // 
             this.btnUpdateExanInCompetitiveGroup.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUpdateExanInCompetitiveGroup.Location = new System.Drawing.Point(577, 387);
+            this.btnUpdateExanInCompetitiveGroup.Location = new System.Drawing.Point(627, 461);
             this.btnUpdateExanInCompetitiveGroup.Name = "btnUpdateExanInCompetitiveGroup";
             this.btnUpdateExanInCompetitiveGroup.Size = new System.Drawing.Size(101, 34);
             this.btnUpdateExanInCompetitiveGroup.TabIndex = 18;
@@ -262,7 +273,7 @@
             // 
             this.chbFullImport.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.chbFullImport.AutoSize = true;
-            this.chbFullImport.Location = new System.Drawing.Point(577, 325);
+            this.chbFullImport.Location = new System.Drawing.Point(627, 375);
             this.chbFullImport.Name = "chbFullImport";
             this.chbFullImport.Size = new System.Drawing.Size(74, 17);
             this.chbFullImport.TabIndex = 19;
@@ -273,7 +284,7 @@
             // 
             this.btnImportOrdersOfAdmission.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnImportOrdersOfAdmission.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.btnImportOrdersOfAdmission.Location = new System.Drawing.Point(577, 275);
+            this.btnImportOrdersOfAdmission.Location = new System.Drawing.Point(627, 275);
             this.btnImportOrdersOfAdmission.Name = "btnImportOrdersOfAdmission";
             this.btnImportOrdersOfAdmission.Size = new System.Drawing.Size(101, 44);
             this.btnImportOrdersOfAdmission.TabIndex = 20;
@@ -284,7 +295,7 @@
             // btnDeleteApplications
             // 
             this.btnDeleteApplications.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnDeleteApplications.Location = new System.Drawing.Point(577, 427);
+            this.btnDeleteApplications.Location = new System.Drawing.Point(627, 501);
             this.btnDeleteApplications.Name = "btnDeleteApplications";
             this.btnDeleteApplications.Size = new System.Drawing.Size(101, 21);
             this.btnDeleteApplications.TabIndex = 21;
@@ -295,7 +306,7 @@
             // btnUpdateDics
             // 
             this.btnUpdateDics.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnUpdateDics.Location = new System.Drawing.Point(577, 360);
+            this.btnUpdateDics.Location = new System.Drawing.Point(627, 434);
             this.btnUpdateDics.Name = "btnUpdateDics";
             this.btnUpdateDics.Size = new System.Drawing.Size(101, 21);
             this.btnUpdateDics.TabIndex = 22;
@@ -303,21 +314,24 @@
             this.btnUpdateDics.UseVisualStyleBackColor = true;
             this.btnUpdateDics.Click += new System.EventHandler(this.btnUpdateDics_Click);
             // 
-            // chbIsCrimea
+            // btnExportRecommendedList
             // 
-            this.chbIsCrimea.AutoSize = true;
-            this.chbIsCrimea.Location = new System.Drawing.Point(399, 21);
-            this.chbIsCrimea.Name = "chbIsCrimea";
-            this.chbIsCrimea.Size = new System.Drawing.Size(55, 17);
-            this.chbIsCrimea.TabIndex = 4;
-            this.chbIsCrimea.Text = "Крым";
-            this.chbIsCrimea.UseVisualStyleBackColor = true;
+            this.btnExportRecommendedList.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnExportRecommendedList.Font = new System.Drawing.Font("Microsoft Sans Serif", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.btnExportRecommendedList.Location = new System.Drawing.Point(627, 325);
+            this.btnExportRecommendedList.Name = "btnExportRecommendedList";
+            this.btnExportRecommendedList.Size = new System.Drawing.Size(101, 44);
+            this.btnExportRecommendedList.TabIndex = 23;
+            this.btnExportRecommendedList.Text = "Выгрузить Recommended";
+            this.btnExportRecommendedList.UseVisualStyleBackColor = true;
+            this.btnExportRecommendedList.Click += new System.EventHandler(this.btnExportRecommendedList_Click);
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(690, 516);
+            this.ClientSize = new System.Drawing.Size(740, 581);
+            this.Controls.Add(this.btnExportRecommendedList);
             this.Controls.Add(this.btnUpdateDics);
             this.Controls.Add(this.btnDeleteApplications);
             this.Controls.Add(this.btnImportOrdersOfAdmission);
@@ -372,6 +386,7 @@
         private System.Windows.Forms.Button btnDeleteApplications;
         private System.Windows.Forms.Button btnUpdateDics;
         private System.Windows.Forms.CheckBox chbIsCrimea;
+        private System.Windows.Forms.Button btnExportRecommendedList;
     }
 }
 
