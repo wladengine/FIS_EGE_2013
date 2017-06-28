@@ -121,6 +121,7 @@ namespace FIS_EGE_2013
             lst.Add(new KeyValuePair<string, string>("1", "1 к."));
             lst.Add(new KeyValuePair<string, string>("2", "маг."));
             lst.Add(new KeyValuePair<string, string>("3", "СПО"));
+            lst.Add(new KeyValuePair<string, string>("4", "асп"));
             ComboServ.FillCombo(cbStudyLevelGroup, lst, false, false);
         }
         public int StudyLevelGroupId
@@ -891,7 +892,7 @@ namespace FIS_EGE_2013
                             where (FacultyId.HasValue ? abit.FacultyId == FacultyId.Value : true)
                             && (abit.StudyLevelGroupId == StudyLevelGroupId)
                             &&  !abit.IsForeign && abit.IsCrimea == isCrimea
-                            && abit.CompetitionId == 6 //&& !abit.BackDoc && !abit.NotEnabled
+                            //&& abit.CompetitionId == 6 //&& !abit.BackDoc && !abit.NotEnabled
                             select new
                             {
                                 AppUID = abit.Id,
@@ -2043,7 +2044,7 @@ namespace FIS_EGE_2013
                 wc.Show();
                 //--------------------------------------------------------------------------------------------------------------
                 //заполняем данные Applications
-                bool bIsOnlyZeroWave = true;
+                bool bIsOnlyZeroWave = false;
 
                 DateTime dtZeroWaveLastTime = new DateTime(2015, 7, 31);
                 var apps = (from abit in context.qAbiturient
@@ -2052,7 +2053,7 @@ namespace FIS_EGE_2013
                             join compGroup in context.qEntryToCompetitiveGroup on abit.EntryId equals compGroup.EntryId
                             join extCompGroup in context.extCompetitiveGroup on compGroup.CompetitiveGroupId equals extCompGroup.Id
                             join SL in context.StudyLevel on abit.StudyLevelId equals SL.Id
-                            where SL.LevelGroupId <= 4
+                            where SL.LevelGroupId == 2 && abit.StudyFormId == 2
                             && abit.IsCrimea == isCrimea
                             && !abit.IsForeign
                             //нулевая волна
@@ -2131,6 +2132,7 @@ namespace FIS_EGE_2013
                         root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "OrderDatePublished", ""));
                         root.LastChild["OrderDatePublished"].InnerXml = eOrder.NationalityId == 1 ? eOrder.OrderDate.Value.ToString("yyyy-MM-dd") : eOrder.OrderDateFor.Value.ToString("yyyy-MM-dd");
                     }
+
                     //id направления подготовки (справочник №14 "Направления подготовки")
                     root.LastChild.AppendChild(doc.CreateNode(XmlNodeType.Element, "DirectionID", ""));
                     root.LastChild["DirectionID"].InnerXml = SearchInDictionary(dic10_Direction, eOrder.LicenseProgramName, eOrder.LicenseProgramCode, eOrder.QualificationCode);
